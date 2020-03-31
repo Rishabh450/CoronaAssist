@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:padding="16dp">
+
+
+    <RadioGroup
+        android:id="@+id/urgency_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkedButton="@+id/pass_type_not_urgent"
+        android:orientation="vertical">
+
+
+        <RadioButton
+            android:id="@+id/pass_type_urgent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Urgent" />
+
+        <RadioButton
+            android:id="@+id/pass_type_not_urgent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Not Urgent" />
+
+    </RadioGroup>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/urgency_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/pass_type_urgency_message"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawablePadding="10dp"
+            android:hint="Urgency Message"
+            android:singleLine="true"
+            android:visibility="gone" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+</RelativeLayout>

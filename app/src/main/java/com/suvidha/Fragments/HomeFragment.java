@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import com.suvidha.Activities.GroceriesActivity;
 import com.suvidha.Activities.MedicineActivity;
+import com.suvidha.Activities.MyPassActivity;
 import com.suvidha.R;
 
 import androidx.annotation.NonNull;
@@ -17,7 +18,7 @@ import androidx.fragment.app.Fragment;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private Button iconGroceries;
-    private Button iconMedicines;
+    private Button iconRequestPass;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -28,12 +29,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
     private void init(View v) {
         iconGroceries = v.findViewById(R.id.icon_groceries);
-
+        iconRequestPass = v.findViewById(R.id.icon_request_passes);
     }
 
     private void setListeners() {
         iconGroceries.setOnClickListener(this);
-        iconMedicines.setOnClickListener(this);
+        iconRequestPass.setOnClickListener(this);
     }
 
 
@@ -47,10 +48,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 intent = new Intent(getContext(), GroceriesActivity.class);
                 startActivity(intent);
                 break;
-//            case R.id.icon_medicine:
-//                intent = new Intent(getContext(), MedicineActivity.class);
-//                startActivity(intent);
-//                break;
+            case R.id.icon_request_passes:
+                intent = new Intent(getContext(), MyPassActivity.class);
+                startActivity(intent);
+                break;
 
 
         }

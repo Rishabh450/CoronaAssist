@@ -2,11 +2,17 @@ package com.suvidha.Utilities;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.suvidha.Models.CartModel;
 import com.suvidha.Models.GrocItemModel;
 import com.suvidha.Models.ShopTypesModel;
@@ -71,6 +77,22 @@ public class Utils {
         sharedPrefManager.put(SharedPrefManager.Key.USER_NAME, user.getName());
         sharedPrefManager.put(SharedPrefManager.Key.USER_EMAIL, user.getEmail());
         sharedPrefManager.put(SharedPrefManager.Key.USER_PHONE, user.getPhone());
+    }
+    public static Bitmap getQRCode(String Id) {
+        // Handle Null pointer exception carefully.
+
+        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+        Bitmap bitmap = null;
+        try {
+            BitMatrix bitMatrix = multiFormatWriter.encode(Id, BarcodeFormat.QR_CODE, 200, 200);
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            bitmap = barcodeEncoder.createBitmap(bitMatrix);
+            return bitmap;
+
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 
 }

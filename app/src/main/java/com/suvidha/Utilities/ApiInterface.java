@@ -6,14 +6,19 @@ import com.suvidha.Models.GeneralModel;
 import com.suvidha.Models.GetOrdersModel;
 import com.suvidha.Models.GetShopsModel;
 import com.suvidha.Models.LoginResult;
+import com.suvidha.Models.Pass;
+import com.suvidha.Models.PassGenerationResult;
 import com.suvidha.Models.RegistrationResult;
 import com.suvidha.Models.ShopModel;
 import com.suvidha.Models.ShopRequestModel;
+import com.suvidha.Models.SinglePassResult;
 import com.suvidha.Models.UserModel;
+import com.suvidha.Models.UserPassesResult;
 
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -21,6 +26,8 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
 public interface ApiInterface {
     @Headers("Content-Type: application/json")
@@ -47,8 +54,21 @@ public interface ApiInterface {
     @GET("/api/get_orders")
     Call<GetOrdersModel> getAllOrders(@Header("x-access-tokens") String token);
 
+    @Headers("Content-Type: application/json")
+    @GET("/api/user_passes")  @POST("/api/generate_pass")
+    Call<PassGenerationResult> createPass(@Header("x-access-tokens") String token, @Body Pass pass);
+    Call<UserPassesResult> getPasses(@Header("x-access-tokens") String token);
 
+    @Headers("Content-Type: application/json")
+    @POST("/api/police/get_pass")
+    Call<SinglePassResult> getPass(@Body Map<String, String> body);
 
+    @GET("/api/police/get_passes/{status}")
+    Call<UserPassesResult> getStatusPass(@Path("status") int status);
+
+    @Headers("Content-Type: application/json")
+    @PUT("/api/police/validate_pass")
+    Call<RegistrationResult> updateStatus(@Body Map<String, String> body);
 //    @POST("/api/login")
 //    Call<LoginResult> login(@Body LoginCredential loginCredential);
 //

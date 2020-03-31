@@ -9,4 +9,33 @@
     <color name="warning_button_color">#FF0000</color>
     <color name="secondary_text_color">#ffffff</color>
     <color name="grey">#EDEDED</color>
+
+    <color name="blue">#2143B3</color>
+    <color name="black">#000000</color>
+    <color name="black_100">#303030</color>
+
+    <color name="red">#971d5a</color>
+
+
+    <color name="date_blue">#275F8B</color>
+    <color name="text_border_default">#207A7676</color>
+    <color name="text_border_selected">#70C9C9C9</color>
+    <color name="grey_100">#F5F7F7</color>
+    <color name="grey_200">#e9ecec</color>
+    <color name="grey_300">#d3d6d6</color>
+    <color name="grey_400">#B0B9B9</color>
+    <color name="qr_background">#D1F9DB</color>
+    <color name="custom_badge_color">#545858</color>
+    <color name="text_color">#353535</color>
+    <color name="primaryDark">#00766B</color>
+
+
+    <color name="colorAccentSecondary">#3A3737</color>
+
+    <color name="green">#4CAF50</color>
+    <color name="yellow_one">#ffff8d</color>
+    <color name="yellow_two">#ffab00</color>
+
+    <color name="rejected_red">#FDDBDB</color>
+    <color name="rejected_red_text">#FF0000</color>
 </resources>

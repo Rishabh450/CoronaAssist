@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 
+
 android {
+
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.suvidha"
@@ -8,6 +10,7 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -41,8 +44,11 @@ dependencies {
     repositories {
         mavenCentral()
     }
+    implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
-
+    implementation 'com.journeyapps:zxing-android-embedded:4.0.0'
+    implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
 
 
