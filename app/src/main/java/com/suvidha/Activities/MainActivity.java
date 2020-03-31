@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         nodeName = findViewById(R.id.node_name);
         locationLayout = findViewById(R.id.node_location_layout);
         local_zone_name = SharedPrefManager.getInstance(this).getInt(SharedPrefManager.Key.ZONE_KEY);
-        nodeName.setText(zonesList.get(local_zone_name).name);
+//        nodeName.setText(zonesList.get(local_zone_name).name);
     }
     //suvidhajamshedhpur@gmail.com
 
