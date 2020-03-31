@@ -3,4 +3,5 @@
     <dimen name="left_margin">10dp</dimen>
     <dimen name="border_margin">10dp</dimen>
     <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="cart_text_size">16sp</dimen>
 </resources>

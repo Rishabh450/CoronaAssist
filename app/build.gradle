@@ -3,12 +3,17 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.chat.pcon.myapplication"
+        applicationId "com.suvidha"
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["androidManifestFile": "$projectDir/src/main/AndroidManifest.xml".toString()]
+            }
+        }
     }
     buildTypes {
         release {
@@ -33,6 +38,12 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.squareup.retrofit2:retrofit:2.8.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
+    repositories {
+        mavenCentral()
+    }
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+
+
 
 
 }

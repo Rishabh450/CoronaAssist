@@ -1,29 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/border_margin">
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
-        android:background="#00C000"
-        android:gravity="center"
-
+        android:id="@+id/main_app_bar"
+        android:background="@color/white"
+        >
+    <include layout="@layout/include_toolbar" />
+    </com.google.android.material.appbar.AppBarLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:layout_marginTop="@dimen/border_margin"
+        android:layout_below="@id/main_app_bar"
+        android:layout_marginBottom="@dimen/border_margin"
+        android:id="@+id/categories_layout"
         >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Shop By Category"
-            android:textColor="@color/white"
+            android:text="Categories"
+            android:textColor="@color/primary_text_color"
             android:textSize="20sp"
+            android:textStyle="bold"
             />
     </LinearLayout>
-    <androidx.recyclerview.widget.RecyclerView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/shop_cat_rview"
-        android:layout_marginTop="@dimen/border_margin"
+        android:layout_below="@+id/categories_layout"
+        android:id="@+id/nested_scroll_view"
+        >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/shop_cat_rview"
+            android:layout_marginTop="@dimen/border_margin"
+            android:paddingBottom="@dimen/toolbar_height"
+            />
+
+    </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
+    <include layout="@layout/include_goto_cart"
         />
-</LinearLayout>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="10dp"
+        android:layout_below="@+id/main_app_bar"
+        >
+        <include layout="@layout/cart_bottom_sheet"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

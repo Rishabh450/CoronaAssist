@@ -5,5 +5,8 @@
     <color name="colorAccent">#D81B60</color>
     <color name="primary_text_color">#000000</color>
     <color name="white">#ffffff</color>
+    <color name="default_button_color">#0EA018</color>
+    <color name="warning_button_color">#FF0000</color>
     <color name="secondary_text_color">#ffffff</color>
+    <color name="grey">#EDEDED</color>
 </resources>

@@ -10,78 +10,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/main_app_bar"
+        android:layout_margin="@dimen/border_margin"
         android:background="@color/white"
         >
         <include layout="@layout/toolbar_layout" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
+
+    <FrameLayout
+        android:id="@+id/frame_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_below="@+id/main_app_bar"
-        >
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Stay at home essentials"
-            android:textStyle="bold"
-            android:textColor="@color/primary_text_color"
-            android:layout_marginTop="15dp"
-            android:textSize="18sp"
-            android:layout_marginLeft="@dimen/left_margin"
-            />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="@dimen/border_margin"
-            >
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/icon_groceries"
-                >
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/ic_launcher_background"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:text="@string/first_icon_name"
-                    android:layout_marginTop="2dp"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/icon_medicine"
-                android:layout_marginLeft="@dimen/border_margin"
-                >
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/ic_launcher_background"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:text="@string/second_icon_name"
-                    android:layout_marginTop="2dp"
-                    />
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
+        android:layout_above="@id/navigation"
+        android:layout_below="@id/main_app_bar"
+        />
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/navigation"
+        android:layout_marginTop="@dimen/border_margin"
+        />
 
 
 </RelativeLayout>

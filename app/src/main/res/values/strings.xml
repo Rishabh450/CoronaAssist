@@ -1,7 +1,10 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Suvidha</string>
     <string name="action_settings">Settings</string>
     <string name="first_icon_name">Groceries</string>
     <string name="second_icon_name">Medicine</string>
     <string name="google_map_api_key">AIzaSyDwaMUD4DcndR_rfG5LyD5ectVowYaLPCk</string>
+    <string name="warning_cart_not_empty">You\'ll lose the cart items if you go back. Do you want to continue?</string>
+    <string name="view_order_summary">VIEW ORDER SUMMARY</string>
+    <string name="place_order_msg">Do you want to continue placing the order?</string>
 </resources>

@@ -4,26 +4,31 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/border_margin">
-    <LinearLayout
+    >
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
-        android:background="#00C000"
-        android:gravity="center"
-
+        android:id="@+id/main_app_bar"
+        android:background="@color/white"
         >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Shops in your Area"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            />
-    </LinearLayout>
-    <androidx.recyclerview.widget.RecyclerView
+        <include layout="@layout/include_toolbar" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/groc_cat_rview"
-        android:layout_marginTop="@dimen/border_margin"
-        />
+        android:orientation="vertical"
+        android:layout_margin="@dimen/border_margin"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/groc_cat_rview"
+                android:layout_marginTop="@dimen/border_margin"
+                />
+        </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

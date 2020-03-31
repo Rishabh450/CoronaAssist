@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.chat.pcon.myapplication">
+    package="com.suvidha">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission. ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -12,24 +12,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_map_api_key"/>
 
         <activity
-            android:name=".Activities.MainActivity"
+            android:name="com.suvidha.Activities.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            >
+        </activity>
+        <activity android:name=".Activities.LoginActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.MedicineActivity" />
-        <activity android:name=".Activities.GroceriesActivity" />
-        <activity android:name=".Activities.ShopActivity" />
-        <activity android:name=".Activities.ItemActivity" />
+        <activity android:name="com.suvidha.Activities.MedicineActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.suvidha.Activities.GroceriesActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.suvidha.Activities.ShopActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.suvidha.Activities.ItemActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.RegisterActivity" android:screenOrientation="portrait" />
+        <activity android:name=".Activities.OrderDetailsActivity" android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
