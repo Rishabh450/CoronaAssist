@@ -13,6 +13,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.suvidha.Models.LoginResult;
 import com.suvidha.Models.UserModel;
+import com.suvidha.Models.ZonesModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
@@ -20,6 +21,8 @@ import com.suvidha.Utilities.SharedPrefManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -84,7 +87,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Log.d(TAG, "onResponse: " + response.body().id.token);
                             //store access token
                             Intent intent = null;
-                            zonesList = response.body().zone;
+                            zonesList.clear();
+                            zonesList.addAll(response.body().zone);
+
                             SharedPrefManager.getInstance(LoginActivity.this).storeToken(response.body().id.token);
                             if (response.body().status == 205 || response.body().id.phone == null) {
                                 // goto register activity
@@ -95,7 +100,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                             } else {
                                 //go to main activity
-                                setLoginSession(response.body().id, LoginActivity.this);
+                                setLoginSession(response.body().id, LoginActivity.this,getZoneId(response.body().id,response.body().zone));
                                 intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
@@ -115,6 +120,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //            finish();
             }
         }
+    }
+
+    private int getZoneId(UserModel user, List<ZonesModel> zone) {
+        for(int i=0;i<zone.size();i++){
+            if(user.name.compareTo(zone.get(i).name)==0){
+                return zone.get(i).id;
+            }
+        }
+        return 0;
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {

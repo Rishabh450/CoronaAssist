@@ -28,7 +28,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
     private void init(View v) {
         iconGroceries = v.findViewById(R.id.icon_groceries);
-        iconMedicines = v.findViewById(R.id.icon_medicine);
+
     }
 
     private void setListeners() {
@@ -47,10 +47,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 intent = new Intent(getContext(), GroceriesActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.icon_medicine:
-                intent = new Intent(getContext(), MedicineActivity.class);
-                startActivity(intent);
-                break;
+//            case R.id.icon_medicine:
+//                intent = new Intent(getContext(), MedicineActivity.class);
+//                startActivity(intent);
+//                break;
 
 
         }

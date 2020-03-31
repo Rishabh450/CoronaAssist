@@ -26,6 +26,8 @@
                 android:text="Shop Name"
                 android:textSize="20sp"
                 android:id="@+id/history_shopname"
+                android:textStyle="bold"
+                android:textColor="@color/primary_text_color"
                 />
             <TextView
                 android:layout_width="wrap_content"
@@ -38,6 +40,29 @@
                 android:layout_height="1dp"
                 android:background="@color/grey"
                 />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/border_margin"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Order Status:"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pending"
+                    android:textColor="@color/default_button_color"
+                    android:layout_marginLeft="@dimen/border_margin"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:id="@+id/history_orderstatus"
+                    />
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -64,7 +89,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ordered ON"
+                    android:text="Ordered on"
                     android:textSize="17sp"
                     />
             </LinearLayout>

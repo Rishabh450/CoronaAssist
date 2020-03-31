@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-public class CartModel implements Parcelable {
+public class CartModel implements Parcelable,Comparable<CartModel> {
     public String _id;
     public ArrayList<GrocItemModel> items;
     public String sid;
@@ -77,5 +77,10 @@ public class CartModel implements Parcelable {
         dest.writeString(sid);
         dest.writeDouble(amount);
         dest.writeInt(status);
+    }
+
+    @Override
+    public int compareTo(CartModel o) {
+        return (int) (o.time.getTime()-time.getTime());
     }
 }

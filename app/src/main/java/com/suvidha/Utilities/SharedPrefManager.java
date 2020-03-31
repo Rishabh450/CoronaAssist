@@ -51,6 +51,7 @@ public class SharedPrefManager {
         public static final String USER_PHONE = "user_phone";
         public static final String USER_ID = "user_id";
         public static final String TOKEN_KEY = "token";
+        public static final String ZONE_KEY = "zone";
 
     }
 

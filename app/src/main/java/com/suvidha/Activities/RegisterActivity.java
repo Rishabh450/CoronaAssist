@@ -30,6 +30,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.getAccessToken;
+import static com.suvidha.Utilities.Utils.setLoginSession;
+import static com.suvidha.Utilities.Utils.zonesList;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -70,9 +72,17 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setSpinner() {
-        ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,zones);
+        ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,getList());
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_zone.setAdapter(aa);
+    }
+
+    private List<String> getList() {
+        List<String> list = new ArrayList<>();
+        for(int i=1;i<zonesList.size();i++){
+            list.add(zonesList.get(i).name);
+        }
+        return list;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -94,11 +104,13 @@ public class RegisterActivity extends AppCompatActivity {
         String phone = etPhone.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String address = etAddress.getText().toString().trim();
-        String zoneName = spinner_zone.getSelectedItem().toString().trim();
+        int zoneid = spinner_zone.getSelectedItemPosition()+1;
+        String zoneName = spinner_zone.getSelectedItem().toString();
+
 
         if (name.length() != 0 && phone.length() != 0 && isVerified && etEmail.length()!=0 && address.length()!=0 && zoneName.length()!=0) {
 //            List<String> passes = new ArrayList<>();
-            final UserModel user = new UserModel(name, email, phone);
+            final UserModel user = new UserModel(name, email, phone,address,zoneName);
 //            Log.e(TAG,getAccessToken(RegisterActivity.this));
             Call<RegistrationResult> registerCall = apiInterface.register(getAccessToken(RegisterActivity.this),user);
             registerCall.enqueue(new Callback<RegistrationResult>() {
@@ -108,6 +120,7 @@ public class RegisterActivity extends AppCompatActivity {
 //                    Toast.makeText(RegisterActivity.this, "Registration Successful." + response.message(), Toast.LENGTH_LONG).show();
                     Log.e(TAG, "onResponse: " + response.body().getId());
                     if(response.body().getStatus() == 201) {
+                        setLoginSession(user, RegisterActivity.this,zoneid);
                         sharedPrefManager.put(SharedPrefManager.Key.USER_ID, response.body().getId());
                         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                         startActivity(intent);

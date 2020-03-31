@@ -3,8 +3,6 @@ package com.suvidha.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 public class UserModel implements Parcelable {
@@ -16,8 +14,25 @@ public class UserModel implements Parcelable {
     public String address="";
     public String zone="";
     public String token;
+    public List<String> orders;
+    public List<String> passes;
 
     public UserModel() {
+    }
+
+    public UserModel(String name, String email, String phone, String address, String zone) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+        this.zone = zone;
+    }
+
+    public UserModel(String name, String email, List<String> orders, List<String> passes) {
+        this.name = name;
+        this.email = email;
+        this.orders = orders;
+        this.passes = passes;
     }
 
     public UserModel(String id, String name, String email, String phone) {

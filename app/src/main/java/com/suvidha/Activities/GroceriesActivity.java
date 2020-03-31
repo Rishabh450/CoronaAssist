@@ -25,6 +25,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.getAccessToken;
+import static com.suvidha.Utilities.Utils.local_zone_name;
 
 public class GroceriesActivity extends AppCompatActivity {
     private static final String TAG = "GroceriesActivity";
@@ -46,7 +47,7 @@ public class GroceriesActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        GetShopsModel model = new GetShopsModel(1, 0);
+        GetShopsModel model = new GetShopsModel(1, local_zone_name);
 //        Log.e(TAG, "ACCESSTOKEN: "+getAccessToken(this));
         Call<ShopRequestModel> listCallResult = apiInterface.getAllShops(getAccessToken(this), model);
         listCallResult.enqueue(new Callback<ShopRequestModel>() {

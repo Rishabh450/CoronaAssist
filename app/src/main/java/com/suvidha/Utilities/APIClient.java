@@ -7,6 +7,8 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.suvidha.Utilities.Utils.BASE_URL;
+
 public class APIClient {
 //    use this url for the deployed url
 //    public static final String BASE_URL = "https://inv-mg-bb.herokuapp.com/";
@@ -16,7 +18,7 @@ public class APIClient {
 
 
 //        use this url when the IP is static. Suraj
-      public static final String BASE_URL = "http://192.168.43.114:5000";
+
 
     //    This is the singleton pattern for declaring the instance of retrofit.
     public static Retrofit retrofit = null;
