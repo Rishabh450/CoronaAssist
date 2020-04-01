@@ -1,5 +1,6 @@
 package com.suvidha.Activities;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -27,17 +28,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.APP_CHARGE;
 import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
+import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.rs;
 import static com.suvidha.Utilities.Utils.statusHashMap;
 
-public class OrderDetailsActivity extends AppCompatActivity implements View.OnClickListener, CartAdapter.CartCallback {
+public class OrderDetailsActivity extends AppCompatActivity implements View.OnClickListener, CartAdapter.CartCallback, SwipeRefreshLayout.OnRefreshListener {
     private BottomSheetBehavior mBottomSheetBehaviour;
     View nestedScrollView;
     private TextView orderSummary;
@@ -54,6 +57,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
     private boolean orderPlaced = true;
     private LinearLayout deliveryLayout;
     private ApiInterface apiInterface;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,11 +71,14 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
 //        orderData = data.items;
         setBottomSheet();
         setData();
+        swipeRefreshLayout.setOnRefreshListener(this);
     }
     private void intialiseRetrofit() {
         apiInterface = APIClient.getApiClient().create(ApiInterface.class);
     }
     private void getOrderDetails() {
+        Dialog dialog = createProgressDialog(this,"Please wait");
+        dialog.show();
         OrderIdModel orderIdModel = new OrderIdModel(data._id);
         Call<OrderRequestModel> orderRequestModelCall = apiInterface.getOrder(getAccessToken(this),orderIdModel);
         orderRequestModelCall.enqueue(new Callback<OrderRequestModel>() {
@@ -80,11 +87,15 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
                 Toast.makeText(getApplicationContext(),"Data is loaded",Toast.LENGTH_SHORT).show();
                 orderData = response.body().id.items;
                 cartAdapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
+                dialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<OrderRequestModel> call, Throwable t) {
                 Log.e("LOL",t.getMessage());
+                Toast.makeText(getApplicationContext(),"Error loading your data",Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
             }
         });
     }
@@ -141,6 +152,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         orderSummary = findViewById(R.id.order_view_summary);
         orderSummary.setOnClickListener(this);
         placeOrder.setVisibility(View.GONE);
+        swipeRefreshLayout = findViewById(R.id.swipe_ref);
     }
 
     @Override
@@ -192,5 +204,10 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void hideGoto() {
 
+    }
+
+    @Override
+    public void onRefresh() {
+        getOrderDetails();
     }
 }

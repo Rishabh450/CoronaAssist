@@ -41,6 +41,7 @@ import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.APP_CHARGE;
 import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
+import static com.suvidha.Utilities.Utils.catHashMap;
 import static com.suvidha.Utilities.Utils.createAlertDialog;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.rs;
@@ -252,7 +253,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         if(catId == -1){
             getSupportActionBar().setTitle(shop_name);
         }else
-            getSupportActionBar().setTitle("Category "+catId);
+            getSupportActionBar().setTitle(catHashMap.get(catId+1).first);
     }
 
     @Override

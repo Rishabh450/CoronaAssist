@@ -220,7 +220,7 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
     }
 
     void setuprec() {
-        categoryData = getAllDifferentCategories();
+        shopItems.clear();
         mAdapter = new CategoryAdapter(this, categoryData,shop_id);
         rView.setLayoutManager(new GridLayoutManager(this, ITEM_COUNT));
         rView.setAdapter(mAdapter);

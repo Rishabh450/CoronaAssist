@@ -47,6 +47,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyHold
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ItemActivity.class);
+                Log.e("CATID", String.valueOf(catId+1));
                 intent.putExtra("CategoryId",catId);
                 intent.putExtra("shopid",shopid);
                 context.startActivity(intent);

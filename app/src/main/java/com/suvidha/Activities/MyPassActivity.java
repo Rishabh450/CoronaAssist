@@ -155,7 +155,6 @@ public class MyPassActivity extends AppCompatActivity {
 
 
     private void fetchData() {
-
         Call<UserPassesResult> getPassesCall = apiInterface.getPasses(getAccessToken(this));
         Log.d(TAG, "fetchData: accesstoken" + (getAccessToken(this)));
         getPassesCall.enqueue(new Callback<UserPassesResult>() {
