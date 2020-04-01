@@ -5,7 +5,8 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorButtonNormal">@color/default_button_color</item>
+        <!--        <item name="colorControlHighlight">@color/myWhite</item>-->
         <item name="android:fontFamily" tools:targetApi="jelly_bean">@font/poppins_light</item>
     </style>
 

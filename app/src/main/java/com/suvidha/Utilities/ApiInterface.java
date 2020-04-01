@@ -66,7 +66,7 @@ public interface ApiInterface {
     Call<GetOrdersModel> getAllOrders(@Header("x-access-tokens") String token);
 
     @Headers("Content-Type: application/json")
-    @GET("/api/user_passes")  @POST("/api/generate_pass")
+    @POST("/api/generate_pass")
     Call<PassGenerationResult> createPass(@Header("x-access-tokens") String token, @Body Pass pass);
 
     @Headers("Content-Type: application/json")

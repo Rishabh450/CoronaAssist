@@ -18,9 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -34,6 +31,10 @@ import com.suvidha.Utilities.SharedPrefManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.getAccessToken;
 
@@ -156,7 +157,7 @@ public class MyPassActivity extends AppCompatActivity {
     private void fetchData() {
 
         Call<UserPassesResult> getPassesCall = apiInterface.getPasses(getAccessToken(this));
-
+        Log.d(TAG, "fetchData: accesstoken" + (getAccessToken(this)));
         getPassesCall.enqueue(new Callback<UserPassesResult>() {
             @Override
             public void onResponse(Call<UserPassesResult> call, Response<UserPassesResult> response) {
@@ -173,7 +174,8 @@ public class MyPassActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<UserPassesResult> call, Throwable t) {
-                Toast.makeText(MyPassActivity.this, "Failed to fetch passes", Toast.LENGTH_SHORT).show();
+                Log.d("hello", "onFailure: " + t.getMessage());
+                Toast.makeText(MyPassActivity.this, "Failed to fetch passes" + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

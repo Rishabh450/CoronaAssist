@@ -1,4 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!--Set application-wide security config using base-config tag.-->
-    <base-config cleartextTrafficPermitted="true"/>
+    <domain-config cleartextTrafficPermitted="true">
+        <!--        suraj-->
+        <!--        <domain includeSubdomains="true">192.168.43.193</domain>-->
+        <!--        sanay-->
+        <domain includeSubdomains="true">202.56.13.210</domain>
+    </domain-config>
 </network-security-config>
