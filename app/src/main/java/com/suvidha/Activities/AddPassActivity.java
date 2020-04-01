@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.textfield.TextInputEditText;
 import com.suvidha.Models.Pass;
 import com.suvidha.Models.PassGenerationResult;
@@ -127,7 +129,6 @@ public class AddPassActivity extends AppCompatActivity {
                 if (rbUrgent.isChecked()) {
                     urgency = true;
                     urgentMessage = "Urgent. " + etUrgencyMessage.getText().toString().trim();
-
                     etUrgency.setText(urgentMessage);
                 } else if (rbNotUrgent.isChecked()) {
                     urgency = false;
@@ -345,15 +346,18 @@ public class AddPassActivity extends AppCompatActivity {
 
             String uid = sharedPrefManager.getString(SharedPrefManager.Key.USER_ID);
             Pass pass = new Pass(proof, destination, vehicleNumber, purpose, time, duration, 0, uid, passType, seniorCitizen, passengerCount, urgency, urgentMessage);
-            Call<PassGenerationResult> createPassCall = apiInterface.createPass(sharedPrefManager.getString(getAccessToken(this)), pass);
+            Call<PassGenerationResult> createPassCall = apiInterface.createPass(getAccessToken(this), pass);
             createPassCall.enqueue(new Callback<PassGenerationResult>() {
+
                 @Override
                 public void onResponse(Call<PassGenerationResult> call, Response<PassGenerationResult> response) {
                     PassGenerationResult passGenerationResult = response.body();
+                    Log.d(TAG, "onResponse: " + passGenerationResult);
                     if (passGenerationResult.getStatus() == 200) {
                         Toast.makeText(AddPassActivity.this, "Added" + passGenerationResult, Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
+                        Log.d(TAG, "onResponse: " + response.message() + " " + response.body().getStatus());
                         Toast.makeText(AddPassActivity.this, "Failed Addition", Toast.LENGTH_SHORT).show();
                     }
                 }

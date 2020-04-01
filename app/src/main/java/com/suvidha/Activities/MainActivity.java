@@ -1,42 +1,7 @@
 package com.suvidha.Activities;
 
-import android.Manifest;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-
-import com.suvidha.Fragments.HistoryFragment;
-import com.suvidha.Fragments.HomeFragment;
-import com.suvidha.Models.EssentialsRequestModel;
-import com.suvidha.Models.GetOrdersModel;
-import com.suvidha.Models.NodeModel;
-import com.suvidha.R;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.suvidha.Utilities.APIClient;
-import com.suvidha.Utilities.ApiInterface;
-import com.suvidha.Utilities.SharedPrefManager;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import android.os.Handler;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,20 +10,37 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.suvidha.Fragments.HistoryFragment;
+import com.suvidha.Fragments.HomeFragment;
+import com.suvidha.Models.EssentialsRequestModel;
+import com.suvidha.Models.GetOrdersModel;
+import com.suvidha.R;
+import com.suvidha.Utilities.APIClient;
+import com.suvidha.Utilities.ApiInterface;
+import com.suvidha.Utilities.SharedPrefManager;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.APP_CHARGE;
 import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
 import static com.suvidha.Utilities.Utils.allOrders;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.local_zone_name;
-import static com.suvidha.Utilities.Utils.shopTypesList;
 import static com.suvidha.Utilities.Utils.zonesList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {

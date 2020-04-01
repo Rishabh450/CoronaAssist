@@ -9,15 +9,11 @@ import com.suvidha.Models.LoginResult;
 import com.suvidha.Models.Pass;
 import com.suvidha.Models.PassGenerationResult;
 import com.suvidha.Models.RegistrationResult;
-import com.suvidha.Models.ShopModel;
 import com.suvidha.Models.ShopRequestModel;
 import com.suvidha.Models.SinglePassResult;
 import com.suvidha.Models.UserModel;
 import com.suvidha.Models.UserPassesResult;
 
-import org.json.JSONObject;
-
-import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -55,7 +51,7 @@ public interface ApiInterface {
     Call<GetOrdersModel> getAllOrders(@Header("x-access-tokens") String token);
 
     @Headers("Content-Type: application/json")
-    @GET("/api/user_passes")  @POST("/api/generate_pass")
+    @POST("/api/generate_pass")
     Call<PassGenerationResult> createPass(@Header("x-access-tokens") String token, @Body Pass pass);
 
     @Headers("Content-Type: application/json")
