@@ -155,7 +155,8 @@ public class MyPassActivity extends AppCompatActivity {
 
     private void fetchData() {
 
-        Call<UserPassesResult> getPassesCall = apiInterface.getPasses(sharedPrefManager.getString(getAccessToken(this)));
+        Call<UserPassesResult> getPassesCall = apiInterface.getPasses(getAccessToken(this));
+
         getPassesCall.enqueue(new Callback<UserPassesResult>() {
             @Override
             public void onResponse(Call<UserPassesResult> call, Response<UserPassesResult> response) {

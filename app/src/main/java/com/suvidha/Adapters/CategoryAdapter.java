@@ -2,6 +2,7 @@ package com.suvidha.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,14 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.suvidha.Activities.ItemActivity;
-import com.suvidha.Models.GrocItemModel;
 import com.suvidha.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static com.suvidha.Utilities.Utils.catHashMap;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyHolder> {
     List<Integer> list;
@@ -38,7 +39,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyHold
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
         Integer catId = list.get(position);
-        holder.name.setText("Category "+catId);
+        Log.e("LOL", String.valueOf(catId));
+        holder.name.setText(catHashMap.get(catId+1).first);
+        holder.img.setImageResource(catHashMap.get(catId+1).second);
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

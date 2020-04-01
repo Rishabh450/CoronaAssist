@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.suvidha.Models.GrocItemModel;
+import com.suvidha.Models.ItemModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.CartHandler;
 
@@ -21,11 +21,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
     private Context ctx;
-    private List<GrocItemModel> list;
+    private List<ItemModel> list;
     private CartHandler cartHandler;
     private CartCallback mCallback;
     private boolean orderPlaced;
-    public CartAdapter(Context ctx, List<GrocItemModel> list,boolean orderPlaced) {
+    public CartAdapter(Context ctx, List<ItemModel> list, boolean orderPlaced) {
         this.ctx = ctx;
         this.list = list;
         this.orderPlaced = orderPlaced;
@@ -43,7 +43,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
     @SuppressLint("NewApi")
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
-        GrocItemModel data = list.get(position);
+        ItemModel data = list.get(position);
         holder.item_name.setText(data.itemName);
         holder.item_price.setText("\u20B9"+data.itemPrice*data.item_add_qty);
         holder.item_qty.setText(String.valueOf(data.item_add_qty));
@@ -60,7 +60,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
         holder.plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GrocItemModel newItem = cartHandler.findItem(data);
+                ItemModel newItem = cartHandler.findItem(data);
                 newItem.item_add_qty += 1;
                 cartHandler.updateItem(newItem);
                 holder.item_qty.setText(String.valueOf(newItem.item_add_qty));
@@ -71,7 +71,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
         holder.minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GrocItemModel newItem = cartHandler.findItem(data);
+                ItemModel newItem = cartHandler.findItem(data);
                 if(newItem!=null) {
                     newItem.item_add_qty -= 1;
                     if (newItem.item_add_qty == 0) {

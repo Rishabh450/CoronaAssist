@@ -1,25 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="100dp"
-    android:layout_height="120dp"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:elevation="5dp"
     android:layout_margin="@dimen/border_margin"
-    >
-    <ImageView
+    app:cardCornerRadius="5dp">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="100dp"
         android:layout_height="120dp"
-        android:src="@drawable/ic_launcher_background"
-        android:scaleType="fitXY"
-        android:id="@+id/cat_img"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Vegetables"
-        android:textColor="@color/primary_text_color"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
-        android:id="@+id/cat_name"
-        />
-</RelativeLayout>
+
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:weightSum="6">
+
+        <ImageView
+            android:id="@+id/cat_img"
+            android:layout_width="100dp"
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_launcher_background" />
+
+        <TextView
+            android:id="@+id/cat_name"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
+            android:text="Vegetables"
+            android:textColor="@color/primary_text_color" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

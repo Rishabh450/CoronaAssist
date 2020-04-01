@@ -2,6 +2,7 @@ package com.suvidha.Activities;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -43,6 +44,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -56,9 +58,9 @@ import java.util.List;
 import static com.suvidha.Utilities.Utils.APP_CHARGE;
 import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
 import static com.suvidha.Utilities.Utils.allOrders;
+import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.local_zone_name;
-import static com.suvidha.Utilities.Utils.shopTypesList;
 import static com.suvidha.Utilities.Utils.zonesList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -77,16 +79,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         init();
         intialiseRetrofit();
-        getEssentials();
         setListeners();
+        getEssentials();
         setBottomNavigation();
     }
 
     private void getAllOrders() {
         Call<GetOrdersModel> listCall = apiInterface.getAllOrders(getAccessToken(this));
+
+
         listCall.enqueue(new Callback<GetOrdersModel>() {
             @Override
             public void onResponse(Call<GetOrdersModel> call, Response<GetOrdersModel> response) {
+
                 if (response.body().status == 200) {
 
                     allOrders.clear();
@@ -104,12 +109,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onFailure(Call<GetOrdersModel> call, Throwable t) {
-                Log.e("LOL", t.getMessage());
+                Toast.makeText(MainActivity.this, "Failed to connect to the server", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    public Dialog dialog;
+    public ProgressBar progressBar;
     private void getEssentials() {
+        if (dialog == null) {
+            dialog = createProgressDialog(this, "Please wait");
+        }
+        progressBar = dialog.findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
+        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
+        staticProgress.setVisibility(View.GONE);
+        dialog.show();
         Call<EssentialsRequestModel> essentialsRequestModelCall = apiInterface.getEssentials(getAccessToken(this));
 //        Log.e(TAG,"Response Error "+"LOL");
         essentialsRequestModelCall.enqueue(new Callback<EssentialsRequestModel>() {
@@ -118,7 +133,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 try {
                     if (response.body().status == 200) {
-
+                        Log.e(TAG, "LOLOLOL");
+                        dialog.dismiss();
+                        onStart();
                         zonesList.clear();
                         zonesList.addAll(response.body().id.zones);
                         //response.body().id.shop_types;
@@ -128,9 +145,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         local_zone_name = SharedPrefManager.getInstance(MainActivity.this).getInt(SharedPrefManager.Key.ZONE_KEY);
                         nodeName.setText(zonesList.get(local_zone_name).name);
                     } else {
+                        TextView msg = dialog.findViewById(R.id.progress_msg);
+                        msg.setText("Try Again");
                     }
                 } catch (Exception e) {
                     Log.e(TAG, String.valueOf(e.getStackTrace()));
+                    TextView msg = dialog.findViewById(R.id.progress_msg);
+                    msg.setText("Try Again");
                 }
 
             }
@@ -138,13 +159,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onFailure(Call<EssentialsRequestModel> call, Throwable t) {
                 Log.e(TAG, "Response Error " + t.getMessage());
+                TextView msg = dialog.findViewById(R.id.progress_msg);
+                msg.setText("Try Again");
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar = dialog.findViewById(R.id.progress_bar);
+                        progressBar.setVisibility(View.INVISIBLE);
+                        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
+                        staticProgress.setVisibility(View.VISIBLE);
+                        staticProgress.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                getEssentials();
+                            }
+                        });
+                    }
+                },500);
+
+                Toast.makeText(MainActivity.this, "Failed to connect to the server", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void intialiseRetrofit() {
-        apiInterface = APIClient.getApiClient().create(ApiInterface.class);
-    }
+        private void intialiseRetrofit() {
+            apiInterface = APIClient.getApiClient().create(ApiInterface.class);
+        }
 
     private void setBottomNavigation() {
         loadFragment(new HomeFragment());
@@ -218,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView tv = (TextView) view;
                 nodeName.setText(tv.getText().toString());
-                local_zone_name = position+1;
+                local_zone_name = position + 1;
                 dialog.dismiss();
             }
         });

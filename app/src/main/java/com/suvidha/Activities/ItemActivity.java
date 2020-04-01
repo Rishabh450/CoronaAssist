@@ -15,12 +15,13 @@ import com.suvidha.Adapters.CartAdapter;
 import com.suvidha.Adapters.ItemAdapter;
 import com.suvidha.Models.CartModel;
 import com.suvidha.Models.GeneralModel;
-import com.suvidha.Models.GrocItemModel;
+import com.suvidha.Models.ItemModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.CartHandler;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.suvidha.Utilities.SharedPrefManager;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -59,8 +60,8 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
     View nestedScrollView;
     private CartAdapter cartAdapter;
     private ItemAdapter itemAdapter;
-    private List<GrocItemModel> cartData = new ArrayList<>();
-    private List<GrocItemModel> items = new ArrayList<>();
+    private List<ItemModel> cartData = new ArrayList<>();
+    private List<ItemModel> items = new ArrayList<>();
 
     private TextView cartTotal;
     private TextView delivery;
@@ -189,7 +190,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
                     case BottomSheetBehavior.STATE_SETTLING: {
                         state = "SETTLING";
                         //modify items
-                        List<GrocItemModel> newList = cartHandler.getListInCart();
+                        List<ItemModel> newList = cartHandler.getListInCart();
                         for (int i = 0; i < items.size(); i++) {
                             for (int j = 0; j < newList.size(); j++)
                                 if (items.get(i).itemId.compareTo(newList.get(j).itemId) == 0) {
@@ -226,8 +227,8 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         rView.setAdapter(itemAdapter);
 
     }
-    private List<GrocItemModel> getData() {
-        List<GrocItemModel> l=new ArrayList<>();
+    private List<ItemModel> getData() {
+        List<ItemModel> l=new ArrayList<>();
         for(int i=0;i<shopItems.size();i++){
             if(shopItems.get(i).category==catId){
                 l.add(shopItems.get(i));
@@ -235,10 +236,10 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         }
         return l;
     }
-    private List<GrocItemModel> getList() {
-        List<GrocItemModel> list = new ArrayList<>();
+    private List<ItemModel> getList() {
+        List<ItemModel> list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            GrocItemModel item = new GrocItemModel(String.valueOf(i), "Apple", "1 kg", 0, 130, 0);
+            ItemModel item = new ItemModel(String.valueOf(i), "Apple", "1 kg", 0, 130, 0);
             list.add(item);
         }
         return list;
@@ -301,7 +302,9 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
                     public void onClick(View v) {
                         //store order in cartModel
                         double grandTotal = cartHandler.getTotalWithoutTax()+DELIVERY_CHARGE+(APP_CHARGE*cartHandler.getTotalWithoutTax())/100;
-                        CartModel cartModel = new CartModel(cartHandler.getListInCart(),shop_id,grandTotal,0,new Timestamp(System.currentTimeMillis()),"address");
+                        String userAddress = SharedPrefManager.getInstance(getApplicationContext()).getString(SharedPrefManager.Key.USER_ADDRESS);
+                        CartModel cartModel = new CartModel(cartHandler.getListInCart(),shop_id,grandTotal,0,
+                                new Timestamp(System.currentTimeMillis()),userAddress);
                         Call<GeneralModel> orderResultCall = apiInterface.pushOrder(getAccessToken(ItemActivity.this),cartModel);
                         orderResultCall.enqueue(new Callback<GeneralModel>() {
                             @Override
@@ -346,7 +349,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void closeBtmSheet() {
         mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_HIDDEN);
-        List<GrocItemModel> newList = cartHandler.getListInCart();
+        List<ItemModel> newList = cartHandler.getListInCart();
         for (int i = 0; i < items.size(); i++) {
             for (int j = 0; j < newList.size(); j++)
                 if (items.get(i).itemId.compareTo(newList.get(j).itemId) == 0) {

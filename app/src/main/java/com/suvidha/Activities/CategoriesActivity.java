@@ -3,6 +3,7 @@ package com.suvidha.Activities;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
@@ -14,7 +15,9 @@ import com.suvidha.Adapters.CartAdapter;
 import com.suvidha.Adapters.CategoryAdapter;
 import com.suvidha.Models.CartModel;
 import com.suvidha.Models.GeneralModel;
-import com.suvidha.Models.GrocItemModel;
+import com.suvidha.Models.ItemModel;
+import com.suvidha.Models.ItemsRequestModel;
+import com.suvidha.Models.SidModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
@@ -58,7 +61,7 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
     private CartHandler cartHandler;
     private View nestedScrollView;
     private CartAdapter cartAdapter;
-    private List<GrocItemModel> cartData = new ArrayList<>();
+    private List<ItemModel> cartData = new ArrayList<>();
     private TextView cartTotal;
     private TextView delivery;
     private TextView app;
@@ -67,6 +70,8 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
     private ApiInterface apiInterface;
     private String shop_id;
     private String shop_name;
+    public CategoryAdapter mAdapter;
+    public List<Integer> categoryData = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,12 +81,33 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
         shop_id = getIntent().getStringExtra("shopid");
         shop_name = getIntent().getStringExtra("shopname");
         intialiseRetrofit();
+        getItems();
         manageToolbar();
         setuprec();
         setBottomSheet();
         setGotoCart();
         hideGotoCart();
         updateGotoCart();
+    }
+
+    private void getItems() {
+        Call<ItemsRequestModel> itemModelCall = apiInterface.getItems(getAccessToken(this),new SidModel(shop_id));
+        itemModelCall.enqueue(new Callback<ItemsRequestModel>() {
+            @Override
+            public void onResponse(Call<ItemsRequestModel> call, Response<ItemsRequestModel> response) {
+                Log.e(TAG, String.valueOf(response.body()));
+                shopItems.clear();
+                shopItems.addAll(response.body().id);
+                categoryData.clear();
+                categoryData.addAll(getAllDifferentCategories());
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<ItemsRequestModel> call, Throwable t) {
+                Log.e(TAG,t.getMessage());
+            }
+        });
     }
 
     private void init() {
@@ -194,8 +220,10 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
     }
 
     void setuprec() {
+        categoryData = getAllDifferentCategories();
+        mAdapter = new CategoryAdapter(this, categoryData,shop_id);
         rView.setLayoutManager(new GridLayoutManager(this, ITEM_COUNT));
-        rView.setAdapter(new CategoryAdapter(this, getAllDifferentCategories(),shop_id));
+        rView.setAdapter(mAdapter);
     }
     private List<Integer> getAllDifferentCategories() {
         List<Integer> l =new ArrayList<>();

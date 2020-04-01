@@ -7,4 +7,5 @@
     <string name="warning_cart_not_empty">You\'ll lose the cart items if you go back. Do you want to continue?</string>
     <string name="view_order_summary">VIEW ORDER SUMMARY</string>
     <string name="place_order_msg">Do you want to continue placing the order?</string>
+    <string name="loading_msg">Please Wait</string>
 </resources>

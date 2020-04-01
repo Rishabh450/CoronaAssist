@@ -53,6 +53,7 @@ public class SharedPrefManager {
         public static final String TOKEN_KEY = "token";
         public static final String ZONE_KEY = "zone";
 
+        public static final String USER_ADDRESS = "address";
     }
 
     private SharedPrefManager(Context context) {

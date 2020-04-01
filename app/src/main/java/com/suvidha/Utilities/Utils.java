@@ -3,6 +3,7 @@ package com.suvidha.Utilities;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -14,15 +15,13 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.suvidha.Models.CartModel;
-import com.suvidha.Models.GrocItemModel;
-import com.suvidha.Models.ShopTypesModel;
+import com.suvidha.Models.ItemModel;
 import com.suvidha.Models.UserModel;
 import com.suvidha.Models.ZonesModel;
 import com.suvidha.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 public class Utils {
@@ -31,15 +30,31 @@ public class Utils {
 //    public static final String BASE_URL = "http://192.168.43.114:5000";
 //    public static final String BASE_URL = "http://192.168.43.55:5000";
     public static final String BASE_URL = "http://202.56.13.210:5000";
+    public static final String password = "Nitsuvidha1!";
     public static double DELIVERY_CHARGE = 5;
     public static double APP_CHARGE = 2;
     public static List<ZonesModel> zonesList=new ArrayList<>();
-    public static List<GrocItemModel> shopItems=new ArrayList<>();
+    public static List<ItemModel> shopItems=new ArrayList<>();
     public static List<CartModel> allOrders = new ArrayList<>();
     public static Integer currentType;
     public static int local_zone_name = 0;
     public static HashMap<Integer,String> statusHashMap = new HashMap<Integer, String>(){{
-
+        put(-1,"Rejected");
+        put(0,"Pending");
+        put(1,"Accepted");
+        put(2,"Delivered");
+    }};
+    public static HashMap<Integer, Pair<String,Integer>> catHashMap = new HashMap<Integer, Pair<String, Integer>>(){{
+        put(1,new Pair<>("Vegetables",R.mipmap.ic_vegetables));
+        put(2,new Pair<>("Fruits",R.mipmap.ic_fruits));
+        put(3,new Pair<>("Food Grains",R.mipmap.ic_foodgrains));
+        put(4,new Pair<>("Oils",R.mipmap.ic_oils));
+        put(5,new Pair<>("Readymade Masalas",R.mipmap.ic_masala));
+        put(6,new Pair<>("Spices",R.mipmap.ic_masala));
+        put(7,new Pair<>("Cleaning & Houshold Items",R.mipmap.ic_cleaninghousehold));
+        put(8,new Pair<>("Hygiene & Personal Care",R.mipmap.ic_personalcare));
+        put(9,new Pair<>("Dairy Products",R.mipmap.ic_milk));
+        put(10,new Pair<>("Others",R.mipmap.ic_snacks));
     }};
     public static HashMap<Integer,Integer> shopTypesMap = new HashMap<Integer, Integer>(){{
         put(R.id.icon_request_passes,0);
@@ -55,6 +70,19 @@ public class Utils {
      put(1,"Order Accepted");
      put(2,"Out for delivery");
     }};
+    public static Dialog createProgressDialog(Context context,String msg){
+        Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_progress);
+        dialog.setCancelable(false);
+        TextView tv = dialog.findViewById(R.id.progress_msg);
+        tv.setText(msg);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        dialog.getWindow().setAttributes(lp);
+        dialog.show();
+        return dialog;
+    }
     public static Dialog createAlertDialog(Context context,String head,String msg,String b1,String b2){
         Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_alert);
@@ -90,6 +118,7 @@ public class Utils {
         sharedPrefManager.put(SharedPrefManager.Key.USER_NAME, user.getName());
         sharedPrefManager.put(SharedPrefManager.Key.USER_EMAIL, user.getEmail());
         sharedPrefManager.put(SharedPrefManager.Key.USER_PHONE, user.getPhone());
+        sharedPrefManager.put(SharedPrefManager.Key.USER_ADDRESS,user.address);
     }
     public static Bitmap getQRCode(String Id) {
         // Handle Null pointer exception carefully.
