@@ -7,8 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.suvidha.Activities.GroceriesActivity;
-import com.suvidha.Activities.MedicineActivity;
+import com.suvidha.Activities.ShopsActivity;
 import com.suvidha.Activities.MyPassActivity;
 import com.suvidha.R;
 
@@ -16,9 +15,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import static com.suvidha.Utilities.Utils.shopTypesMap;
+
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private Button iconGroceries;
     private Button iconRequestPass;
+    private Button iconMilk;
+    private Button iconBread;
+    private Button iconGas;
+    private Button iconWater;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -30,11 +36,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private void init(View v) {
         iconGroceries = v.findViewById(R.id.icon_groceries);
         iconRequestPass = v.findViewById(R.id.icon_request_passes);
+        iconMilk = v.findViewById(R.id.icon_milk_and_dairy);
+        iconBread = v.findViewById(R.id.icon_bread);
+        iconGas = v.findViewById(R.id.icon_gas);
+        iconWater = v.findViewById(R.id.icon_water);
     }
 
     private void setListeners() {
         iconGroceries.setOnClickListener(this);
         iconRequestPass.setOnClickListener(this);
+        iconMilk.setOnClickListener(this);
+        iconBread.setOnClickListener(this);
+        iconGas.setOnClickListener(this);
+        iconWater.setOnClickListener(this);
+
     }
 
 
@@ -44,15 +59,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         int itemId = v.getId();
         Intent intent = null;
         switch (itemId){
-            case R.id.icon_groceries:
-                intent = new Intent(getContext(), GroceriesActivity.class);
-                startActivity(intent);
-                break;
             case R.id.icon_request_passes:
                 intent = new Intent(getContext(), MyPassActivity.class);
                 startActivity(intent);
                 break;
-
+            default:
+                intent = new Intent(getContext(), ShopsActivity.class);
+                intent.putExtra("type",shopTypesMap.get(itemId));
+                startActivity(intent);
 
         }
     }

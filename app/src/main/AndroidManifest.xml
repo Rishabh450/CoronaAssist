@@ -36,8 +36,8 @@
             </intent-filter>
         </activity>
         <activity android:name="com.suvidha.Activities.MedicineActivity" android:screenOrientation="portrait"/>
-        <activity android:name="com.suvidha.Activities.GroceriesActivity" android:screenOrientation="portrait"/>
-        <activity android:name="com.suvidha.Activities.ShopActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.suvidha.Activities.ShopsActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.suvidha.Activities.CategoriesActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.suvidha.Activities.ItemActivity" android:screenOrientation="portrait"/>
         <activity android:name=".Activities.RegisterActivity" android:screenOrientation="portrait" />
         <activity android:name=".Activities.OrderDetailsActivity" android:screenOrientation="portrait"/>

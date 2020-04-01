@@ -1,6 +1,7 @@
 package com.suvidha.Activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -34,6 +35,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
     private TextView app;
     private TextView grandTotal;
     private Button placeOrder;
+    private TextView orderStatus;
     private CartAdapter cartAdapter;
     CartModel data;
     ArrayList<GrocItemModel> orderData;
@@ -50,6 +52,17 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         data = getIntent().getParcelableExtra("data");
         orderData = data.items;
         setBottomSheet();
+        setData();
+    }
+
+    private void setData() {
+      try {
+          Log.e("TAG","TAG"+data.address);
+          orderStatus.setText(data.status);
+
+      }catch (Exception e){
+          e.printStackTrace();
+      }
     }
 
     private void manageToolbar() {
@@ -83,6 +96,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         nestedScrollView = findViewById(R.id.bottom_sheet_layout);
         mBottomSheetBehaviour = BottomSheetBehavior.from(nestedScrollView);
         mBottomSheetBehaviour.setPeekHeight(0);
+        orderStatus = findViewById(R.id.details_order_status);
         cartTotal = nestedScrollView.findViewById(R.id.cart_cart_total);
         delivery = nestedScrollView.findViewById(R.id.cart_delivery);
         app = nestedScrollView.findViewById(R.id.cart_app);

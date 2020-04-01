@@ -3,7 +3,6 @@ package com.suvidha.Activities;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
@@ -45,9 +44,9 @@ import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.rs;
 import static com.suvidha.Utilities.Utils.shopItems;
 
-public class ShopActivity extends AppCompatActivity implements View.OnClickListener, CartAdapter.CartCallback {
+public class CategoriesActivity extends AppCompatActivity implements View.OnClickListener, CartAdapter.CartCallback {
     private static final int ITEM_COUNT = 3;
-    private static final String TAG = "ShopActivity";
+    private static final String TAG = "CategoriesActivity";
     private RecyclerView rView;
     private Toolbar toolbar;
     private CardView goto_cart;
@@ -72,7 +71,7 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shop);
+        setContentView(R.layout.activity_category);
         init();
         shop_id = getIntent().getStringExtra("shopid");
         shop_name = getIntent().getStringExtra("shopname");
@@ -272,12 +271,12 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
                         //store order in cartModel
                         double grandTotal = cartHandler.getTotalWithoutTax()+DELIVERY_CHARGE+(APP_CHARGE*cartHandler.getTotalWithoutTax())/100;
                         CartModel cartModel = new CartModel(cartHandler.getListInCart(),shop_id,grandTotal,0,new Timestamp(System.currentTimeMillis()   ));
-                        Call<GeneralModel> orderResultCall = apiInterface.pushOrder(getAccessToken(ShopActivity.this),cartModel);
+                        Call<GeneralModel> orderResultCall = apiInterface.pushOrder(getAccessToken(CategoriesActivity.this),cartModel);
                         orderResultCall.enqueue(new Callback<GeneralModel>() {
                             @Override
                             public void onResponse(Call<GeneralModel> call, Response<GeneralModel> response) {
                                 if(response.body().status == 201){
-                                    Toast.makeText(ShopActivity.this, "Your Order successfully placed", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(CategoriesActivity.this, "Your Order successfully placed", Toast.LENGTH_SHORT).show();
                                     //open order description
                                     //clear activity stack
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -290,7 +289,7 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
                                     //remove items from cart
                                     cartHandler.clearCart();
                                 }else {
-                                    Toast.makeText(ShopActivity.this, "Sorry, your request was unsuccessful", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(CategoriesActivity.this, "Sorry, your request was unsuccessful", Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
                                 }
                             }

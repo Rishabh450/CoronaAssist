@@ -34,6 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="cancel"
+            android:backgroundTint="@color/white"
             android:id="@+id/dialog_cancel"
             android:textColor="@color/primary_text_color"
             style="@style/Widget.AppCompat.Button.Borderless"

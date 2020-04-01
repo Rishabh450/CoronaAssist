@@ -29,50 +29,55 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-
-        android:gravity="center"
-        >
+        android:id="@+id/cart_change_qty_layout"
+        android:gravity="center">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/add_layout"
+            android:layout_width="130dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
             android:background="@drawable/btn_shape"
-            android:padding="2dp"
-            android:id="@+id/cart_change_qty_layout"
-            >
+            android:gravity="center"
+            android:padding="1dp"
+            android:visibility="visible"
+            android:weightSum="3">
 
             <Button
                 android:id="@+id/cart_minus_btn"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@color/white"
-                android:text="-"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:textColor="#E30404"
-                android:textSize="22sp"
-
-                />
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/white"
+                android:gravity="center"
+                android:text="-"
+                android:textColor="@color/red"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/cart_add_qty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/border_margin"
-                android:layout_marginRight="@dimen/border_margin"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:text="1"
-                android:layout_gravity="center"
-                android:textColor="#E30404"
-                android:textSize="@dimen/cart_text_size" />
+                android:textColor="@color/primary_text_color"
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/cart_plus_btn"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:background="@color/white"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/btn_shape"
+                android:backgroundTint="@color/white"
+                android:gravity="center"
                 android:text="+"
-                android:textColor="#E30404"
-                android:textSize="22sp" />
+                android:textColor="@color/red"
+                android:textSize="18sp" />
+
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

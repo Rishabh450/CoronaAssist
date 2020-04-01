@@ -124,7 +124,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         //response.body().id.shop_types;
                         APP_CHARGE = response.body().id.cess_rate;
                         DELIVERY_CHARGE = response.body().id.delivery_cost;
-                        shopTypesList = response.body().id.shop_types;
+
+                        local_zone_name = SharedPrefManager.getInstance(MainActivity.this).getInt(SharedPrefManager.Key.ZONE_KEY);
+                        nodeName.setText(zonesList.get(local_zone_name).name);
                     } else {
                     }
                 } catch (Exception e) {
@@ -185,8 +187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void init() {
         nodeName = findViewById(R.id.node_name);
         locationLayout = findViewById(R.id.node_location_layout);
-        local_zone_name = SharedPrefManager.getInstance(this).getInt(SharedPrefManager.Key.ZONE_KEY);
-//        nodeName.setText(zonesList.get(local_zone_name).name);
+
     }
     //suvidhajamshedhpur@gmail.com
 
@@ -217,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView tv = (TextView) view;
                 nodeName.setText(tv.getText().toString());
-                local_zone_name = position;
+                local_zone_name = position+1;
                 dialog.dismiss();
             }
         });

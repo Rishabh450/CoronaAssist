@@ -70,13 +70,15 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
     private ApiInterface apiInterface;
     private int catId;
     private String shop_id;
+    private String shop_name;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item);
         init();
-        catId = getIntent().getIntExtra("CategoryId",0);
+        catId = getIntent().getIntExtra("CategoryId",-1);
         shop_id = getIntent().getStringExtra("shopid");
+        shop_name = getIntent().getStringExtra("shopname");
         intialiseRetrofit();
         manageToolbar();
         setRView();
@@ -246,7 +248,10 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
     void manageToolbar() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Category "+catId);
+        if(catId == -1){
+            getSupportActionBar().setTitle(shop_name);
+        }else
+            getSupportActionBar().setTitle("Category "+catId);
     }
 
     @Override
@@ -296,7 +301,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
                     public void onClick(View v) {
                         //store order in cartModel
                         double grandTotal = cartHandler.getTotalWithoutTax()+DELIVERY_CHARGE+(APP_CHARGE*cartHandler.getTotalWithoutTax())/100;
-                        CartModel cartModel = new CartModel(cartHandler.getListInCart(),shop_id,grandTotal,0,new Timestamp(System.currentTimeMillis()));
+                        CartModel cartModel = new CartModel(cartHandler.getListInCart(),shop_id,grandTotal,0,new Timestamp(System.currentTimeMillis()),"address");
                         Call<GeneralModel> orderResultCall = apiInterface.pushOrder(getAccessToken(ItemActivity.this),cartModel);
                         orderResultCall.enqueue(new Callback<GeneralModel>() {
                             @Override

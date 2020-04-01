@@ -143,7 +143,7 @@ public class RegisterActivity extends AppCompatActivity {
                 etPhone.setError("Phone number cannot be empty");
             }
             if(address.length() == 0){
-                etAddress.setError("Address cannot be empty");
+                etAddress.setError("address cannot be empty");
             }
             if(zoneName.length() == 0){
                 Log.e(TAG,"This case is impossible");

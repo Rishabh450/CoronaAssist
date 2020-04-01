@@ -8,9 +8,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.suvidha.Activities.ShopActivity;
+import com.suvidha.Activities.CategoriesActivity;
+import com.suvidha.Activities.ItemActivity;
 import com.suvidha.Models.ShopModel;
 import com.suvidha.R;
+
+import static com.suvidha.Utilities.Utils.currentType;
 import static com.suvidha.Utilities.Utils.shopItems;
 
 import java.util.List;
@@ -44,10 +47,17 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.MyHold
             public void onClick(View v) {
                 shopItems.clear();
                 shopItems.addAll(data.items);
-                Intent intent = new Intent(ctx, ShopActivity.class);
-                intent.putExtra("shopid",data._id);
-                intent.putExtra("shopname",data.name);
-                ctx.startActivity(intent);
+                if(currentType==1) {
+                    Intent intent = new Intent(ctx, CategoriesActivity.class);
+                    intent.putExtra("shopid", data._id);
+                    intent.putExtra("shopname", data.name);
+                    ctx.startActivity(intent);
+                }else{
+                    Intent intent = new Intent(ctx, ItemActivity.class);
+                    intent.putExtra("shopid", data._id);
+                    intent.putExtra("shopname", data.name);
+                    ctx.startActivity(intent);
+                }
             }
         });
     }

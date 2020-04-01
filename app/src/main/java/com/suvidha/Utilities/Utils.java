@@ -22,6 +22,7 @@ import com.suvidha.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class Utils {
@@ -35,8 +36,20 @@ public class Utils {
     public static List<ZonesModel> zonesList=new ArrayList<>();
     public static List<GrocItemModel> shopItems=new ArrayList<>();
     public static List<CartModel> allOrders = new ArrayList<>();
+    public static Integer currentType;
     public static int local_zone_name = 0;
-    public static List<ShopTypesModel> shopTypesList = new ArrayList<>();
+    public static HashMap<Integer,String> statusHashMap = new HashMap<Integer, String>(){{
+
+    }};
+    public static HashMap<Integer,Integer> shopTypesMap = new HashMap<Integer, Integer>(){{
+        put(R.id.icon_request_passes,0);
+        put(R.id.icon_groceries,1);
+        put(R.id.icon_milk_and_dairy,2);
+        put(R.id.icon_bread,3);
+        put(R.id.icon_gas,4);
+        put(R.id.icon_water,5);
+    }};
+
     public static HashMap<Integer,String> orderStatus= new HashMap<Integer,String>(){{
      put(0,"Pending");
      put(1,"Order Accepted");

@@ -57,7 +57,9 @@
             android:layout_marginLeft="10dp"
             android:text="PENDING"
             android:textColor="@color/default_button_color"
-            android:textSize="25sp" />
+            android:textSize="25sp"
+            android:id="@+id/details_order_status"
+            />
     </LinearLayout>
 
     <TextView

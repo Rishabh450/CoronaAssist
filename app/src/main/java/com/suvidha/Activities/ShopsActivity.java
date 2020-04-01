@@ -11,6 +11,7 @@ import com.suvidha.Models.ShopRequestModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
+import com.suvidha.Utilities.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +24,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
+import static com.suvidha.Utilities.Utils.currentType;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.local_zone_name;
 
-public class GroceriesActivity extends AppCompatActivity {
-    private static final String TAG = "GroceriesActivity";
+public class ShopsActivity extends AppCompatActivity {
+    private static final String TAG = "ShopsActivity";
     private RecyclerView rView;
     private Toolbar toolbar;
     ApiInterface apiInterface;
@@ -38,8 +39,9 @@ public class GroceriesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_groceries);
+        setContentView(R.layout.activity_shops);
         init();
+        currentType = getIntent().getIntExtra("type",1);
         intialiseRetrofit();
         getData();
         manageToolbar();
@@ -47,7 +49,7 @@ public class GroceriesActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        GetShopsModel model = new GetShopsModel(1, local_zone_name);
+        GetShopsModel model = new GetShopsModel(currentType, local_zone_name);
 //        Log.e(TAG, "ACCESSTOKEN: "+getAccessToken(this));
         Call<ShopRequestModel> listCallResult = apiInterface.getAllShops(getAccessToken(this), model);
         listCallResult.enqueue(new Callback<ShopRequestModel>() {

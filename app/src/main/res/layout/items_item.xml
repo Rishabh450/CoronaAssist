@@ -48,48 +48,60 @@
                     android:layout_centerVertical="true"
                     />
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="130dp"
+                    android:layout_height="50dp"
                     android:layout_alignParentRight="true"
                     android:id="@+id/add_layout"
-                    android:visibility="gone"
+                    android:padding="1dp"
+                    android:gravity="center"
+                    android:visibility="visible"
+                    android:background="@drawable/btn_shape"
+                    android:weightSum="3"
                     >
                     <Button
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
                         android:text="-"
-                        android:textSize="20sp"
-                        android:id="@+id/item_minus_btn"
-                        android:textColor="#E30404"
-                        android:background="@drawable/btn_shape"
-                        />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1"
-                        android:id="@+id/item_add_qty"
-                        android:textColor="#E30404"
+                        android:gravity="center"
                         android:textSize="18sp"
-                        android:layout_marginLeft="@dimen/border_margin"
-                        android:layout_marginRight="@dimen/border_margin"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:backgroundTint="@color/white"
+                        android:id="@+id/item_minus_btn"
+                        android:textColor="@color/red"
                         />
+
+                    <TextView
+                        android:id="@+id/item_add_qty"
+                        android:layout_width="0dp"
+                        android:gravity="center"
+                        android:layout_height="match_parent"
+                        android:text="1"
+                        android:layout_weight="1"
+                        android:textColor="@color/primary_text_color"
+                        android:textSize="18sp" />
                     <Button
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
                         android:text="+"
-                        android:textSize="20sp"
-                        android:textColor="#E30404"
-                        android:id="@+id/item_plus_btn"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textSize="18sp"
                         android:background="@drawable/btn_shape"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:backgroundTint="@color/white"
+                        android:id="@+id/item_plus_btn"
+                        android:textColor="@color/red"
                         />
+
                 </LinearLayout>
                 <Button
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="#E30404"
                     android:layout_alignParentRight="true"
-                    android:text="ADD"
+                    android:text="ADD +"
                     android:id="@+id/item_add_btn"
                     android:textColor="@color/secondary_text_color"
                     />

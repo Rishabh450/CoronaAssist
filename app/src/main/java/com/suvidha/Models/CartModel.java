@@ -15,7 +15,34 @@ public class CartModel implements Parcelable,Comparable<CartModel> {
     public String uid;
     public Timestamp time;
     public ShopModel shop_details;
+    public String address;
+
+
+    public CartModel(String _id, ArrayList<GrocItemModel> items, String sid, double amount, int status, String uid, Timestamp time, ShopModel shop_details, String address) {
+        this._id = _id;
+        this.items = items;
+        this.sid = sid;
+        this.amount = amount;
+        this.status = status;
+        this.uid = uid;
+        this.time = time;
+        this.shop_details = shop_details;
+        this.address = address;
+    }
+
     public CartModel(){}
+
+    public CartModel(ArrayList<GrocItemModel> items, String sid, double amount, int status, Timestamp time, String address) {
+        this._id = _id;
+        this.items = items;
+        this.sid = sid;
+        this.amount = amount;
+        this.status = status;
+        this.uid = uid;
+        this.time = time;
+        this.shop_details = shop_details;
+        this.address = address;
+    }
 
     public CartModel(String _id, ArrayList<GrocItemModel> items, String sid, double amount, int status, String uid, Timestamp time, ShopModel shop_details) {
         this._id = _id;
