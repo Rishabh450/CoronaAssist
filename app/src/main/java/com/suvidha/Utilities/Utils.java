@@ -131,6 +131,12 @@ public class Utils {
         sharedPrefManager.put(SharedPrefManager.Key.USER_PHONE, user.getPhone());
         sharedPrefManager.put(SharedPrefManager.Key.USER_ADDRESS,user.address);
     }
+    public static void clearLoginSession(Context context){
+        SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance(context);
+        sharedPrefManager.edit();
+        sharedPrefManager.clear();
+        sharedPrefManager.commit();
+    }
     public static Bitmap getQRCode(String Id) {
         // Handle Null pointer exception carefully.
 
