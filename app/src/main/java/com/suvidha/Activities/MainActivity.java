@@ -256,8 +256,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         APP_CHARGE = response.body().id.cess_rate;
                         DELIVERY_CHARGE = response.body().id.delivery_cost;
 
-                        local_zone_name = SharedPrefManager.getInstance(MainActivity.this).getInt(SharedPrefManager.Key.ZONE_KEY);
-                        nodeName.setText(zonesList.get(local_zone_name).name);
+                        local_zone_name = SharedPrefManager.getInstance(MainActivity.this).getInt(SharedPrefManager.Key.ZONE_KEY)+1;
+                        nodeName.setText(local_zone_name);
                     } else {
                         TextView msg = dialog.findViewById(R.id.progress_msg);
                         msg.setText("Try Again");
