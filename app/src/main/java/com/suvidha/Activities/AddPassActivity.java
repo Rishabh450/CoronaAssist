@@ -1,5 +1,6 @@
 package com.suvidha.Activities;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -26,6 +28,8 @@ import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.SharedPrefManager;
 
+import java.util.Calendar;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,7 +45,7 @@ public class AddPassActivity extends AppCompatActivity {
     boolean seniorCitizen = false, urgency = false;
     String urgentMessage = "Not Urgent";
     // Views
-    TextInputEditText etProof, etDestination, etVehicleNumber, etPurpose, etTime, etDuration, etPassType, etPassengerCount, etUrgency;
+    TextInputEditText etName, etDate, etProof, etDestination, etVehicleNumber, etPurpose, etTime, etDuration, etPassType, etPassengerCount, etUrgency;
     Button btnAdd;
 
     // Retrofit
@@ -95,6 +99,34 @@ public class AddPassActivity extends AppCompatActivity {
                 setUrgencyStatus();
             }
         });
+        etDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePicker();
+            }
+        });
+    }
+
+    private void showDatePicker() {
+        // Get Current Date
+        final Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                new DatePickerDialog.OnDateSetListener() {
+
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+
+                        etDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+
+                    }
+                }, mYear, mMonth, mDay);
+        datePickerDialog.show();
     }
 
     private void setUrgencyStatus() {
@@ -338,14 +370,17 @@ public class AddPassActivity extends AppCompatActivity {
         String time = etTime.getText().toString().trim();
         String duration = etDuration.getText().toString().trim();
         String passTypeText = etPassType.getText().toString().trim(), passengerCountText = etPassengerCount.getText().toString().trim();
+        String name = etName.getText().toString().trim();
+        String date = etDate.getText().toString().trim();
+        int passType = 0, passengerCount = 1;
 
-        int passType = Integer.parseInt(etPassType.getText().toString().trim());
-        int passengerCount = Integer.parseInt(etPassengerCount.getText().toString().trim());
+        if (proof.length() != 0 && destination.length() != 0 && vehicleNumber.length() != 0 && purpose.length() != 0 && time.length() != 0 && duration.length() != 0 && passTypeText.length() != 0 && passengerCountText.length() != 0 && name.length() != 0 && date.length() != 0) {
 
-        if (proof.length() != 0 && destination.length() != 0 && vehicleNumber.length() != 0 && purpose.length() != 0 && time.length() != 0 && duration.length() != 0 && passTypeText.length() != 0 && passengerCountText.length() != 0) {
+            passType = Integer.parseInt(etPassType.getText().toString().trim());
+            passengerCount = Integer.parseInt(etPassengerCount.getText().toString().trim());
 
             String uid = sharedPrefManager.getString(SharedPrefManager.Key.USER_ID);
-            Pass pass = new Pass(proof, destination, vehicleNumber, purpose, time, duration, 0, uid, passType, seniorCitizen, passengerCount, urgency, urgentMessage);
+            Pass pass = new Pass(proof, destination, vehicleNumber, purpose, time, duration, 0, uid, passType, seniorCitizen, passengerCount, urgency, urgentMessage, name, date);
             Call<PassGenerationResult> createPassCall = apiInterface.createPass(getAccessToken(this), pass);
             createPassCall.enqueue(new Callback<PassGenerationResult>() {
 
@@ -358,7 +393,7 @@ public class AddPassActivity extends AppCompatActivity {
                         finish();
                     } else {
                         Log.d(TAG, "onResponse: " + response.message() + " " + response.body().getStatus());
-                        Toast.makeText(AddPassActivity.this, "Failed Addition", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddPassActivity.this, "Failed Addition" + getAccessToken(AddPassActivity.this), Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -432,15 +467,22 @@ public class AddPassActivity extends AppCompatActivity {
         if (duration.length() == 0) {
             etDuration.setError("This field cannot be empty");
         }
-        if (passType.length() == 0) {
+        if (passType.length() == 0 || passType.equalsIgnoreCase("0")) {
             etPassType.setError("This field cannot be empty");
         }
-        if (passengerCount.length() == 0) {
+        if (passengerCount.length() == 0 || passengerCount.equalsIgnoreCase("1")) {
             etPassengerCount.setError("This field cannot be empty");
         }
         if (etUrgency.length() == 0) {
             etUrgency.setError("This field cannot be empty");
         }
+        if (etDate.length() == 0) {
+            etDate.setError("This field cannot be empty");
+        }
+        if (etName.length() == 0) {
+            etName.setError("This field cannot be empty");
+        }
+
 
     }
 
@@ -451,6 +493,8 @@ public class AddPassActivity extends AppCompatActivity {
     private void initialiseAllViews() {
         sharedPrefManager = SharedPrefManager.getInstance(this);
 
+        etName = findViewById(R.id.add_pass_name);
+        etDate = findViewById(R.id.add_pass_date);
         etProof = findViewById(R.id.add_pass_proof);
         etDestination = findViewById(R.id.add_pass_destination);
         etVehicleNumber = findViewById(R.id.add_pass_vehicle);

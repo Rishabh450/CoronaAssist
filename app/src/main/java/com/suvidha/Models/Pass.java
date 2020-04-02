@@ -32,29 +32,17 @@ public class Pass {
     private boolean urgency;
     @SerializedName("urgency_text")
     private String urgencyText;
+    @SerializedName("name")
+    private String name;
+    @SerializedName("date")
+    private String date;
 
 
 
     public Pass() {
     }
 
-    public Pass(String proof, String destination, String vehicle, String purpose, String time, String duration, int status, String uid, int type, boolean seniorCitizen, int passengerCount, boolean urgency, String urgencyText) {
-        this.proof = proof;
-        this.destination = destination;
-        this.vehicle = vehicle;
-        this.purpose = purpose;
-        this.time = time;
-        this.duration = duration;
-        this.status = status;
-        this.uid = uid;
-        this.type = type;
-        this.seniorCitizen = seniorCitizen;
-        this.passengerCount = passengerCount;
-        this.urgency = urgency;
-        this.urgencyText = urgencyText;
-    }
-
-    public Pass(String passid, String proof, String destination, String vehicle, String purpose, String time, String duration, int status, String uid, int type, boolean seniorCitizen, int passengerCount, boolean urgency, String urgencyText) {
+    public Pass(String passid, String proof, String destination, String vehicle, String purpose, String time, String duration, int status, String uid, int type, boolean seniorCitizen, int passengerCount, boolean urgency, String urgencyText, String name, String date) {
         this.passid = passid;
         this.proof = proof;
         this.destination = destination;
@@ -69,6 +57,26 @@ public class Pass {
         this.passengerCount = passengerCount;
         this.urgency = urgency;
         this.urgencyText = urgencyText;
+        this.name = name;
+        this.date = date;
+    }
+
+    public Pass(String proof, String destination, String vehicle, String purpose, String time, String duration, int status, String uid, int type, boolean seniorCitizen, int passengerCount, boolean urgency, String urgencyText, String name, String date) {
+        this.proof = proof;
+        this.destination = destination;
+        this.vehicle = vehicle;
+        this.purpose = purpose;
+        this.time = time;
+        this.duration = duration;
+        this.status = status;
+        this.uid = uid;
+        this.type = type;
+        this.seniorCitizen = seniorCitizen;
+        this.passengerCount = passengerCount;
+        this.urgency = urgency;
+        this.urgencyText = urgencyText;
+        this.name = name;
+        this.date = date;
     }
 
     public boolean isSeniorCitizen() {

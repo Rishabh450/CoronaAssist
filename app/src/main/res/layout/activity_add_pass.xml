@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/grey_100"
     android:screenOrientation="portrait"
-    tools:context=".RegisterActivity">
+    tools:context=".Activities.AddPassActivity">
 
     <RelativeLayout
         android:id="@+id/register_root_layout"
@@ -48,7 +48,43 @@
                         android:text="Add Pass"
                         android:textSize="30sp" />
 
+                    <com.google.android.material.textfield.TextInputLayout
 
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/add_pass_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:drawablePadding="10dp"
+                            android:hint="Name"
+                            android:inputType="textShortMessage"
+                            android:singleLine="true" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/add_pass_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:drawablePadding="10dp"
+                            android:focusable="false"
+                            android:hint="Date"
+                            android:inputType="textShortMessage"
+                            android:singleLine="true" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
 
                         android:layout_width="match_parent"
@@ -96,7 +132,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:drawablePadding="10dp"
-                            android:hint="Vehicle number"
+                            android:hint="Vehicle Type(2 or 4 wheeler)"
                             android:inputType="textShortMessage"
                             android:singleLine="true" />
 
