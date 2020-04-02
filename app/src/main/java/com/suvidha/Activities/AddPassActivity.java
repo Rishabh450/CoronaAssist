@@ -397,7 +397,7 @@ public class AddPassActivity extends AppCompatActivity {
         showMessage("Adding", "Adding your pass to the database");
         String proof = etProof.getText().toString().trim();
         String destination = etDestination.getText().toString().trim();
-        String vehicleNumber = etProof.getText().toString().trim();
+        String vehicleNumber = etVehicleNumber.getText().toString().trim();
         String purpose = etPurpose.getText().toString().trim();
         String time = etTime.getText().toString().trim();
         String duration = etDuration.getText().toString().trim();

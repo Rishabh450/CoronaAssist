@@ -1,10 +1,8 @@
 package com.suvidha.Activities;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,7 +16,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -116,12 +113,12 @@ public class ScanPassActivity extends AppCompatActivity {
             }
         }
 
-        fabScan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openscanner();
-            }
-        });
+//        fabScan.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                openscanner();
+//            }
+//        });
 
 
 
@@ -234,21 +231,21 @@ public class ScanPassActivity extends AppCompatActivity {
     }
 
 
-    private void openscanner() {
-        if (ActivityCompat.checkSelfPermission(ScanPassActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(ScanPassActivity.this, "Barcode scanner started", Toast.LENGTH_SHORT).show();
-            integrator = new IntentIntegrator(ScanPassActivity.this);
-            integrator.setOrientationLocked(true);
-            integrator.setPrompt("Scan your QR code");
-            integrator.setCameraId(0);  // Use a specific camera of the device
-            integrator.setBeepEnabled(true);
-            integrator.setBarcodeImageEnabled(true);
-            integrator.initiateScan();
-
-        } else {
-            ActivityCompat.requestPermissions(ScanPassActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-        }
-    }
+//    private void openscanner() {
+//        if (ActivityCompat.checkSelfPermission(ScanPassActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+//            Toast.makeText(ScanPassActivity.this, "Barcode scanner started", Toast.LENGTH_SHORT).show();
+//            integrator = new IntentIntegrator(ScanPassActivity.this);
+//            integrator.setOrientationLocked(true);
+//            integrator.setPrompt("Scan your QR code");
+//            integrator.setCameraId(0);  // Use a specific camera of the device
+//            integrator.setBeepEnabled(true);
+//            integrator.setBarcodeImageEnabled(true);
+//            integrator.initiateScan();
+//
+//        } else {
+//            ActivityCompat.requestPermissions(ScanPassActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+//        }
+//    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
