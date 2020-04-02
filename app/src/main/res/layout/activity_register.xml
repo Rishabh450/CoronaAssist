@@ -136,6 +136,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="2"
                             android:id="@+id/register_verify_btn"
+                            android:visibility="invisible"
                             android:text="Verify" />
                     </LinearLayout>
 

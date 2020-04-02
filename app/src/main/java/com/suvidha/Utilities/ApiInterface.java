@@ -5,11 +5,16 @@ import com.suvidha.Models.EssentialsRequestModel;
 import com.suvidha.Models.GeneralModel;
 import com.suvidha.Models.GetOrdersModel;
 import com.suvidha.Models.GetShopsModel;
+import com.suvidha.Models.ItemModel;
+import com.suvidha.Models.ItemsRequestModel;
 import com.suvidha.Models.LoginResult;
+import com.suvidha.Models.OrderIdModel;
+import com.suvidha.Models.OrderRequestModel;
 import com.suvidha.Models.Pass;
 import com.suvidha.Models.PassGenerationResult;
 import com.suvidha.Models.RegistrationResult;
 import com.suvidha.Models.ShopRequestModel;
+import com.suvidha.Models.SidModel;
 import com.suvidha.Models.SinglePassResult;
 import com.suvidha.Models.UserModel;
 import com.suvidha.Models.UserPassesResult;
@@ -32,7 +37,17 @@ public interface ApiInterface {
 
 
     @POST("/api/glogin")
-    Call<LoginResult> login(@Body UserModel user);
+    Call<LoginResult> login(@Body UserModel model);
+
+    @Headers("Content-Type: application/json")
+    @POST("/api/get_shop_items")
+    Call<ItemsRequestModel> getItems(@Header("x-access-tokens") String token, @Body SidModel sid);
+
+    @Headers("Content-Type: application/json")
+    @POST("/api/get_order")
+    Call<OrderRequestModel> getOrder(@Header("x-access-tokens") String token, @Body OrderIdModel model);
+
+
 
     @Headers("Content-Type: application/json")
     @POST("/api/push_orders")

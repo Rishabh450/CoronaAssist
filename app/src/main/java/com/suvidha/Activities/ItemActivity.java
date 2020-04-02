@@ -15,12 +15,15 @@ import com.suvidha.Adapters.CartAdapter;
 import com.suvidha.Adapters.ItemAdapter;
 import com.suvidha.Models.CartModel;
 import com.suvidha.Models.GeneralModel;
-import com.suvidha.Models.GrocItemModel;
+import com.suvidha.Models.ItemModel;
+import com.suvidha.Models.ItemsRequestModel;
+import com.suvidha.Models.SidModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.CartHandler;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.suvidha.Utilities.SharedPrefManager;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -40,6 +43,7 @@ import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.APP_CHARGE;
 import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
+import static com.suvidha.Utilities.Utils.catHashMap;
 import static com.suvidha.Utilities.Utils.createAlertDialog;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.rs;
@@ -59,18 +63,20 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
     View nestedScrollView;
     private CartAdapter cartAdapter;
     private ItemAdapter itemAdapter;
-    private List<GrocItemModel> cartData = new ArrayList<>();
-    private List<GrocItemModel> items = new ArrayList<>();
+    private List<ItemModel> cartData = new ArrayList<>();
+    private List<ItemModel> items = new ArrayList<>();
 
     private TextView cartTotal;
     private TextView delivery;
     private TextView app;
     private TextView grandTotal;
+    private TextView address;
     private Button placeOrder;
     private ApiInterface apiInterface;
     private int catId;
     private String shop_id;
     private String shop_name;
+    private int flag;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +85,12 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         catId = getIntent().getIntExtra("CategoryId",-1);
         shop_id = getIntent().getStringExtra("shopid");
         shop_name = getIntent().getStringExtra("shopname");
+        flag= getIntent().getIntExtra("flag",0);
         intialiseRetrofit();
+        if(flag==1){
+            getItems();
+        }
+
         manageToolbar();
         setRView();
         setBottomSheet();
@@ -100,6 +111,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         cartTotal = nestedScrollView.findViewById(R.id.cart_cart_total);
         delivery = nestedScrollView.findViewById(R.id.cart_delivery);
         app = nestedScrollView.findViewById(R.id.cart_app);
+        address = nestedScrollView.findViewById(R.id.cart_address);
         grandTotal = nestedScrollView.findViewById(R.id.cart_grand_total);
         placeOrder = nestedScrollView.findViewById(R.id.cart_place_order);
         placeOrder.setOnClickListener(this);
@@ -107,6 +119,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
     private void intialiseRetrofit() {
         apiInterface = APIClient.getApiClient().create(ApiInterface.class);
     }
+
     private void setGotoCart() {
         //set goto cart
         if (cartHandler.getItemsCount() == 0) {
@@ -189,7 +202,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
                     case BottomSheetBehavior.STATE_SETTLING: {
                         state = "SETTLING";
                         //modify items
-                        List<GrocItemModel> newList = cartHandler.getListInCart();
+                        List<ItemModel> newList = cartHandler.getListInCart();
                         for (int i = 0; i < items.size(); i++) {
                             for (int j = 0; j < newList.size(); j++)
                                 if (items.get(i).itemId.compareTo(newList.get(j).itemId) == 0) {
@@ -226,8 +239,28 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         rView.setAdapter(itemAdapter);
 
     }
-    private List<GrocItemModel> getData() {
-        List<GrocItemModel> l=new ArrayList<>();
+    private void getItems() {
+        Call<ItemsRequestModel> itemModelCall = apiInterface.getItems(getAccessToken(this),new SidModel(shop_id));
+        itemModelCall.enqueue(new Callback<ItemsRequestModel>() {
+            @Override
+            public void onResponse(Call<ItemsRequestModel> call, Response<ItemsRequestModel> response) {
+                shopItems.clear();
+                shopItems.addAll(response.body().id);
+                items.clear();
+                items.addAll(shopItems);
+                itemAdapter.notifyDataSetChanged();
+
+
+            }
+
+            @Override
+            public void onFailure(Call<ItemsRequestModel> call, Throwable t) {
+                Log.e("ItemActivity",t.getMessage());
+            }
+        });
+    }
+    private List<ItemModel> getData() {
+        List<ItemModel> l=new ArrayList<>();
         for(int i=0;i<shopItems.size();i++){
             if(shopItems.get(i).category==catId){
                 l.add(shopItems.get(i));
@@ -235,15 +268,6 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         }
         return l;
     }
-    private List<GrocItemModel> getList() {
-        List<GrocItemModel> list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            GrocItemModel item = new GrocItemModel(String.valueOf(i), "Apple", "1 kg", 0, 130, 0);
-            list.add(item);
-        }
-        return list;
-    }
-
 
     void manageToolbar() {
         setSupportActionBar(toolbar);
@@ -251,7 +275,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         if(catId == -1){
             getSupportActionBar().setTitle(shop_name);
         }else
-            getSupportActionBar().setTitle("Category "+catId);
+            getSupportActionBar().setTitle(catHashMap.get(catId+1).first);
     }
 
     @Override
@@ -273,7 +297,30 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         if (mBottomSheetBehaviour.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_HIDDEN);
         } else {
-            finish();
+            if(flag == 1){
+                if (cartHandler.getListInCart().isEmpty()) {
+                    finish();
+                } else {
+                    //open alert dialog
+                    Dialog dialog = createAlertDialog(this, "Warning", getResources().getString(R.string.warning_cart_not_empty),
+                            "Cancel", "Continue");
+                    dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            cartHandler.clearCart();
+                            dialog.dismiss();
+                            finish();
+                        }
+                    });
+                }
+            }
+
         }
     }
     @Override
@@ -281,6 +328,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.goto_cart_layout:
                 mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
+                address.setText(SharedPrefManager.getInstance(this).getString(SharedPrefManager.Key.USER_ADDRESS));
                 updatePrice();
                 cartData = cartHandler.getListInCart();
                 cartAdapter.notifyDataSetChanged();
@@ -301,7 +349,9 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
                     public void onClick(View v) {
                         //store order in cartModel
                         double grandTotal = cartHandler.getTotalWithoutTax()+DELIVERY_CHARGE+(APP_CHARGE*cartHandler.getTotalWithoutTax())/100;
-                        CartModel cartModel = new CartModel(cartHandler.getListInCart(),shop_id,grandTotal,0,new Timestamp(System.currentTimeMillis()),"address");
+                        String userAddress = SharedPrefManager.getInstance(getApplicationContext()).getString(SharedPrefManager.Key.USER_ADDRESS);
+                        CartModel cartModel = new CartModel(cartHandler.getListInCart(),shop_id,grandTotal,0,
+                                new Timestamp(System.currentTimeMillis()),userAddress);
                         Call<GeneralModel> orderResultCall = apiInterface.pushOrder(getAccessToken(ItemActivity.this),cartModel);
                         orderResultCall.enqueue(new Callback<GeneralModel>() {
                             @Override
@@ -316,6 +366,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
                                     startActivity(intent);
                                     intent = new Intent(ItemActivity.this,OrderDetailsActivity.class);
                                     intent.putExtra("data", cartModel);
+                                    intent.putExtra("oid",response.body().id);
                                     startActivity(intent);
                                     //remove items from cart
                                     cartHandler.clearCart();
@@ -346,7 +397,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void closeBtmSheet() {
         mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_HIDDEN);
-        List<GrocItemModel> newList = cartHandler.getListInCart();
+        List<ItemModel> newList = cartHandler.getListInCart();
         for (int i = 0; i < items.size(); i++) {
             for (int j = 0; j < newList.size(); j++)
                 if (items.get(i).itemId.compareTo(newList.get(j).itemId) == 0) {

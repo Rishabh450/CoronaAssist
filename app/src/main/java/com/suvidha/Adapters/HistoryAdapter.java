@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static com.suvidha.Utilities.Utils.orderStatus;
+import static com.suvidha.Utilities.Utils.statusHashMap;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyHolder> {
     Context ctx;
@@ -50,12 +51,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyHolder
         holder.time.setText(String.valueOf(date + " at " + time));
         holder.orderid.setText(data._id);
         Log.e("status", String.valueOf(data.status));
-        holder.order_status.setText(orderStatus.get(data.status));
+        holder.order_status.setText(orderStatus.get(statusHashMap.get(data.status)));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ctx, OrderDetailsActivity.class);
                 intent.putExtra("data",data);
+                intent.putExtra("oid",data._id);
                 ctx.startActivity(intent);
             }
         });

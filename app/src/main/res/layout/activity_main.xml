@@ -17,15 +17,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-
-    <FrameLayout
-        android:id="@+id/frame_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/navigation"
-        android:layout_below="@id/main_app_bar"
-        />
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="match_parent"
@@ -35,6 +26,15 @@
         app:menu="@menu/navigation"
         android:layout_marginTop="@dimen/border_margin"
         />
+
+    <FrameLayout
+        android:id="@+id/frame_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/navigation"
+        android:layout_below="@id/main_app_bar"
+         />
+
 
 
 </RelativeLayout>

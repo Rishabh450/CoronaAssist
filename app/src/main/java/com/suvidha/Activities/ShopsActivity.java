@@ -34,6 +34,7 @@ public class ShopsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     ApiInterface apiInterface;
     private ShopListAdapter mAdapter;
+    private String title;
     private List<ShopModel> data=new ArrayList<>();
 
     @Override
@@ -42,6 +43,7 @@ public class ShopsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_shops);
         init();
         currentType = getIntent().getIntExtra("type",1);
+        title = getIntent().getStringExtra("type_name");
         intialiseRetrofit();
         getData();
         manageToolbar();
@@ -82,7 +84,7 @@ public class ShopsActivity extends AppCompatActivity {
     void manageToolbar() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Groceries");
+        getSupportActionBar().setTitle(title);
     }
 
     void setuprec() {

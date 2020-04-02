@@ -108,7 +108,7 @@ public class RegisterActivity extends AppCompatActivity {
         String zoneName = spinner_zone.getSelectedItem().toString();
 
 
-        if (name.length() != 0 && phone.length() != 0 && isVerified && etEmail.length()!=0 && address.length()!=0 && zoneName.length()!=0) {
+        if (name.length() != 0 && phone.length() != 0 && phone.length()==10 && isVerified && etEmail.length()!=0 && address.length()!=0 && zoneName.length()!=0) {
 //            List<String> passes = new ArrayList<>();
             final UserModel user = new UserModel(name, email, phone,address,zoneName);
 //            Log.e(TAG,getAccessToken(RegisterActivity.this));
@@ -147,6 +147,9 @@ public class RegisterActivity extends AppCompatActivity {
             }
             if(zoneName.length() == 0){
                 Log.e(TAG,"This case is impossible");
+            }
+            if(phone.length() == 10){
+                etPhone.setError("Invalid phone number");
             }
 
         }

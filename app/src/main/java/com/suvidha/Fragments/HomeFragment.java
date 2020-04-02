@@ -25,6 +25,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private Button iconGas;
     private Button iconWater;
 
+    public HomeFragment() {
+
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,8 +67,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent);
                 break;
             default:
+                Button b = (Button)v;
                 intent = new Intent(getContext(), ShopsActivity.class);
                 intent.putExtra("type",shopTypesMap.get(itemId));
+                intent.putExtra("type_name",b.getText().toString());
                 startActivity(intent);
 
         }

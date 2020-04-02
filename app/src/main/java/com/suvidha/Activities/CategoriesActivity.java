@@ -3,6 +3,7 @@ package com.suvidha.Activities;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
@@ -14,12 +15,15 @@ import com.suvidha.Adapters.CartAdapter;
 import com.suvidha.Adapters.CategoryAdapter;
 import com.suvidha.Models.CartModel;
 import com.suvidha.Models.GeneralModel;
-import com.suvidha.Models.GrocItemModel;
+import com.suvidha.Models.ItemModel;
+import com.suvidha.Models.ItemsRequestModel;
+import com.suvidha.Models.SidModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.CartHandler;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.suvidha.Utilities.SharedPrefManager;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -58,7 +62,7 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
     private CartHandler cartHandler;
     private View nestedScrollView;
     private CartAdapter cartAdapter;
-    private List<GrocItemModel> cartData = new ArrayList<>();
+    private List<ItemModel> cartData = new ArrayList<>();
     private TextView cartTotal;
     private TextView delivery;
     private TextView app;
@@ -67,6 +71,8 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
     private ApiInterface apiInterface;
     private String shop_id;
     private String shop_name;
+    public CategoryAdapter mAdapter;
+    public List<Integer> categoryData = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,12 +82,33 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
         shop_id = getIntent().getStringExtra("shopid");
         shop_name = getIntent().getStringExtra("shopname");
         intialiseRetrofit();
+        getItems();
         manageToolbar();
         setuprec();
         setBottomSheet();
         setGotoCart();
         hideGotoCart();
         updateGotoCart();
+    }
+
+    private void getItems() {
+        Call<ItemsRequestModel> itemModelCall = apiInterface.getItems(getAccessToken(this),new SidModel(shop_id));
+        itemModelCall.enqueue(new Callback<ItemsRequestModel>() {
+            @Override
+            public void onResponse(Call<ItemsRequestModel> call, Response<ItemsRequestModel> response) {
+                Log.e(TAG, String.valueOf(response.body()));
+                shopItems.clear();
+                shopItems.addAll(response.body().id);
+                categoryData.clear();
+                categoryData.addAll(getAllDifferentCategories());
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<ItemsRequestModel> call, Throwable t) {
+                Log.e(TAG,t.getMessage());
+            }
+        });
     }
 
     private void init() {
@@ -194,8 +221,10 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
     }
 
     void setuprec() {
+        shopItems.clear();
+        mAdapter = new CategoryAdapter(this, categoryData,shop_id);
         rView.setLayoutManager(new GridLayoutManager(this, ITEM_COUNT));
-        rView.setAdapter(new CategoryAdapter(this, getAllDifferentCategories(),shop_id));
+        rView.setAdapter(mAdapter);
     }
     private List<Integer> getAllDifferentCategories() {
         List<Integer> l =new ArrayList<>();
@@ -221,27 +250,27 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
         if (mBottomSheetBehaviour.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_HIDDEN);
         } else {
-            if (cartHandler.getListInCart().isEmpty()) {
-                finish();
-            } else {
-                //open alert dialog
-                Dialog dialog = createAlertDialog(this, "Warning", getResources().getString(R.string.warning_cart_not_empty),
-                        "Cancel", "Continue");
-                dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        cartHandler.clearCart();
-                        dialog.dismiss();
-                        finish();
-                    }
-                });
-            }
+                if (cartHandler.getListInCart().isEmpty()) {
+                    finish();
+                } else {
+                    //open alert dialog
+                    Dialog dialog = createAlertDialog(this, "Warning", getResources().getString(R.string.warning_cart_not_empty),
+                            "Cancel", "Continue");
+                    dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            cartHandler.clearCart();
+                            dialog.dismiss();
+                            finish();
+                        }
+                    });
+                }
         }
     }
 
@@ -257,7 +286,7 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
             case R.id.cart_place_order: {
                 //submit order to server
                 //show dialog
-                Dialog dialog = createAlertDialog(this, "Place Order", getResources().getString(R.string.place_order_msg), "cancel", "Continue");
+                Dialog dialog = createAlertDialog(this,"Place Order",getResources().getString(R.string.place_order_msg),"cancel","Continue");
 
                 dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -270,7 +299,9 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
                     public void onClick(View v) {
                         //store order in cartModel
                         double grandTotal = cartHandler.getTotalWithoutTax()+DELIVERY_CHARGE+(APP_CHARGE*cartHandler.getTotalWithoutTax())/100;
-                        CartModel cartModel = new CartModel(cartHandler.getListInCart(),shop_id,grandTotal,0,new Timestamp(System.currentTimeMillis()   ));
+                        String userAddress = SharedPrefManager.getInstance(getApplicationContext()).getString(SharedPrefManager.Key.USER_ADDRESS);
+                        CartModel cartModel = new CartModel(cartHandler.getListInCart(),shop_id,grandTotal,0,
+                                new Timestamp(System.currentTimeMillis()),userAddress);
                         Call<GeneralModel> orderResultCall = apiInterface.pushOrder(getAccessToken(CategoriesActivity.this),cartModel);
                         orderResultCall.enqueue(new Callback<GeneralModel>() {
                             @Override
@@ -283,11 +314,15 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
 
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |  Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     startActivity(intent);
-                                    intent = new Intent(getApplicationContext(),OrderDetailsActivity.class);
+                                    intent = new Intent(CategoriesActivity.this,OrderDetailsActivity.class);
                                     intent.putExtra("data", cartModel);
+                                    intent.putExtra("oid",response.body().id);
                                     startActivity(intent);
                                     //remove items from cart
                                     cartHandler.clearCart();
+                                }else if(response.body().status == 404){
+                                    Toast.makeText(CategoriesActivity.this, "Sorry, shop do not exist anymore", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
                                 }else {
                                     Toast.makeText(CategoriesActivity.this, "Sorry, your request was unsuccessful", Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
@@ -296,7 +331,7 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
 
                             @Override
                             public void onFailure(Call<GeneralModel> call, Throwable t) {
-
+                                Log.e("TAG","responseError "+t.getMessage());
                             }
                         });
 

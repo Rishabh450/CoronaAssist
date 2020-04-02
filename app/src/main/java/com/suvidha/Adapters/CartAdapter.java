@@ -10,9 +10,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.suvidha.Models.GrocItemModel;
+import com.suvidha.Models.ItemModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.CartHandler;
+import com.suvidha.Utilities.SharedPrefManager;
 
 import java.util.List;
 
@@ -21,11 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
     private Context ctx;
-    private List<GrocItemModel> list;
+    private List<ItemModel> list;
     private CartHandler cartHandler;
     private CartCallback mCallback;
     private boolean orderPlaced;
-    public CartAdapter(Context ctx, List<GrocItemModel> list,boolean orderPlaced) {
+    public CartAdapter(Context ctx, List<ItemModel> list, boolean orderPlaced) {
         this.ctx = ctx;
         this.list = list;
         this.orderPlaced = orderPlaced;
@@ -43,24 +44,25 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
     @SuppressLint("NewApi")
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
-        GrocItemModel data = list.get(position);
+        ItemModel data = list.get(position);
         holder.item_name.setText(data.itemName);
         holder.item_price.setText("\u20B9"+data.itemPrice*data.item_add_qty);
         holder.item_qty.setText(String.valueOf(data.item_add_qty));
+
         if(orderPlaced){
             holder.plus.setVisibility(View.GONE);
             holder.minus.setVisibility(View.GONE);
-            holder.chngLayout.setBackground(null);
+            holder.addLayout.setVisibility(View.GONE);
             holder.item_qty.setTextColor(Color.parseColor("#808080"));
         }else{
             holder.plus.setVisibility(View.VISIBLE);
             holder.minus.setVisibility(View.VISIBLE);
-            holder.chngLayout.setBackground(ctx.getResources().getDrawable(R.drawable.btn_shape));
+            holder.addLayout.setVisibility(View.VISIBLE);
         }
         holder.plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GrocItemModel newItem = cartHandler.findItem(data);
+                ItemModel newItem = cartHandler.findItem(data);
                 newItem.item_add_qty += 1;
                 cartHandler.updateItem(newItem);
                 holder.item_qty.setText(String.valueOf(newItem.item_add_qty));
@@ -71,7 +73,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
         holder.minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GrocItemModel newItem = cartHandler.findItem(data);
+                ItemModel newItem = cartHandler.findItem(data);
                 if(newItem!=null) {
                     newItem.item_add_qty -= 1;
                     if (newItem.item_add_qty == 0) {
@@ -108,8 +110,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
         TextView item_name;
         TextView item_price;
         TextView item_qty;
-        Button plus,minus;
-        LinearLayout chngLayout;
+        TextView plus,minus;
+        LinearLayout addLayout;
+
         public MyHolder(@NonNull View itemView) {
             super(itemView);
             item_name = itemView.findViewById(R.id.cart_item_name);
@@ -117,7 +120,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
             item_qty = itemView.findViewById(R.id.cart_add_qty);
             plus = itemView.findViewById(R.id.cart_plus_btn);
             minus = itemView.findViewById(R.id.cart_minus_btn);
-            chngLayout = itemView.findViewById(R.id.cart_change_qty_layout);
+            addLayout = itemView.findViewById(R.id.cart_add_layout);
         }
     }
 

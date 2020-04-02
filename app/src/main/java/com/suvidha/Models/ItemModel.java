@@ -3,7 +3,7 @@ package com.suvidha.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class GrocItemModel implements Parcelable {
+public class ItemModel implements Parcelable {
     public String itemId;
     public String itemName;
     public String itemQty;
@@ -11,7 +11,7 @@ public class GrocItemModel implements Parcelable {
     public double itemPrice;
     public int category;
 
-    public GrocItemModel(String itemId, String itemName, String itemQty, int item_add_qty, double itemPrice, int category) {
+    public ItemModel(String itemId, String itemName, String itemQty, int item_add_qty, double itemPrice, int category) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.itemQty = itemQty;
@@ -20,7 +20,7 @@ public class GrocItemModel implements Parcelable {
         this.category = category;
     }
 
-    protected GrocItemModel(Parcel in) {
+    protected ItemModel(Parcel in) {
         itemId = in.readString();
         itemName = in.readString();
         itemQty = in.readString();
@@ -29,15 +29,15 @@ public class GrocItemModel implements Parcelable {
         category = in.readInt();
     }
 
-    public static final Creator<GrocItemModel> CREATOR = new Creator<GrocItemModel>() {
+    public static final Creator<ItemModel> CREATOR = new Creator<ItemModel>() {
         @Override
-        public GrocItemModel createFromParcel(Parcel in) {
-            return new GrocItemModel(in);
+        public ItemModel createFromParcel(Parcel in) {
+            return new ItemModel(in);
         }
 
         @Override
-        public GrocItemModel[] newArray(int size) {
-            return new GrocItemModel[size];
+        public ItemModel[] newArray(int size) {
+            return new ItemModel[size];
         }
     };
 

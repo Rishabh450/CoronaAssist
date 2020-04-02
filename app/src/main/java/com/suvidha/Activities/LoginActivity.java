@@ -1,5 +1,6 @@
 package com.suvidha.Activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,10 +18,8 @@ import com.suvidha.Models.ZonesModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
+import com.suvidha.Utilities.ServiceGenerator;
 import com.suvidha.Utilities.SharedPrefManager;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -30,7 +29,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.isLoggedIn;
+import static com.suvidha.Utilities.Utils.password;
 import static com.suvidha.Utilities.Utils.setLoginSession;
 import static com.suvidha.Utilities.Utils.zonesList;
 
@@ -39,6 +40,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private static final int RC_SIGN_IN = 100;
     GoogleSignInClient mGoogleSignInClient;
     ApiInterface apiInterface;
+    Dialog dialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,7 +81,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Log.e(TAG, account.getDisplayName());
                 Log.e(TAG, account.getEmail());
                 UserModel user = new UserModel(account.getDisplayName(), account.getEmail());
-                Call<LoginResult> loginResultCall = apiInterface.login(user);
+                ApiInterface loginService =
+                        ServiceGenerator.createService(ApiInterface.class, user.email, password);
+                Call<LoginResult> loginResultCall = loginService.login(user);
                 loginResultCall.enqueue(new Callback<LoginResult>() {
                     @Override
                     public void onResponse(Call<LoginResult> call, Response<LoginResult> response) {
@@ -149,6 +153,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button:
+                dialog = createProgressDialog(this,"Please Wait");
                 signIn();
                 break;
             // ...
@@ -161,10 +166,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
+            dialog.dismiss();
             // The Task returned from this call is always completed, no need to attach
             // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
+        }else {
+
         }
     }
 

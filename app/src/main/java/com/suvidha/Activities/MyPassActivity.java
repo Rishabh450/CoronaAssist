@@ -42,7 +42,7 @@ import static com.suvidha.Utilities.Utils.getAccessToken;
 public class MyPassActivity extends AppCompatActivity {
 
     //Field Variables
-    private static final String TAG= "My pass";
+    private static final String TAG = "My pass";
     private SharedPrefManager sharedPrefManager;
     RecyclerView.LayoutManager layoutManager;
     PassAdapter passAdapter;
@@ -57,12 +57,11 @@ public class MyPassActivity extends AppCompatActivity {
     ApiInterface apiInterface;
 
 
-
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onStart() {
-    if(!isFinishing())
-        fetchData();
+        if (!isFinishing())
+            fetchData();
         super.onStart();
 
     }
@@ -77,7 +76,6 @@ public class MyPassActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Your Passes");
-        toolbar.inflateMenu(R.menu.my_pass_menu);
 
 
 //        UtilityFunctions.clearLoginSession(MyPassActivity.this);
@@ -96,26 +94,15 @@ public class MyPassActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.my_pass_menu, menu);
+
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.menu_main_police:
-                Intent intent = new Intent(MyPassActivity.this, ScanPassActivity.class);
-                intent.putExtra("police", true);
-                askPolice(intent);
-                return true;
-            case R.id.menu_all_pass:
-                Intent police_intent = new Intent(MyPassActivity.this, AllPassActivity.class);
-                police_intent.putExtra("police", true);
-                askPolice(police_intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        return super.onOptionsItemSelected(item);
+
     }
 
     private void askPolice(Intent intent) {
@@ -131,14 +118,14 @@ public class MyPassActivity extends AppCompatActivity {
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(final DialogInterface dialog, int id) {
                 String pass = etPassword.getText().toString().trim();
-                if(pass.length()!=0){
-                    if(pass.equalsIgnoreCase("123456")){
+                if (pass.length() != 0) {
+                    if (pass.equalsIgnoreCase("123456")) {
 
                         startActivity(intent);
-                    }else{
+                    } else {
                         etPassword.setError("Wrong  Password");
                     }
-                }else{
+                } else {
                     etPassword.setError("Password field cannot be empty");
                 }
             }
@@ -155,7 +142,6 @@ public class MyPassActivity extends AppCompatActivity {
 
 
     private void fetchData() {
-
         Call<UserPassesResult> getPassesCall = apiInterface.getPasses(getAccessToken(this));
         Log.d(TAG, "fetchData: accesstoken" + (getAccessToken(this)));
         getPassesCall.enqueue(new Callback<UserPassesResult>() {
@@ -163,7 +149,7 @@ public class MyPassActivity extends AppCompatActivity {
             public void onResponse(Call<UserPassesResult> call, Response<UserPassesResult> response) {
                 passes.clear();
                 UserPassesResult userPassesResult = response.body();
-                if(userPassesResult!=null){
+                if (userPassesResult != null) {
                     List<Pass> p = userPassesResult.getPasses();
                     passes.addAll(p);
                 }
@@ -184,7 +170,7 @@ public class MyPassActivity extends AppCompatActivity {
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
         rvPasses.setLayoutManager(layoutManager);
-        passAdapter = new PassAdapter(this, passes,false);
+        passAdapter = new PassAdapter(this, passes, false);
         rvPasses.hasFixedSize();
         rvPasses.setAdapter(passAdapter);
 //        rvPasses.addItemDecoration(new DividerItemDecoration(rvNotes.getContext(), DividerItemDecoration.VERTICAL));

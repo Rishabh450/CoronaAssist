@@ -43,8 +43,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="continue"
+            android:background="@drawable/btn_shape"
             android:id="@+id/dialog_continue"
-            android:textColor="@color/primary_text_color"
+            android:textColor="@color/secondary_text_color"
             style="@style/Widget.AppCompat.Button.Borderless"
             />
     </LinearLayout>

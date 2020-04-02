@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.suvidha.Activities.CategoriesActivity;
 import com.suvidha.Activities.ItemActivity;
@@ -40,24 +41,33 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.MyHold
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
         ShopModel data = list.get(position);
+        if(currentType==1){
+            holder.iv.setImageResource(R.mipmap.ic_groc);
+        }
         holder.shop_name.setText(data.name);
         holder.shop_addr.setText(data.address);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shopItems.clear();
-                shopItems.addAll(data.items);
-                if(currentType==1) {
-                    Intent intent = new Intent(ctx, CategoriesActivity.class);
-                    intent.putExtra("shopid", data._id);
-                    intent.putExtra("shopname", data.name);
-                    ctx.startActivity(intent);
-                }else{
-                    Intent intent = new Intent(ctx, ItemActivity.class);
-                    intent.putExtra("shopid", data._id);
-                    intent.putExtra("shopname", data.name);
-                    ctx.startActivity(intent);
+                try {
+
+                    if(currentType==1) {
+                        Intent intent = new Intent(ctx, CategoriesActivity.class);
+                        intent.putExtra("shopid", data._id);
+                        intent.putExtra("shopname", data.name);
+                        ctx.startActivity(intent);
+                    }else{
+                        Intent intent = new Intent(ctx, ItemActivity.class);
+                        intent.putExtra("shopid", data._id);
+                        intent.putExtra("shopname", data.name);
+                        intent.putExtra("flag",1);
+                        ctx.startActivity(intent);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(ctx, "No Items Found", Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
     }

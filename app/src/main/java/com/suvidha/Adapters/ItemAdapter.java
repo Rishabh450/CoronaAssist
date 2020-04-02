@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.suvidha.Models.GrocItemModel;
+import com.suvidha.Models.ItemModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.CartHandler;
 
@@ -19,11 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyHolder> {
     private Context context;
-    private List<GrocItemModel> list;
+    private List<ItemModel> list;
     private CartHandler cartHandler;
     private Callback mCallback;
 
-    public ItemAdapter(Context context, List<GrocItemModel> list) {
+    public ItemAdapter(Context context, List<ItemModel> list) {
         this.context = context;
         this.list = list;
         cartHandler = CartHandler.getInstance();
@@ -39,8 +39,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
-        GrocItemModel item;
-        GrocItemModel existingItem=null;
+        ItemModel item;
+        ItemModel existingItem=null;
         if(cartHandler.getItemsCount()!=0){
             mCallback.updateGotoCart();
             existingItem = cartHandler.findItem(list.get(position));
@@ -102,7 +102,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyHolder> {
         });
     }
 
-    private void updateCartItems(GrocItemModel item,MyHolder holder) {
+    private void updateCartItems(ItemModel item, MyHolder holder) {
         holder.itemBtnAdd.setVisibility(View.GONE);
         holder.addLayout.setVisibility(View.VISIBLE);
         holder.itemAddQty.setText(String.valueOf(item.item_add_qty));
@@ -120,7 +120,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyHolder> {
         public TextView itemQty;
         public TextView itemAddQty;
         public Button itemBtnAdd;
-        public Button plusBtn,minusBtn;
+        public TextView plusBtn,minusBtn;
         public TextView price;
 
         public MyHolder(@NonNull View itemView) {

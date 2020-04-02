@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class CartModel implements Parcelable,Comparable<CartModel> {
     public String _id;
-    public ArrayList<GrocItemModel> items;
+    public ArrayList<ItemModel> items;
     public String sid;
     public double amount;
     public int status;
@@ -18,7 +18,7 @@ public class CartModel implements Parcelable,Comparable<CartModel> {
     public String address;
 
 
-    public CartModel(String _id, ArrayList<GrocItemModel> items, String sid, double amount, int status, String uid, Timestamp time, ShopModel shop_details, String address) {
+    public CartModel(String _id, ArrayList<ItemModel> items, String sid, double amount, int status, String uid, Timestamp time, ShopModel shop_details, String address) {
         this._id = _id;
         this.items = items;
         this.sid = sid;
@@ -32,7 +32,7 @@ public class CartModel implements Parcelable,Comparable<CartModel> {
 
     public CartModel(){}
 
-    public CartModel(ArrayList<GrocItemModel> items, String sid, double amount, int status, Timestamp time, String address) {
+    public CartModel(ArrayList<ItemModel> items, String sid, double amount, int status, Timestamp time, String address) {
         this._id = _id;
         this.items = items;
         this.sid = sid;
@@ -44,7 +44,7 @@ public class CartModel implements Parcelable,Comparable<CartModel> {
         this.address = address;
     }
 
-    public CartModel(String _id, ArrayList<GrocItemModel> items, String sid, double amount, int status, String uid, Timestamp time, ShopModel shop_details) {
+    public CartModel(String _id, ArrayList<ItemModel> items, String sid, double amount, int status, String uid, Timestamp time, ShopModel shop_details) {
         this._id = _id;
         this.items = items;
         this.sid = sid;
@@ -55,7 +55,7 @@ public class CartModel implements Parcelable,Comparable<CartModel> {
         this.shop_details = shop_details;
     }
 
-    public CartModel(ArrayList<GrocItemModel> items, String sid, double amount, int status, String uid, Timestamp time, ShopModel shopDetails) {
+    public CartModel(ArrayList<ItemModel> items, String sid, double amount, int status, String uid, Timestamp time, ShopModel shopDetails) {
         this.items = items;
         this.sid = sid;
         this.amount = amount;
@@ -65,7 +65,7 @@ public class CartModel implements Parcelable,Comparable<CartModel> {
         this.shop_details = shopDetails;
     }
 
-    public CartModel(ArrayList<GrocItemModel> items, String sid, double amount, int status, Timestamp timestamp) {
+    public CartModel(ArrayList<ItemModel> items, String sid, double amount, int status, Timestamp timestamp) {
         this.items = items;
         this.sid = sid;
         this.amount = amount;
@@ -75,7 +75,7 @@ public class CartModel implements Parcelable,Comparable<CartModel> {
     }
 
     protected CartModel(Parcel in) {
-        items = in.createTypedArrayList(GrocItemModel.CREATOR);
+        items = in.createTypedArrayList(ItemModel.CREATOR);
         sid = in.readString();
         amount = in.readDouble();
         status = in.readInt();

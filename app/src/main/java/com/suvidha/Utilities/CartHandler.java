@@ -1,13 +1,13 @@
 package com.suvidha.Utilities;
 
-import com.suvidha.Models.GrocItemModel;
+import com.suvidha.Models.ItemModel;
 
 import java.util.ArrayList;
 
 public class CartHandler {
     private static CartHandler single_instance = null;
-    private static ArrayList<GrocItemModel> inCart = new ArrayList<>();
-    private static ArrayList<ArrayList<GrocItemModel>> alreadyPlaced = new ArrayList<>();
+    private static ArrayList<ItemModel> inCart = new ArrayList<>();
+    private static ArrayList<ArrayList<ItemModel>> alreadyPlaced = new ArrayList<>();
 
     public static CartHandler getInstance()
     {
@@ -15,24 +15,24 @@ public class CartHandler {
             single_instance = new CartHandler();
         return single_instance;
     }
-    public void addItem(GrocItemModel item){
+    public void addItem(ItemModel item){
         inCart.add(item);
     }
-    public void updateItem(GrocItemModel item){
+    public void updateItem(ItemModel item){
         for(int i=0;i<inCart.size();i++){
             if(item.itemId.compareTo(inCart.get(i).itemId)==0){
                 inCart.set(i,item);
             }
         }
     }
-    public void removeItem(GrocItemModel item){
+    public void removeItem(ItemModel item){
         for(int i=0;i<inCart.size();i++){
             if(item.itemId.compareTo(inCart.get(i).itemId)==0){
                 inCart.remove(i);
             }
         }
     }
-    public GrocItemModel findItem(GrocItemModel item){
+    public ItemModel findItem(ItemModel item){
         for(int i=0;i<inCart.size();i++){
             if(item.itemId.compareTo(inCart.get(i).itemId)==0){
                 return inCart.get(i);
@@ -50,7 +50,7 @@ public class CartHandler {
         }
         return total;
     }
-    public ArrayList<GrocItemModel>  getListInCart(){
+    public ArrayList<ItemModel>  getListInCart(){
         return inCart;
     }
 
@@ -60,7 +60,7 @@ public class CartHandler {
         }
         inCart.clear();
     }
-    public ArrayList<ArrayList<GrocItemModel>> getAlreadyPlaced(){
+    public ArrayList<ArrayList<ItemModel>> getAlreadyPlaced(){
         return alreadyPlaced;
     }
 }
