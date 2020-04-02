@@ -8,4 +8,5 @@
     <string name="view_order_summary">VIEW ORDER SUMMARY</string>
     <string name="place_order_msg">Do you want to continue placing the order?</string>
     <string name="loading_msg">Please Wait</string>
+    <string name="backPress">Press back again to close the application</string>
 </resources>

@@ -38,4 +38,5 @@
 
     <color name="rejected_red">#FDDBDB</color>
     <color name="rejected_red_text">#FF0000</color>
+    <color name="ligh_primary">#0066FF</color>
 </resources>

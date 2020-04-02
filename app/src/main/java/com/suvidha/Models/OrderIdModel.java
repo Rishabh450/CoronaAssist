@@ -1,9 +1,9 @@
 package com.suvidha.Models;
 
 public class OrderIdModel {
-    String id;
+    public String oid;
 
     public OrderIdModel(String oid) {
-        this.id = oid;
+        this.oid = oid;
     }
 }

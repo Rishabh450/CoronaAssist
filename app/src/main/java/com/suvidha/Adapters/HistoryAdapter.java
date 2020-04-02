@@ -57,6 +57,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyHolder
             public void onClick(View v) {
                 Intent intent = new Intent(ctx, OrderDetailsActivity.class);
                 intent.putExtra("data",data);
+                intent.putExtra("oid",data._id);
                 ctx.startActivity(intent);
             }
         });

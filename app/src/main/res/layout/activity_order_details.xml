@@ -14,9 +14,9 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_ref"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/swipe_ref"
         android:layout_below="@id/main_app_bar">
 
         <LinearLayout
@@ -35,6 +35,14 @@
                 android:textColor="@color/primary_text_color"
                 android:textSize="25sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/border_margin"
+                android:text="Address"
+                android:id="@+id/order_shop_addr"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/order_view_summary"
@@ -63,7 +71,7 @@
                     android:textSize="20sp" />
 
                 <TextView
-                    android:id="@+id/details_order_status"
+                    android:id="@+id/order_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -72,20 +80,48 @@
                     android:textSize="25sp" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/order_status_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/order_status_layout"
-                android:layout_marginLeft="@dimen/border_margin"
-                android:layout_marginTop="@dimen/border_margin"
-                android:text="Description of status" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/border_margin"
+                    android:layout_marginTop="@dimen/border_margin"
+                    android:text="Order Id : " />
+                <TextView
+                    android:id="@+id/order_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/order_status_layout"
+                    android:layout_marginLeft="@dimen/border_margin"
+                    android:layout_marginTop="@dimen/border_margin"
+                    android:text="safasags" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/border_margin"
+                    android:layout_marginTop="@dimen/border_margin"
+                    android:text="Delivery Address : " />
+                <TextView
+                    android:id="@+id/order_deliv_addr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/order_status_layout"
+                    android:layout_marginLeft="@dimen/border_margin"
+                    android:layout_marginTop="@dimen/border_margin"
+                    android:text="safasags" />
+            </LinearLayout>
 
             <View
                 android:id="@+id/order_line"
                 android:layout_width="wrap_content"
                 android:layout_height="2dp"
-                android:layout_below="@+id/order_status_description"
+                android:layout_below="@+id/order_id_layout"
                 android:layout_marginTop="@dimen/border_margin"
                 android:background="@color/grey" />
 
@@ -160,6 +196,7 @@
                         <ImageView
                             android:layout_width="30dp"
                             android:layout_height="30dp"
+                            android:id="@+id/dev_mail"
                             android:src="@mipmap/ic_email" />
                     </LinearLayout>
                 </LinearLayout>

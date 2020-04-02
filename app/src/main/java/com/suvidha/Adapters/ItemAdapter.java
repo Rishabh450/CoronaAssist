@@ -120,7 +120,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyHolder> {
         public TextView itemQty;
         public TextView itemAddQty;
         public Button itemBtnAdd;
-        public Button plusBtn,minusBtn;
+        public TextView plusBtn,minusBtn;
         public TextView price;
 
         public MyHolder(@NonNull View itemView) {

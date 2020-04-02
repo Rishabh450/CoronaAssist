@@ -27,10 +27,11 @@ import java.util.List;
 public class Utils {
     public static final String rs = "\u20B9";
 
-//    public static final String BASE_URL = "http://192.168.43.114:5000";
+    public static final String BASE_URL = "http://192.168.43.114:5000";
 //    public static final String BASE_URL = "http://192.168.43.55:5000";
-    public static final String BASE_URL = "http://202.56.13.210:5000";
+//    public static final String BASE_URL = "http://202.56.13.210:5000";
     public static final String password = "Nitsuvidha1!";
+    public static final String email = "suvidhajamshedpur@gmail.com";
     public static double DELIVERY_CHARGE = 5;
     public static double APP_CHARGE = 2;
     public static List<ZonesModel> zonesList=new ArrayList<>();

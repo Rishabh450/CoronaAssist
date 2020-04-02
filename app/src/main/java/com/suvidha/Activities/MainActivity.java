@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.suvidha.Adapters.ViewPagerAdapter;
 import com.suvidha.Fragments.HistoryFragment;
 import com.suvidha.Fragments.HomeFragment;
 import com.suvidha.Models.EssentialsRequestModel;
@@ -35,6 +37,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,19 +56,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private LinearLayout locationLayout;
     private TextView nodeName;
-    private BottomNavigationView navigationView;
     FusedLocationProviderClient mFusedLocationClient;
     private ApiInterface apiInterface;
+    private int backFlag = 0;
+    private BottomNavigationView navigation;
+    private ViewPager mPager;
+    MenuItem prevMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+        setBottomNavigation();
         intialiseRetrofit();
         setListeners();
         getEssentials();
-        setBottomNavigation();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.frame_container);
+        if(f instanceof HistoryFragment){
+            //go to home fragment
+            navigation.setSelectedItemId(R.id.navigation_home);
+            loadFragment(new HomeFragment());
+
+        }else{
+            Handler backHandler = new Handler();
+
+            if (backFlag == 1) {
+                finish();
+            }
+            backFlag = 1;
+            Toast.makeText(MainActivity.this, R.string.backPress, 3000).show();
+            backHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    backFlag = 0;
+                }
+            }, 2500);
+        }
+
     }
 
     private void getAllOrders() {
@@ -97,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public Dialog dialog;
     public ProgressBar progressBar;
+
     private void getEssentials() {
         if (dialog == null) {
             dialog = createProgressDialog(this, "Please wait");
@@ -156,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             }
                         });
                     }
-                },500);
+                }, 500);
 
                 Toast.makeText(MainActivity.this, "Failed to connect to the server", Toast.LENGTH_SHORT).show();
             }
@@ -169,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setBottomNavigation() {
         loadFragment(new HomeFragment());
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 

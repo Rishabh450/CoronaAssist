@@ -23,6 +23,7 @@ import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.CartHandler;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.suvidha.Utilities.SharedPrefManager;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -249,27 +250,27 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
         if (mBottomSheetBehaviour.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_HIDDEN);
         } else {
-            if (cartHandler.getListInCart().isEmpty()) {
-                finish();
-            } else {
-                //open alert dialog
-                Dialog dialog = createAlertDialog(this, "Warning", getResources().getString(R.string.warning_cart_not_empty),
-                        "Cancel", "Continue");
-                dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        cartHandler.clearCart();
-                        dialog.dismiss();
-                        finish();
-                    }
-                });
-            }
+                if (cartHandler.getListInCart().isEmpty()) {
+                    finish();
+                } else {
+                    //open alert dialog
+                    Dialog dialog = createAlertDialog(this, "Warning", getResources().getString(R.string.warning_cart_not_empty),
+                            "Cancel", "Continue");
+                    dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            cartHandler.clearCart();
+                            dialog.dismiss();
+                            finish();
+                        }
+                    });
+                }
         }
     }
 
@@ -285,7 +286,7 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
             case R.id.cart_place_order: {
                 //submit order to server
                 //show dialog
-                Dialog dialog = createAlertDialog(this, "Place Order", getResources().getString(R.string.place_order_msg), "cancel", "Continue");
+                Dialog dialog = createAlertDialog(this,"Place Order",getResources().getString(R.string.place_order_msg),"cancel","Continue");
 
                 dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -298,7 +299,9 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
                     public void onClick(View v) {
                         //store order in cartModel
                         double grandTotal = cartHandler.getTotalWithoutTax()+DELIVERY_CHARGE+(APP_CHARGE*cartHandler.getTotalWithoutTax())/100;
-                        CartModel cartModel = new CartModel(cartHandler.getListInCart(),shop_id,grandTotal,0,new Timestamp(System.currentTimeMillis()   ));
+                        String userAddress = SharedPrefManager.getInstance(getApplicationContext()).getString(SharedPrefManager.Key.USER_ADDRESS);
+                        CartModel cartModel = new CartModel(cartHandler.getListInCart(),shop_id,grandTotal,0,
+                                new Timestamp(System.currentTimeMillis()),userAddress);
                         Call<GeneralModel> orderResultCall = apiInterface.pushOrder(getAccessToken(CategoriesActivity.this),cartModel);
                         orderResultCall.enqueue(new Callback<GeneralModel>() {
                             @Override
@@ -311,11 +314,15 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
 
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |  Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     startActivity(intent);
-                                    intent = new Intent(getApplicationContext(),OrderDetailsActivity.class);
+                                    intent = new Intent(CategoriesActivity.this,OrderDetailsActivity.class);
                                     intent.putExtra("data", cartModel);
+                                    intent.putExtra("oid",response.body().id);
                                     startActivity(intent);
                                     //remove items from cart
                                     cartHandler.clearCart();
+                                }else if(response.body().status == 404){
+                                    Toast.makeText(CategoriesActivity.this, "Sorry, shop do not exist anymore", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
                                 }else {
                                     Toast.makeText(CategoriesActivity.this, "Sorry, your request was unsuccessful", Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
@@ -324,7 +331,7 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
 
                             @Override
                             public void onFailure(Call<GeneralModel> call, Throwable t) {
-
+                                Log.e("TAG","responseError "+t.getMessage());
                             }
                         });
 

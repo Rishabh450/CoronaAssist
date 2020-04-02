@@ -60,6 +60,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.MyHold
                         Intent intent = new Intent(ctx, ItemActivity.class);
                         intent.putExtra("shopid", data._id);
                         intent.putExtra("shopname", data.name);
+                        intent.putExtra("flag",1);
                         ctx.startActivity(intent);
                     }
                 }catch (Exception e){

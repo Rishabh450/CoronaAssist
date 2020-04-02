@@ -16,6 +16,8 @@ import com.suvidha.Adapters.ItemAdapter;
 import com.suvidha.Models.CartModel;
 import com.suvidha.Models.GeneralModel;
 import com.suvidha.Models.ItemModel;
+import com.suvidha.Models.ItemsRequestModel;
+import com.suvidha.Models.SidModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
@@ -68,11 +70,13 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
     private TextView delivery;
     private TextView app;
     private TextView grandTotal;
+    private TextView address;
     private Button placeOrder;
     private ApiInterface apiInterface;
     private int catId;
     private String shop_id;
     private String shop_name;
+    private int flag;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +85,12 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         catId = getIntent().getIntExtra("CategoryId",-1);
         shop_id = getIntent().getStringExtra("shopid");
         shop_name = getIntent().getStringExtra("shopname");
+        flag= getIntent().getIntExtra("flag",0);
         intialiseRetrofit();
+        if(flag==1){
+            getItems();
+        }
+
         manageToolbar();
         setRView();
         setBottomSheet();
@@ -102,6 +111,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         cartTotal = nestedScrollView.findViewById(R.id.cart_cart_total);
         delivery = nestedScrollView.findViewById(R.id.cart_delivery);
         app = nestedScrollView.findViewById(R.id.cart_app);
+        address = nestedScrollView.findViewById(R.id.cart_address);
         grandTotal = nestedScrollView.findViewById(R.id.cart_grand_total);
         placeOrder = nestedScrollView.findViewById(R.id.cart_place_order);
         placeOrder.setOnClickListener(this);
@@ -109,6 +119,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
     private void intialiseRetrofit() {
         apiInterface = APIClient.getApiClient().create(ApiInterface.class);
     }
+
     private void setGotoCart() {
         //set goto cart
         if (cartHandler.getItemsCount() == 0) {
@@ -228,6 +239,26 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         rView.setAdapter(itemAdapter);
 
     }
+    private void getItems() {
+        Call<ItemsRequestModel> itemModelCall = apiInterface.getItems(getAccessToken(this),new SidModel(shop_id));
+        itemModelCall.enqueue(new Callback<ItemsRequestModel>() {
+            @Override
+            public void onResponse(Call<ItemsRequestModel> call, Response<ItemsRequestModel> response) {
+                shopItems.clear();
+                shopItems.addAll(response.body().id);
+                items.clear();
+                items.addAll(shopItems);
+                itemAdapter.notifyDataSetChanged();
+
+
+            }
+
+            @Override
+            public void onFailure(Call<ItemsRequestModel> call, Throwable t) {
+                Log.e("ItemActivity",t.getMessage());
+            }
+        });
+    }
     private List<ItemModel> getData() {
         List<ItemModel> l=new ArrayList<>();
         for(int i=0;i<shopItems.size();i++){
@@ -237,15 +268,6 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         }
         return l;
     }
-    private List<ItemModel> getList() {
-        List<ItemModel> list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            ItemModel item = new ItemModel(String.valueOf(i), "Apple", "1 kg", 0, 130, 0);
-            list.add(item);
-        }
-        return list;
-    }
-
 
     void manageToolbar() {
         setSupportActionBar(toolbar);
@@ -275,7 +297,30 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         if (mBottomSheetBehaviour.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_HIDDEN);
         } else {
-            finish();
+            if(flag == 1){
+                if (cartHandler.getListInCart().isEmpty()) {
+                    finish();
+                } else {
+                    //open alert dialog
+                    Dialog dialog = createAlertDialog(this, "Warning", getResources().getString(R.string.warning_cart_not_empty),
+                            "Cancel", "Continue");
+                    dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            cartHandler.clearCart();
+                            dialog.dismiss();
+                            finish();
+                        }
+                    });
+                }
+            }
+
         }
     }
     @Override
@@ -283,6 +328,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.goto_cart_layout:
                 mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
+                address.setText(SharedPrefManager.getInstance(this).getString(SharedPrefManager.Key.USER_ADDRESS));
                 updatePrice();
                 cartData = cartHandler.getListInCart();
                 cartAdapter.notifyDataSetChanged();
@@ -320,6 +366,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
                                     startActivity(intent);
                                     intent = new Intent(ItemActivity.this,OrderDetailsActivity.class);
                                     intent.putExtra("data", cartModel);
+                                    intent.putExtra("oid",response.body().id);
                                     startActivity(intent);
                                     //remove items from cart
                                     cartHandler.clearCart();
