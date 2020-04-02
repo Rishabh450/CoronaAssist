@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.gson.Gson;
 import com.suvidha.Activities.ScanPassActivity;
 import com.suvidha.Models.Pass;
@@ -65,6 +66,7 @@ public class PassAdapter extends RecyclerView.Adapter<PassViewHolder> {
         holder.tvPassID.setText(pass.getPassid());
         holder.tvduration.setText(pass.getDuration());
         holder.tvVehicleNum.setText(pass.getVehicle());
+        holder.tvDate.setText(pass.getDate());
         holder.tvPassenger.setText(pass.getPassengerCount() + "");
         holder.tvType.setText(typeText);
         switch (pass.getStatus()) {

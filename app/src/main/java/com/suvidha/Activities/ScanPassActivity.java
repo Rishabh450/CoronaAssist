@@ -1,10 +1,5 @@
 package com.suvidha.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -17,6 +12,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
@@ -46,7 +46,7 @@ public class ScanPassActivity extends AppCompatActivity {
     // Views
     IntentIntegrator integrator;
     FloatingActionButton fabScan;
-    TextView tvpassID, tvPassType, tvDuration, tvDate, tvReason, tvVehicleNum, tvStatusText;
+    TextView tvpassID, tvPassType, tvDuration, tvDate, tvReason, tvVehicleNum, tvStatusText, tvDestination, tvIdentity, tvPassanger, tvSenior, tvName;
     ImageView ivQR, ivStatusImage;
     androidx.core.widget.NestedScrollView nestedScroller;
     Toolbar toolbar;
@@ -153,13 +153,32 @@ public class ScanPassActivity extends AppCompatActivity {
     }
 
     private void setInitialValuesToViews(Pass passObj) {
-        tvpassID.setText(passObj.getUid());
-        tvPassType.setText(passObj.getType()+"");
+        tvpassID.setText(passObj.getUrgencyText());
+        String typeText = "";
+        switch (passObj.getType()) {
+            case 0:
+                typeText = "in-city";
+                break;
+            case 1:
+                typeText = "in-state";
+                break;
+            case 2:
+                typeText = "out-state";
+                break;
+        }
+        tvPassType.setText(typeText);
+        llStatus.setVisibility(View.VISIBLE);
+        tvDestination.setText(passObj.getDestination());
         ivQR.setImageBitmap(Utils.getQRCode(passObj.getPassid()));
-        tvDuration.setText(passObj.getDuration());
-        tvDate.setText(passObj.getTime());
+        tvDuration.setText(passObj.getTime() + "(Valid for:" + passObj.getDuration() + ")");
+        tvDate.setText(passObj.getDate());
+        tvIdentity.setText(passObj.getProof());
         tvReason.setText(passObj.getPurpose());
         tvVehicleNum.setText(passObj.getVehicle());
+        String senior = passObj.isSeniorCitizen() ? "Yes" : "No";
+        tvSenior.setText(senior);
+        tvName.setText(passObj.getName());
+        tvPassanger.setText(passObj.getPassengerCount() + "");
 
         switch (passObj.getStatus()) {
             case 0:
@@ -258,6 +277,7 @@ public class ScanPassActivity extends AppCompatActivity {
         fabScan = findViewById(R.id.scan_pass_scan);
         tvpassID = findViewById(R.id.scan_pass_passid);
         tvPassType = findViewById(R.id.scan_pass_type);
+        tvDestination = findViewById(R.id.scan_pass_destination);
         ivQR = findViewById(R.id.scan_pass_qr);
         tvDuration = findViewById(R.id.scan_pass_duration);
         tvDate = findViewById(R.id.scan_pass_date);
@@ -267,6 +287,10 @@ public class ScanPassActivity extends AppCompatActivity {
         tvStatusText = findViewById(R.id.scan_approved_status_text);
         nestedScroller = findViewById(R.id.scan_nested_root);
         toolbar = findViewById(R.id.scan_pass_toolbar);
+        tvIdentity = findViewById(R.id.scan_pass_identity);
+        tvName = findViewById(R.id.scan_pass_name);
+        tvPassanger = findViewById(R.id.scan_pass_passanger);
+        tvSenior = findViewById(R.id.scan_pass_senior);
         rlChangeStatus = findViewById(R.id.scan_police_status_change_layout);
         llApprove = findViewById(R.id.police_status_change_approve_layout);
         llReject = findViewById(R.id.police_status_change_reject_layout);

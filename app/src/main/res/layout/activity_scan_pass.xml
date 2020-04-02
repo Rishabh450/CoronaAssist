@@ -8,6 +8,7 @@
     android:background="@color/qr_background">
 
     <RelativeLayout
+        android:layout_marginBottom="8dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -15,7 +16,7 @@
             android:id="@+id/scan_detail_root"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context=".ScanPassActivity">
+            tools:context=".Activities.ScanPassActivity">
 
             <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -33,6 +34,7 @@
                 android:padding="8dp">
 
                 <LinearLayout
+                    android:visibility="visible"
                     android:id="@+id/scan_pass_id_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -43,7 +45,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="Pass-ID: "
+                        android:text="Urgency: "
                         android:textColor="@color/black_100"
                         android:textSize="12sp" />
 
@@ -52,7 +54,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="XXXX - XXXX - XXXX"
+                        android:text=""
                         android:textColor="@color/black_100"
                         android:textSize="12sp" />
 
@@ -80,7 +82,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="Inside Jamshedpur"
+                        android:text=""
                         android:textColor="@color/black_100"
                         android:textSize="12sp" />
 
@@ -122,7 +124,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="Duration: "
+                        android:text="Start time: "
                         android:textColor="@color/black_100"
                         android:textSize="12sp" />
 
@@ -138,6 +140,7 @@
                 </LinearLayout>
 
                 <TextView
+                    android:visibility="visible"
                     android:id="@+id/scan_pass_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -149,10 +152,37 @@
                     android:textSize="12sp" />
 
                 <LinearLayout
-                    android:id="@+id/scan_pass_reason_layout"
+                    android:id="@+id/scan_pass_name_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/scan_pass_date"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Name: "
+                        android:textColor="@color/black_100"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/scan_pass_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text=""
+                        android:textColor="@color/black_100"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/scan_pass_reason_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/scan_pass_name_layout"
                     android:gravity="center_horizontal"
                     android:orientation="horizontal">
 
@@ -169,7 +199,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="Reason here"
+                        android:text=""
                         android:textColor="@color/black_100"
                         android:textSize="12sp" />
 
@@ -187,7 +217,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="Vehicle number: "
+                        android:text="Vehicle type: "
                         android:textColor="@color/black_100"
                         android:textSize="12sp" />
 
@@ -202,12 +232,120 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/scan_pass_destination_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/scan_pass_vehicle_layout"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Destination: "
+                        android:textColor="@color/black_100"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/scan_pass_destination"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text=""
+                        android:textColor="@color/black_100"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/scan_pass_identity_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/scan_pass_destination_layout"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Identity: "
+                        android:textColor="@color/black_100"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/scan_pass_identity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text=""
+                        android:textColor="@color/black_100"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/scan_pass_passenger_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/scan_pass_identity_layout"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Passenger count: "
+                        android:textColor="@color/black_100"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/scan_pass_passanger"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text=""
+                        android:textColor="@color/black_100"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/scan_pass_senior_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/scan_pass_passenger_layout"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Senior Citizen: "
+                        android:textColor="@color/black_100"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/scan_pass_senior"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text=""
+                        android:textColor="@color/black_100"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
 
                 <LinearLayout
                     android:id="@+id/scan_pass_approved_status_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/scan_pass_vehicle_layout"
+                    android:layout_below="@+id/scan_pass_senior_layout"
                     android:layout_marginTop="16dp"
                     android:orientation="horizontal">
 
@@ -309,16 +447,13 @@
 
         </RelativeLayout>
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_below="@+id/scan_police_status_change_layout"
+            android:layout_alignParentEnd="true"
             android:id="@+id/scan_pass_scan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="bottom|right"
             android:layout_margin="16dp"
-            app:srcCompat="@drawable/ic_scanner"
-            android:layout_alignParentRight="true"
-            tools:ignore="VectorDrawableCompat" />
+            app:srcCompat="@drawable/ic_scanner" />
     </RelativeLayout>
 
 </androidx.core.widget.NestedScrollView>
