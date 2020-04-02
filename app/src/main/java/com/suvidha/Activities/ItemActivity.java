@@ -297,6 +297,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         if (mBottomSheetBehaviour.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_HIDDEN);
         } else {
+            Log.e("TAG", String.valueOf(flag));
             if(flag == 1){
                 if (cartHandler.getListInCart().isEmpty()) {
                     finish();
@@ -319,6 +320,8 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     });
                 }
+            }else{
+                finish();
             }
 
         }

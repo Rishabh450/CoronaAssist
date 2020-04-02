@@ -2,8 +2,12 @@ package com.suvidha.Activities;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +27,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -38,6 +48,8 @@ import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.APP_CHARGE;
 import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
+import static com.suvidha.Utilities.Utils.PLAYSTORE_LINK;
+import static com.suvidha.Utilities.Utils.createAlertDialog;
 import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.email;
 import static com.suvidha.Utilities.Utils.getAccessToken;
@@ -68,6 +80,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
     private TextView delivery_address;
     private TextView orderid;
     private ImageView phone,mail;
+    private String currentVersion;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -112,6 +125,80 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
 
 
     }
+    private void compareAppVersion() {
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(this.getPackageName(), 0);
+            currentVersion = pInfo.versionName;
+            new GetCurrentVersion().execute();
+        } catch (PackageManager.NameNotFoundException e1) {
+            Toast.makeText(this, e1.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+    private class GetCurrentVersion extends AsyncTask<Void, Void, Void> {
+
+        private String latestVersion;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                Document document = Jsoup.connect(PLAYSTORE_LINK)
+                        .timeout(30000)
+//                        .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
+//                        .referrer("http://www.google.com")
+                        .get();
+                if (document != null) {
+                    Elements element = document.getElementsContainingOwnText("Current Version");
+                    for (Element ele : element) {
+                        if (ele.siblingElements() != null) {
+                            Elements sibElemets = ele.siblingElements();
+                            for (Element sibElemet : sibElemets) {
+                                latestVersion = sibElemet.text();
+                            }
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (!TextUtils.isEmpty(currentVersion) && !TextUtils.isEmpty(latestVersion)) {
+//                Log.d("hello", doc.toString());
+//                Log.d("hello", "Current : " + currentVersion + " Latest : " + latestVersion);
+                if (currentVersion.compareTo(latestVersion) < 0) {
+                    if (!isFinishing()) {
+                        showUpdateDialog();
+                    }
+                }
+            }
+            super.onPostExecute(aVoid);
+        }
+    }
+
+    private void showUpdateDialog() {
+        Dialog dialog = createAlertDialog(this,"Update Required","A newer version of apk is available at playstore. Please Update","Cancel","Update");
+        dialog.setCancelable(true);
+        dialog.show();
+        dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=ojass20.nitjsr.in.ojass&hl=en")));
+                dialog.dismiss();
+                dialog.dismiss();
+                finish();
+            }
+        });
+    }
+
     private void intialiseRetrofit() {
         apiInterface = APIClient.getApiClient().create(ApiInterface.class);
     }
