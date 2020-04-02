@@ -181,7 +181,7 @@ public class SharedPrefManager {
         mEditor = null;
     }
 
-    private void doEdit() {
+    public void doEdit() {
         if (!mBulkUpdate && mEditor == null) {
             mEditor = mPref.edit();
         }

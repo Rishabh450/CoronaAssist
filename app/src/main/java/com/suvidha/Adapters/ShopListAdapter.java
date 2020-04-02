@@ -16,6 +16,7 @@ import com.suvidha.R;
 
 import static com.suvidha.Utilities.Utils.currentType;
 import static com.suvidha.Utilities.Utils.shopItems;
+import static com.suvidha.Utilities.Utils.typeImg;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.MyHold
 
     public Context ctx;
     public List<ShopModel> list;
+
     public ShopListAdapter(Context ctx, List<ShopModel> list) {
         this.ctx = ctx;
         this.list = list;
@@ -34,16 +36,15 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.MyHold
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(ctx).inflate(R.layout.item_shop,parent,false);
+        View v = LayoutInflater.from(ctx).inflate(R.layout.item_shop, parent, false);
         return new MyHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
         ShopModel data = list.get(position);
-        if(currentType==1){
-            holder.iv.setImageResource(R.mipmap.ic_groc);
-        }
+        holder.iv.setImageResource(typeImg.get(currentType));
+
         holder.shop_name.setText(data.name);
         holder.shop_addr.setText(data.address);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -51,19 +52,19 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.MyHold
             public void onClick(View v) {
                 try {
 
-                    if(currentType==1) {
+                    if (currentType == 1) {
                         Intent intent = new Intent(ctx, CategoriesActivity.class);
                         intent.putExtra("shopid", data._id);
                         intent.putExtra("shopname", data.name);
                         ctx.startActivity(intent);
-                    }else{
+                    } else {
                         Intent intent = new Intent(ctx, ItemActivity.class);
                         intent.putExtra("shopid", data._id);
                         intent.putExtra("shopname", data.name);
-                        intent.putExtra("flag",1);
+                        intent.putExtra("flag", 1);
                         ctx.startActivity(intent);
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(ctx, "No Items Found", Toast.LENGTH_SHORT).show();
                 }
@@ -74,13 +75,14 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.MyHold
 
     @Override
     public int getItemCount() {
-        if(list == null)return  0;
+        if (list == null) return 0;
         return list.size();
     }
 
-    class MyHolder extends RecyclerView.ViewHolder{
+    class MyHolder extends RecyclerView.ViewHolder {
         ImageView iv;
-        TextView shop_name,shop_addr;
+        TextView shop_name, shop_addr;
+
         public MyHolder(@NonNull View itemView) {
             super(itemView);
             iv = itemView.findViewById(R.id.shop_img);

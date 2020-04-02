@@ -2,9 +2,13 @@ package com.suvidha.Activities;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -41,11 +45,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     GoogleSignInClient mGoogleSignInClient;
     ApiInterface apiInterface;
     Dialog dialog;
+    TextView tv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        tv = findViewById(R.id.logotext);
+
+        Shader textShader=new LinearGradient(0,0, 300, 20,
+                new int[]{Color.parseColor("#F0931F"),Color.parseColor("#0B9243")},
+                new float[]{0, 1}, Shader.TileMode.CLAMP);
+        tv.getPaint().setShader(textShader);
         intialiseRetrofit();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()

@@ -27,11 +27,12 @@ import java.util.List;
 public class Utils {
     public static final String rs = "\u20B9";
 
-    public static final String BASE_URL = "http://192.168.43.114:5000";
+//    public static final String BASE_URL = "http://192.168.43.114:5000";
 //    public static final String BASE_URL = "http://192.168.43.55:5000";
-//    public static final String BASE_URL = "http://202.56.13.210:5000";
+    public static final String BASE_URL = "http://202.56.13.210:5000";
     public static final String password = "Nitsuvidha1!";
     public static final String email = "suvidhajamshedpur@gmail.com";
+    public static final String PLAYSTORE_LINK = "https://play.google.com/store/apps/details?id=com.suvidha";
     public static double DELIVERY_CHARGE = 5;
     public static double APP_CHARGE = 2;
     public static List<ZonesModel> zonesList=new ArrayList<>();
@@ -39,11 +40,20 @@ public class Utils {
     public static List<CartModel> allOrders = new ArrayList<>();
     public static Integer currentType;
     public static int local_zone_name = 0;
+
     public static HashMap<Integer,String> statusHashMap = new HashMap<Integer, String>(){{
         put(-1,"Rejected");
         put(0,"Pending");
         put(1,"Accepted");
         put(2,"Delivered");
+    }};
+    public static HashMap<Integer,Integer> typeImg = new HashMap<Integer,Integer>(){{
+        put(1,R.mipmap.ic_requestpass);
+        put(2,R.mipmap.ic_groc);
+        put(3,R.mipmap.ic_milk);
+        put(4,R.mipmap.ic_bread);
+        put(5,R.mipmap.ic_gas);
+        put(6,R.mipmap.ic_water);
     }};
     public static HashMap<Integer, Pair<String,Integer>> catHashMap = new HashMap<Integer, Pair<String, Integer>>(){{
         put(1,new Pair<>("Vegetables",R.mipmap.ic_vegetables));
@@ -59,7 +69,7 @@ public class Utils {
     }};
     public static HashMap<Integer,Integer> shopTypesMap = new HashMap<Integer, Integer>(){{
         put(R.id.icon_request_passes,0);
-        put(R.id.icon_groceries,1);
+        put(R.id.icon_groceries,1);https://play.google.com/store/apps/details?id=
         put(R.id.icon_milk_and_dairy,2);
         put(R.id.icon_bread,3);
         put(R.id.icon_gas,4);
@@ -120,6 +130,12 @@ public class Utils {
         sharedPrefManager.put(SharedPrefManager.Key.USER_EMAIL, user.getEmail());
         sharedPrefManager.put(SharedPrefManager.Key.USER_PHONE, user.getPhone());
         sharedPrefManager.put(SharedPrefManager.Key.USER_ADDRESS,user.address);
+    }
+    public static void clearLoginSession(Context context){
+        SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance(context);
+        sharedPrefManager.edit();
+        sharedPrefManager.clear();
+        sharedPrefManager.commit();
     }
     public static Bitmap getQRCode(String Id) {
         // Handle Null pointer exception carefully.
