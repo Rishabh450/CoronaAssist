@@ -2,9 +2,12 @@ package com.suvidha.Activities;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +50,7 @@ public class AddPassActivity extends AppCompatActivity {
     // Views
     TextInputEditText etName, etDate, etProof, etDestination, etVehicleNumber, etPurpose, etTime, etDuration, etPassType, etPassengerCount, etUrgency;
     Button btnAdd;
+    ProgressDialog progressDialog;
 
     // Retrofit
     ApiInterface apiInterface;
@@ -347,6 +351,33 @@ public class AddPassActivity extends AppCompatActivity {
 
     }
 
+    private void showMessage(String titile, String Message) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("UI thread", "I am the UI thread");
+                progressDialog.setTitle(titile);
+                progressDialog.setMessage(Message);
+                progressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+                progressDialog.show();
+            }
+        });
+
+    }
+
+    private void hideMessage() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("UI thread", "I am the UI thread from Barcode Fragment");
+                progressDialog.hide();
+
+            }
+        });
+        return;
+    }
+
+
     private void showTimePicker() {
         TimePickerDialog picker = new TimePickerDialog(AddPassActivity.this,
                 new TimePickerDialog.OnTimeSetListener() {
@@ -363,6 +394,7 @@ public class AddPassActivity extends AppCompatActivity {
 
 
     private void addPass() {
+        showMessage("Adding", "Adding your pass to the database");
         String proof = etProof.getText().toString().trim();
         String destination = etDestination.getText().toString().trim();
         String vehicleNumber = etProof.getText().toString().trim();
@@ -395,15 +427,17 @@ public class AddPassActivity extends AppCompatActivity {
                         Log.d(TAG, "onResponse: " + response.message() + " " + response.body().getStatus());
                         Toast.makeText(AddPassActivity.this, "Failed Addition" + getAccessToken(AddPassActivity.this), Toast.LENGTH_SHORT).show();
                     }
+                    hideMessage();
                 }
 
                 @Override
                 public void onFailure(Call<PassGenerationResult> call, Throwable t) {
-
+                    hideMessage();
                 }
             });
 
         } else {
+            hideMessage();
             checkAndDisplayError(proof, destination, vehicleNumber, purpose, time, duration, passType + "", passengerCount + "");
         }
 
@@ -505,5 +539,6 @@ public class AddPassActivity extends AppCompatActivity {
         etPassengerCount = findViewById(R.id.add_pass_passanger_count);
         etUrgency = findViewById(R.id.add_pass_urgencyStatus);
         btnAdd = findViewById(R.id.add_pass_add);
+        progressDialog = new ProgressDialog(this);
     }
 }

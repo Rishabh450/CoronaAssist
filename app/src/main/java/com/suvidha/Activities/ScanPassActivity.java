@@ -2,9 +2,12 @@ package com.suvidha.Activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -52,6 +55,7 @@ public class ScanPassActivity extends AppCompatActivity {
     Toolbar toolbar;
     LinearLayout llApprove, llReject, llStatus;
     RelativeLayout rlChangeStatus;
+    ProgressDialog progressDialog;
 
     //Retrofit
     ApiInterface apiInterface;
@@ -152,6 +156,32 @@ public class ScanPassActivity extends AppCompatActivity {
         });
     }
 
+    private void showMessage(String titile, String Message) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("UI thread", "I am the UI thread");
+                progressDialog.setTitle(titile);
+                progressDialog.setMessage(Message);
+                progressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+                progressDialog.show();
+            }
+        });
+
+    }
+
+    private void hideMessage() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("UI thread", "I am the UI thread from Barcode Fragment");
+                progressDialog.hide();
+
+            }
+        });
+        return;
+    }
+
     private void setInitialValuesToViews(Pass passObj) {
         tvpassID.setText(passObj.getUrgencyText());
         String typeText = "";
@@ -226,7 +256,7 @@ public class ScanPassActivity extends AppCompatActivity {
             if (result.getContents() == null) {
                 Toast.makeText(ScanPassActivity.this, "No Scanned item found", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(ScanPassActivity.this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(ScanPassActivity.this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
                 consumeQRCode(result.getContents());
             }
         } else {
@@ -235,6 +265,7 @@ public class ScanPassActivity extends AppCompatActivity {
     }
 
     private void consumeQRCode(String contents) {
+        showMessage("Loading", "Please wait while we fetch the qr code");
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("pid",contents);
         rlChangeStatus.setVisibility(View.VISIBLE);
@@ -254,6 +285,7 @@ public class ScanPassActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         changeStatus("1", pass, pass.getStatus());
+                        hideMessage();
                     }
                 });
 
@@ -261,6 +293,7 @@ public class ScanPassActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         changeStatus("-1", pass ,pass.getStatus());
+                        hideMessage();
                     }
                 });
             }
@@ -268,6 +301,7 @@ public class ScanPassActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<SinglePassResult> call, Throwable t) {
                 Log.d(TAG, "onFailure: "+t.getMessage());
+                hideMessage();
             }
         });
     }
@@ -295,6 +329,7 @@ public class ScanPassActivity extends AppCompatActivity {
         llApprove = findViewById(R.id.police_status_change_approve_layout);
         llReject = findViewById(R.id.police_status_change_reject_layout);
         llStatus = findViewById(R.id.scan_pass_approved_status_layout);
+        progressDialog = new ProgressDialog(this);
     }
     private void intialiseRetrofit() {
         apiInterface = APIClient.getApiClient().create(ApiInterface.class);
