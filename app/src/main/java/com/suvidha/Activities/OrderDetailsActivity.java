@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -174,6 +175,14 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         shop_address.setText(data.shop_details.address);
         delivery_address.setText(data.address);
         orderid.setText(oid);
+        if(data.status == -1){
+            orderStatus.setTextColor(Color.RED);
+        }else if(data.status == 2 || data.status == 1){
+            orderStatus.setTextColor(getResources().getColor(R.color.default_button_color));
+        }
+        else{
+            orderStatus.setTextColor(getResources().getColor(R.color.colorPrimary));
+        }
         orderStatus.setText(statusHashMap.get(data.status));
 
     }

@@ -148,7 +148,7 @@ public class RegisterActivity extends AppCompatActivity {
             if(zoneName.length() == 0){
                 Log.e(TAG,"This case is impossible");
             }
-            if(phone.length() == 10){
+            if(phone.length() != 10){
                 etPhone.setError("Invalid phone number");
             }
 

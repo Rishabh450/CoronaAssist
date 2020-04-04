@@ -52,7 +52,8 @@ public class SharedPrefManager {
         public static final String USER_ID = "user_id";
         public static final String TOKEN_KEY = "token";
         public static final String ZONE_KEY = "zone";
-
+        public static final String QUARENTINE_LAT_KEY = "quarantinelat";
+        public static final String QUARENTINE_LON_KEY = "quarantinelon";
         public static final String USER_ADDRESS = "address";
     }
 
@@ -126,7 +127,13 @@ public class SharedPrefManager {
         doCommit();
     }
 
-
+    public void put(String key,float loc){
+        doEdit();
+        mEditor.putFloat(key,loc);
+    }
+    public float getFloat(String key, float defaultValue) {
+        return mPref.getFloat(key,defaultValue);
+    }
 
     public String getString(String key, String defaultValue) {
         return mPref.getString(key, defaultValue);

@@ -8,9 +8,9 @@ import java.util.List;
 public class SinglePassResult {
 
     @SerializedName("id")
-    Pass pass;
+    public Pass pass;
     @SerializedName("status")
-    int status;
+    public int status;
 
     public SinglePassResult() {
     }

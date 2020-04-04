@@ -5,37 +5,37 @@ import com.google.gson.annotations.SerializedName;
 public class Pass {
 
     @SerializedName("_id")
-    private String passid;
+    public String passid;
     @SerializedName("proof")
-    private String  proof;
+    public String  proof;
     @SerializedName("destination")
-    private String  destination;
+    public String  destination;
     @SerializedName("vehicle")
-    private String  vehicle;
+    public String  vehicle;
     @SerializedName("purpose")
-    private String  purpose;
+    public String  purpose;
     @SerializedName("time")
-    private String  time;
+    public String  time;
     @SerializedName("duration")
-    private String  duration;
+    public String  duration;
     @SerializedName("status")
-    private int status;
+    public int status;
     @SerializedName("uid")
-    private String  uid;
+    public String  uid;
     @SerializedName("type")
-    private int type;
+    public int type;
     @SerializedName("senior_citizen")
-    private boolean seniorCitizen;
+    public boolean seniorCitizen;
     @SerializedName("passenger_count")
-    private int passengerCount;
+    public int passengerCount;
     @SerializedName("urgency")
-    private boolean urgency;
+    public boolean urgency;
     @SerializedName("urgency_text")
-    private String urgencyText;
+    public String urgencyText;
     @SerializedName("name")
-    private String name;
+    public String name;
     @SerializedName("date")
-    private String date;
+    public String date;
 
 
 

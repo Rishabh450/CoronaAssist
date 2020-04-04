@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,7 +13,6 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -24,16 +24,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.suvidha.Adapters.ViewPagerAdapter;
 import com.suvidha.Fragments.HistoryFragment;
 import com.suvidha.Fragments.HomeFragment;
 import com.suvidha.Models.EssentialsRequestModel;
@@ -71,14 +67,15 @@ import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.local_zone_name;
 import static com.suvidha.Utilities.Utils.zonesList;
+import static com.suvidha.Utilities.Utils.is_quarantined;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private static final int PERMISSION_ID = 001;
+
     private static final String TAG = "MainActivity";
 
     private LinearLayout locationLayout;
     private TextView nodeName;
-    FusedLocationProviderClient mFusedLocationClient;
+
     private ApiInterface apiInterface;
     private int backFlag = 0;
     private BottomNavigationView navigation;
@@ -126,6 +123,79 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
+    private void getEssentials() {
+        if (dialog == null) {
+            dialog = createProgressDialog(this, "Please wait");
+        }
+        progressBar = dialog.findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
+        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
+        staticProgress.setVisibility(View.GONE);
+        dialog.show();
+        Call<EssentialsRequestModel> essentialsRequestModelCall = apiInterface.getEssentials(getAccessToken(this));
+//        Log.e(TAG,"Response Error "+"LOL");
+        essentialsRequestModelCall.enqueue(new Callback<EssentialsRequestModel>() {
+            @Override
+            public void onResponse(Call<EssentialsRequestModel> call, Response<EssentialsRequestModel> response) {
+
+                try {
+                    if (response.body().status == 200) {
+
+                        dialog.dismiss();
+                        onStart();
+                        zonesList.clear();
+                        zonesList.addAll(response.body().id.zones);
+
+                        is_quarantined = response.body().id.is_quarantined;
+                        Log.e(TAG, String.valueOf(is_quarantined));
+                        if (getSupportFragmentManager().findFragmentById(R.id.frame_container) instanceof HomeFragment) {
+                            NotifyFragment callBack = (NotifyFragment) getSupportFragmentManager().findFragmentById(R.id.frame_container);
+                            callBack.notifyDataLoaded();
+                        }
+                        //response.body().id.shop_types;
+                        APP_CHARGE = response.body().id.cess_rate;
+                        DELIVERY_CHARGE = response.body().id.delivery_cost;
+
+                        local_zone_name = SharedPrefManager.getInstance(MainActivity.this).getInt(SharedPrefManager.Key.ZONE_KEY);
+                        nodeName.setText(zonesList.get(local_zone_name).name);
+                    } else {
+                        TextView msg = dialog.findViewById(R.id.progress_msg);
+                        msg.setText("Try Again");
+                    }
+                } catch (Exception e) {
+
+                    TextView msg = dialog.findViewById(R.id.progress_msg);
+                    msg.setText("Try Again");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<EssentialsRequestModel> call, Throwable t) {
+                Log.e(TAG, "Response Error " + t.getMessage());
+
+                TextView msg = dialog.findViewById(R.id.progress_msg);
+                msg.setText("Try Again");
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar = dialog.findViewById(R.id.progress_bar);
+                        progressBar.setVisibility(View.INVISIBLE);
+                        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
+                        staticProgress.setVisibility(View.VISIBLE);
+                        staticProgress.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                getEssentials();
+                            }
+                        });
+                    }
+                }, 500);
+
+                Toast.makeText(MainActivity.this, "Failed to connect to the server", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     private void getAllOrders() {
         Call<GetOrdersModel> listCall = apiInterface.getAllOrders(getAccessToken(this));
@@ -149,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onFailure(Call<GetOrdersModel> call, Throwable t) {
+                Log.e(TAG, t.getMessage());
                 Toast.makeText(MainActivity.this, "Failed to connect to the server", Toast.LENGTH_SHORT).show();
             }
         });
@@ -230,71 +301,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public Dialog dialog;
     public ProgressBar progressBar;
 
-    private void getEssentials() {
-        if (dialog == null) {
-            dialog = createProgressDialog(this, "Please wait");
-        }
-        progressBar = dialog.findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.VISIBLE);
-        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
-        staticProgress.setVisibility(View.GONE);
-        dialog.show();
-        Call<EssentialsRequestModel> essentialsRequestModelCall = apiInterface.getEssentials(getAccessToken(this));
-//        Log.e(TAG,"Response Error "+"LOL");
-        essentialsRequestModelCall.enqueue(new Callback<EssentialsRequestModel>() {
-            @Override
-            public void onResponse(Call<EssentialsRequestModel> call, Response<EssentialsRequestModel> response) {
-
-                try {
-                    if (response.body().status == 200) {
-
-                        dialog.dismiss();
-                        onStart();
-                        zonesList.clear();
-                        zonesList.addAll(response.body().id.zones);
-                        //response.body().id.shop_types;
-                        APP_CHARGE = response.body().id.cess_rate;
-                        DELIVERY_CHARGE = response.body().id.delivery_cost;
-
-                        local_zone_name = SharedPrefManager.getInstance(MainActivity.this).getInt(SharedPrefManager.Key.ZONE_KEY)+1;
-                        nodeName.setText(local_zone_name);
-                    } else {
-                        TextView msg = dialog.findViewById(R.id.progress_msg);
-                        msg.setText("Try Again");
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, String.valueOf(e.getStackTrace()));
-                    TextView msg = dialog.findViewById(R.id.progress_msg);
-                    msg.setText("Try Again");
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<EssentialsRequestModel> call, Throwable t) {
-                Log.e(TAG, "Response Error " + t.getMessage());
-                TextView msg = dialog.findViewById(R.id.progress_msg);
-                msg.setText("Try Again");
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar = dialog.findViewById(R.id.progress_bar);
-                        progressBar.setVisibility(View.INVISIBLE);
-                        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
-                        staticProgress.setVisibility(View.VISIBLE);
-                        staticProgress.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                getEssentials();
-                            }
-                        });
-                    }
-                }, 500);
-
-                Toast.makeText(MainActivity.this, "Failed to connect to the server", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
         private void intialiseRetrofit() {
             apiInterface = APIClient.getApiClient().create(ApiInterface.class);
@@ -335,7 +341,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setListeners() {
         locationLayout.setOnClickListener(this);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         signout.setOnClickListener(this);
     }
 
@@ -434,34 +439,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public interface NotifyFragment {
         void notifyDataLoaded();
+        Location l = new Location("");
+
+
     }
 }
 
-//    private boolean checkPermissions() {
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-//                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//            return true;
-//        }
-//        return false;
-//    }
 
-//    private void requestPermissions() {
-//        ActivityCompat.requestPermissions(
-//                this,
-//                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
-//                PERMISSION_ID
-//        );
-//    }
 //
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if (requestCode == PERMISSION_ID) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                // Granted. Start getting the location information
-//            }
-//        }
-//    }
+
 //
 //    private boolean isLocationEnabled() {
 //        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -494,106 +480,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
 //    }
 
-//    private class LocationStuff extends AsyncTask<Void, Void, Void> {
-//
-//        private Location currentLocation;
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            nodeProgress.setVisibility(View.VISIBLE);
-//            nodeName.setText("");
-//            getCurrentLocation();
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//
-//            //get current location
-//            while (currentLocation == null) {
-////                Log.e("LOL", "lol");
-//            }
-//
-//            nodesLocation = getNodesLocation();
-//            //get nodes location
-//            //punch cur and nod loc in list
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//            Log.e("LOC", String.valueOf(currentLocation));
-//            Double mDist = Double.MAX_VALUE;
-//            NodeModel minDistanceNode = null;
-//            for (NodeModel node : nodesLocation) {
-//                node.distance = distance(currentLocation.getLatitude(), currentLocation.getLongitude(),
-//                        node.location.getLatitude(), node.location.getLongitude(), "K");
-//                if (mDist > node.distance) {
-//                    mDist = node.distance;
-//                    minDistanceNode = node;
-//                }
-//            }
-//            nodeProgress.setVisibility(View.GONE);
-//            nodeName.setText(minDistanceNode.name);
-//            Log.e("TAG", minDistanceNode.name);
-//
-//        }
-//
-//        private double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
-//            if ((lat1 == lat2) && (lon1 == lon2)) {
-//                return 0;
-//            } else {
-//                double theta = lon1 - lon2;
-//                double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
-//                dist = Math.acos(dist);
-//                dist = Math.toDegrees(dist);
-//                dist = dist * 60 * 1.1515;
-//                if (unit.equals("K")) {
-//                    dist = dist * 1.609344;
-//                } else if (unit.equals("N")) {
-//                    dist = dist * 0.8684;
-//                }
-//                return (dist);
-//            }
-//        }
-//
-//        public List<NodeModel> getNodesLocation() {
-//            List<NodeModel> list = new ArrayList<>();
-//            list.add(new NodeModel("Bistupur", initLoc(23.981071, 85.363343)));
-//            list.add(new NodeModel("Adityapur", initLoc(23.981267, 85.361895)));
-//            return list;
-//        }
-//
-//        Location initLoc(Double lat, Double lng) {
-//            Location location = new Location("Provider");
-//            location.setLatitude(lat);
-//            location.setLongitude(lng);
-//            return location;
-//        }
-//
-//        private void getCurrentLocation() {
-//            if (checkPermissions()) {
-//                if (isLocationEnabled()) {
-//                    mFusedLocationClient.getLastLocation().addOnCompleteListener(
-//                            new OnCompleteListener<Location>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<Location> task) {
-//                                    Location location = task.getResult();
-//                                    if (location == null) {
-//                                        //select the node
-//                                    } else {
-//                                        currentLocation = location;
-//
-//                                    }
-//                                }
-//                            }
-//                    );
-//                } else {
-//                    Toast.makeText(getApplicationContext(), "Turn on location", Toast.LENGTH_LONG).show();
-//                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                    startActivity(intent);
-//                }
-//            }
-//        }
-//    }
+

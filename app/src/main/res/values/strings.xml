@@ -9,4 +9,5 @@
     <string name="place_order_msg">Do you want to continue placing the order?</string>
     <string name="loading_msg">Please Wait</string>
     <string name="backPress">Press back again to close the application</string>
+    <string name="terms_and_condition"><p>-This is to agree that you\'ll be monitored my the govt. through the app for home quarantine, and if you violate the quarantine, you\'ll be punished by the local governing body.<br />-You are supposed to click a picture and send it every 30 minutes from 9AM to 9PM.<br />-Always keep your location on at all times, failing to do so will be considered as an act of violation and the local governing authorities can come to inspect you if they find out any default change from your location.<br />-Any False registrations of home quarantine will be considered a Criminal act.</p></string>
 </resources>

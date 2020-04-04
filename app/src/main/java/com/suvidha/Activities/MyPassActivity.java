@@ -73,9 +73,8 @@ public class MyPassActivity extends AppCompatActivity {
 
         initiliseAllViews();
         intialiseRetrofit();
+        setToolbar();
 
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Your Passes");
 
 
 //        UtilityFunctions.clearLoginSession(MyPassActivity.this);
@@ -91,6 +90,12 @@ public class MyPassActivity extends AppCompatActivity {
         fetchData();
     }
 
+    private void setToolbar() {
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Your Passes");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -101,8 +106,13 @@ public class MyPassActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
 
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void askPolice(Intent intent) {

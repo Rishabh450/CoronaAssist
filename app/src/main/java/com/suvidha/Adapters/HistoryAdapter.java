@@ -2,6 +2,7 @@ package com.suvidha.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +52,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyHolder
         holder.time.setText(String.valueOf(date + " at " + time));
         holder.orderid.setText(data._id);
         Log.e("status", String.valueOf(data.status));
+        if(data.status == -1){
+            holder.order_status.setTextColor(Color.RED);
+        }else if(data.status == 2 || data.status == 1){
+            holder.order_status.setTextColor(ctx.getResources().getColor(R.color.default_button_color));
+        }
+        else{
+            holder.order_status.setTextColor(ctx.getResources().getColor(R.color.colorPrimary));
+        }
         holder.order_status.setText(orderStatus.get(statusHashMap.get(data.status)));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

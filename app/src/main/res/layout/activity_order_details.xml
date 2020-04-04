@@ -52,7 +52,7 @@
                 android:layout_marginLeft="@dimen/border_margin"
                 android:layout_marginTop="5dp"
                 android:text="@string/view_order_summary"
-                android:textColor="@color/default_button_color"
+                android:textColor="@color/colorPrimary"
                 android:textSize="15sp" />
 
             <LinearLayout
@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:text="PENDING"
-                    android:textColor="@color/default_button_color"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="25sp" />
             </LinearLayout>
 

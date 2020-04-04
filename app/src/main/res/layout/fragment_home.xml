@@ -78,6 +78,17 @@
             android:text="Water"
             android:textAllCaps="false"
             android:textColor="@color/secondary_text_color" />
+        <Button
+            android:id="@+id/icon_quarentine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/border_margin"
+            android:background="@drawable/home_btn_shape"
+            android:gravity="center"
+            android:text="Quarentine"
+            android:textAllCaps="false"
+            android:textColor="@color/secondary_text_color"
+            />
 
     </LinearLayout>
 </ScrollView>

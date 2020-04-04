@@ -1,7 +1,9 @@
 package com.suvidha.Activities;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
@@ -29,10 +31,13 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.suvidha.Utilities.Utils.CAMERA_PERMISSION_CODE;
+import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.isLoggedIn;
 import static com.suvidha.Utilities.Utils.password;
@@ -84,6 +89,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     void updateUI(GoogleSignInAccount account) {
         if (account != null) {
+            getPermissions();
             if (isLoggedIn(LoginActivity.this)) {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
@@ -104,7 +110,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Intent intent = null;
                             zonesList.clear();
                             zonesList.addAll(response.body().zone);
-
+                            if(response.body().location != null){
+                                SharedPrefManager.getInstance(LoginActivity.this).
+                                        put(SharedPrefManager.Key.QUARENTINE_LAT_KEY,response.body().location.location_lat);
+                                SharedPrefManager.getInstance(LoginActivity.this).
+                                        put(SharedPrefManager.Key.QUARENTINE_LON_KEY,response.body().location.location_lon);
+                            }
                             SharedPrefManager.getInstance(LoginActivity.this).storeToken(response.body().id.token);
                             if (response.body().status == 205 || response.body().id.phone == null) {
                                 // goto register activity
@@ -115,6 +126,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                             } else {
                                 //go to main activity
+                                Log.e("TAG", String.valueOf(getZoneId(response.body().id,response.body().zone)));
                                 setLoginSession(response.body().id, LoginActivity.this,getZoneId(response.body().id,response.body().zone));
                                 intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
@@ -137,9 +149,44 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    private void getPermissions() {
+        if(checkCameraPermission()){
+            requestCameraPermission();
+        }
+        if(checkLocationPermissions()){
+            requestLocationPermissions();
+        }
+    }
+    private boolean checkLocationPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        return false;
+    }
+    private boolean checkCameraPermission(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        return false;
+    }
+    private void requestLocationPermissions() {
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                LOCATION_PERMISSION_CODE
+        );
+    }
+    private void requestCameraPermission() {
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.CAMERA},
+                CAMERA_PERMISSION_CODE
+        );
+    }
     private int getZoneId(UserModel user, List<ZonesModel> zone) {
         for(int i=0;i<zone.size();i++){
-            if(user.name.compareTo(zone.get(i).name)==0){
+            if(user.zone.compareTo(zone.get(i).name)==0){
                 return zone.get(i).id;
             }
         }
@@ -170,7 +217,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             // ...
         }
     }
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Granted. Start getting the location information
+                Log.e(TAG,"CAMERA GRANTED");
+            }
+        }else if(requestCode == LOCATION_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Granted. Start getting the location information
+                Log.e(TAG,"LOCATION GRANTED");
+            }
+        }
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

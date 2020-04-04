@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName;
 public class PassGenerationResult {
 
     @SerializedName("id")
-    private String id;
+    public String id;
     @SerializedName("status")
-    private Integer status;
+    public Integer status;
 
     public PassGenerationResult() {
     }

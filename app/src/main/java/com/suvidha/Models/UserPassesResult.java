@@ -8,9 +8,9 @@ import java.util.List;
 public class UserPassesResult {
 
     @SerializedName("id")
-    List<Pass> passes = new ArrayList<>();
+    public List<Pass> passes = new ArrayList<>();
     @SerializedName("status")
-    int status;
+    public int status;
 
     public UserPassesResult() {
     }

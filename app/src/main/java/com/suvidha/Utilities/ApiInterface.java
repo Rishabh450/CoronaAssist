@@ -12,7 +12,9 @@ import com.suvidha.Models.OrderIdModel;
 import com.suvidha.Models.OrderRequestModel;
 import com.suvidha.Models.Pass;
 import com.suvidha.Models.PassGenerationResult;
+import com.suvidha.Models.QuarantineModel;
 import com.suvidha.Models.RegistrationResult;
+import com.suvidha.Models.ReportModel;
 import com.suvidha.Models.ShopRequestModel;
 import com.suvidha.Models.SidModel;
 import com.suvidha.Models.SinglePassResult;
@@ -83,6 +85,16 @@ public interface ApiInterface {
     @Headers("Content-Type: application/json")
     @PUT("/api/police/validate_pass")
     Call<RegistrationResult> updateStatus(@Body Map<String, String> body);
+
+    @Headers("Content-Type: application/json")
+    @POST("/api/register_quarantine")
+    Call<GeneralModel> register_quarantine(@Header("x-access-tokens") String token, @Body QuarantineModel model);
+
+    @Headers("Content-Type: application/json")
+    @POST("/api/report_quarantine")
+    Call<GeneralModel> send_report(@Header("x-access-tokens") String token, @Body ReportModel model);
+
+
 //    @POST("/api/login")
 //    Call<LoginResult> login(@Body LoginCredential loginCredential);
 //

@@ -40,7 +40,7 @@ import retrofit2.Response;
 public class ScanPassActivity extends AppCompatActivity {
 
     //Field variables
-    private static final int REQUEST_CAMERA_PERMISSION = 201;
+
     private static final String TAG = "scan";
 
     // Views
@@ -231,21 +231,6 @@ public class ScanPassActivity extends AppCompatActivity {
     }
 
 
-//    private void openscanner() {
-//        if (ActivityCompat.checkSelfPermission(ScanPassActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-//            Toast.makeText(ScanPassActivity.this, "Barcode scanner started", Toast.LENGTH_SHORT).show();
-//            integrator = new IntentIntegrator(ScanPassActivity.this);
-//            integrator.setOrientationLocked(true);
-//            integrator.setPrompt("Scan your QR code");
-//            integrator.setCameraId(0);  // Use a specific camera of the device
-//            integrator.setBeepEnabled(true);
-//            integrator.setBarcodeImageEnabled(true);
-//            integrator.initiateScan();
-//
-//        } else {
-//            ActivityCompat.requestPermissions(ScanPassActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-//        }
-//    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
