@@ -10,4 +10,16 @@
     <string name="loading_msg">Please Wait</string>
     <string name="backPress">Press back again to close the application</string>
     <string name="terms_and_condition"><p>-This is to agree that you\'ll be monitored my the govt. through the app for home quarantine, and if you violate the quarantine, you\'ll be punished by the local governing body.<br />-You are supposed to click a picture and send it every 30 minutes from 9AM to 9PM.<br />-Always keep your location on at all times, failing to do so will be considered as an act of violation and the local governing authorities can come to inspect you if they find out any default change from your location.<br />-Any False registrations of home quarantine will be considered a Criminal act.</p></string>
+    <string name="faq">Suvidha- An Application developed by the Final year students of NIT Jamshedpur along with the co-operation of East Singhbhum District Administration to help and protect the Citizens against Covid-19.\n\n
+Features: \n \n
+
+-Home Quarantine Tracking Facility for citizens who are assigned by the government to be Quarantined, so that the govt. can monitor their movements and keep track of them. \n
+-Issuing local passes for Essential workers to move around Jamshedpur for Essential work via the application and approved by the issuing local authority. (Coming Soon)\n
+-Delivery of Essential Items such as Grocery, Personal Care, Gas, Water, Medicines, etc via the Application. (Coming Soon)\n
+
+Currently, the app is on it\'s way to be uploaded on the Google Play Store, and for now it\'s shared via social media for reaching out to people who are told to be under home quarantine and isolation by the government.\n\n
+
+To contact developers:\n\n
+Email: suvidhajamshedpur@gmail.com \n
+Phone: 7061039636 </string>
 </resources>

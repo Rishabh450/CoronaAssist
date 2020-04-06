@@ -1,22 +1,43 @@
 package com.suvidha.Activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.Task;
 import com.suvidha.Models.LoginResult;
 import com.suvidha.Models.UserModel;
@@ -29,9 +50,6 @@ import com.suvidha.Utilities.SharedPrefManager;
 
 import java.util.List;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,7 +62,20 @@ import static com.suvidha.Utilities.Utils.password;
 import static com.suvidha.Utilities.Utils.setLoginSession;
 import static com.suvidha.Utilities.Utils.zonesList;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
+
+    // Location related
+    // Unique tag for the error dialog fragment
+    private static final String DIALOG_ERROR = "dialog_error";
+    // Request code to use when launching the resolution activity
+    private static final int REQUEST_RESOLVE_ERROR = 555;
+    int ACCESS_FINE_LOCATION_CODE = 3310;
+    int ACCESS_COARSE_LOCATION_CODE = 3410;
+    // Bool to track whether the app is already resolving an error
+    private boolean mResolvingError = false;
+    private GoogleApiClient mGoogleApiClient;
+
     private static final String TAG = "LoginActivity";
     private static final int RC_SIGN_IN = 100;
     GoogleSignInClient mGoogleSignInClient;
@@ -56,6 +87,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        buildGoogleApiClient();
         tv = findViewById(R.id.logotext);
 
         Shader textShader=new LinearGradient(0,0, 300, 20,
@@ -76,6 +108,82 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         findViewById(R.id.sign_in_button).setOnClickListener(this);
 
+    }
+
+    // When user first come to this activity we try to connect Google services for location and map related work
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+
+    // Google Api Client is connected
+    @Override
+    public void onConnected(Bundle bundle) {
+        if (mGoogleApiClient.isConnected()) {
+            //if connected successfully show user the settings dialog to enable location from settings services
+            // If location services are enabled then get Location directly
+            // Else show options for enable or disable location services
+            settingsrequest();
+        }
+    }
+
+
+    // This is the method that will be called if user has disabled the location services in the device settings
+    // This will show a dialog asking user to enable location services or not
+    // If user tap on "Yes" it will directly enable the services without taking user to the device settings
+    // If user tap "No" it will just Finish the current Activity
+    public void settingsrequest() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(30 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true); //this is the key ingredient
+
+        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        if (mGoogleApiClient.isConnected()) {
+
+                            // check if the device has OS Marshmellow or greater than
+                            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+                                if (ActivityCompat.checkSelfPermission(LoginActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(LoginActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                    ActivityCompat.requestPermissions(LoginActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_CODE);
+                                } else {
+                                    // get Location
+                                }
+                            } else {
+                                // get Location
+                            }
+
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
+                            status.startResolutionForResult(LoginActivity.this, REQUEST_RESOLVE_ERROR);
+                        } catch (IntentSender.SendIntentException e) {
+                            // Ignore the error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
+                        break;
+                }
+            }
+        });
     }
 
     private void intialiseRetrofit() {
@@ -223,12 +331,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (requestCode == CAMERA_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Granted. Start getting the location information
-                Log.e(TAG,"CAMERA GRANTED");
+                Log.e(TAG, "CAMERA GRANTED");
             }
-        }else if(requestCode == LOCATION_PERMISSION_CODE) {
+        } else if (requestCode == LOCATION_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Granted. Start getting the location information
-                Log.e(TAG,"LOCATION GRANTED");
+                Log.e(TAG, "LOCATION GRANTED");
+            }
+        } else if (requestCode == 3310) {
+
+            if (grantResults.length > 0) {
+
+                for (int i = 0, len = permissions.length; i < len; i++) {
+
+                    if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                        Toast.makeText(this, "Please switch on your location", Toast.LENGTH_SHORT).show();
+                    } else if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        // get Location
+                    } else {
+                        this.finish();
+                    }
+                }
             }
         }
     }
@@ -243,8 +366,96 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
-        }else {
+        } else if (requestCode == REQUEST_RESOLVE_ERROR) {
+            mResolvingError = false;
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    // get location method
+                    break;
+                case Activity.RESULT_CANCELED:
+                    this.finish();
+                    break;
+            }
+        }
+    }
 
+    @Override
+    public void onConnectionSuspended(int i) {
+    }
+
+
+    // When there is an error connecting Google Services
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        if (mResolvingError) {
+            // Already attempting to resolve an error.
+            return;
+        } else if (result.hasResolution()) {
+            try {
+                mResolvingError = true;
+                result.startResolutionForResult(this, REQUEST_RESOLVE_ERROR);
+            } catch (IntentSender.SendIntentException e) {
+                // There was an error with the resolution intent. Try again.
+                mGoogleApiClient.connect();
+            }
+        } else {
+            // Show dialog using GoogleApiAvailability.getErrorDialog()
+            showErrorDialog(result.getErrorCode());
+            mResolvingError = true;
+        }
+    }
+
+
+    /* Creates a dialog for an error message */
+    private void showErrorDialog(int errorCode) {
+        // Create a fragment for the error dialog
+        ErrorDialogFragment dialogFragment = new ErrorDialogFragment();
+        // Pass the error that should be displayed
+        Bundle args = new Bundle();
+        args.putInt(DIALOG_ERROR, errorCode);
+        dialogFragment.setArguments(args);
+        dialogFragment.show(getSupportFragmentManager(), "errordialog");
+    }
+
+    /* Called from ErrorDialogFragment when the dialog is dismissed. */
+    public void onDialogDismissed() {
+        mResolvingError = false;
+    }
+
+    // Connect Google Api Client if it is not connected already
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    // Stop the service when we are leaving this activity
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    /* A fragment to display an error dialog */
+    public static class ErrorDialogFragment extends DialogFragment {
+        public ErrorDialogFragment() {
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Get the error code and retrieve the appropriate dialog
+            int errorCode = this.getArguments().getInt(DIALOG_ERROR);
+            return GoogleApiAvailability.getInstance().getErrorDialog(
+                    this.getActivity(), errorCode, REQUEST_RESOLVE_ERROR);
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            ((LoginActivity) getActivity()).onDialogDismissed();
         }
     }
 
