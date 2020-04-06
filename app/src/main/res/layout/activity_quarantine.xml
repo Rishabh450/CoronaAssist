@@ -26,6 +26,6 @@
         android:layout_alignParentBottom="true"
 
         android:id="@+id/report_btn"
-        android:text="Report and take Selfie"
+        android:text="@string/report"
         />
 </RelativeLayout>

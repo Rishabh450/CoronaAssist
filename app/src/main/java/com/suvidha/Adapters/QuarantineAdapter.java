@@ -52,7 +52,8 @@ public class QuarantineAdapter extends RecyclerView.Adapter<QuarantineAdapter.My
         String date = formatter.format(timestamp);
         formatter = new SimpleDateFormat("hh:mm a");
         String time =formatter.format(timestamp);
-        holder.report_time.setText(ctx.getResources().getString(R.string.reported_on)+ date + ctx.getResources().getString(R.string.at) + time);
+//        holder.report_time.setText(ctx.getResources().getString(R.string.reported_on)+ date + ctx.getResources().getString(R.string.at) + time);
+        holder.report_time.setText(val.report_time);
         if(val.location_error == 1){
             holder.quarantine_item.setBackgroundColor(Color.RED);
         }else{

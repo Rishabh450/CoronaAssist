@@ -7,8 +7,7 @@ public class EssentialsModel {
     public double cess_rate;
     public List<ZonesModel> zones;
     public List<ShopTypesModel> shop_types;
-    public int is_quarantined
-            ;
+    public int is_quarantined;
 
     public EssentialsModel(double delivery_cost, double cess_rate, List<ZonesModel> zones, List<ShopTypesModel> shop_types, int is_quarantined) {
         this.delivery_cost = delivery_cost;

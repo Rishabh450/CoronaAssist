@@ -49,8 +49,8 @@
         <activity android:name=".Activities.AddPassActivity" />
         <activity android:name=".Activities.MyPassActivity" />
         <activity android:name=".Activities.QuarantineActivity" >
-
         </activity>
+        <activity android:name=".Activities.FAQActivity" />
     </application>
 
 </manifest>

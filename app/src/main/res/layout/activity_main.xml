@@ -16,7 +16,25 @@
         <include layout="@layout/toolbar_layout" />
 
     </com.google.android.material.appbar.AppBarLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_app_bar"
+        android:layout_alignParentRight="true"
+        android:text="@string/change_to_hindi"
+        android:id="@+id/change_to_hindi"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_app_bar"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="20dp"
+        android:visibility="visible"
+        android:text="@string/change_to_english"
 
+        android:id="@+id/change_to_english"
+        />
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="match_parent"
@@ -32,7 +50,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/navigation"
-        android:layout_below="@id/main_app_bar"
+        android:layout_below="@id/change_to_hindi"
+        android:layout_marginTop="@dimen/border_margin"
          />
 
 

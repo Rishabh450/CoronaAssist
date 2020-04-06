@@ -45,6 +45,7 @@ import com.suvidha.Utilities.SharedPrefManager;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -100,22 +101,22 @@ public class QuarantineActivity extends AppCompatActivity {
 
 
     }
-    private Dialog dialog;
-    private ProgressBar progressBar;
+//    private Dialog dialog;
+//    private ProgressBar progressBar;
     private void getReports() {
-        if (dialog == null) {
-            dialog = createProgressDialog(this, getResources().getString(R.string.please_wait));
-        }
-        progressBar = dialog.findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.VISIBLE);
-        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
-        staticProgress.setVisibility(View.GONE);
-        dialog.show();
+//        if (dialog == null) {
+//            dialog = createProgressDialog(this, getResources().getString(R.string.please_wait));
+//        }
+//        progressBar = dialog.findViewById(R.id.progress_bar);
+//        progressBar.setVisibility(View.VISIBLE);
+//        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
+//        staticProgress.setVisibility(View.GONE);
+//        dialog.show();
         Call<GetReportsModel> getReportsModelCall = apiInterface.get_report(getAccessToken(this));
         getReportsModelCall.enqueue(new Callback<GetReportsModel>() {
             @Override
             public void onResponse(Call<GetReportsModel> call, Response<GetReportsModel> response) {
-                dialog.dismiss();
+//                dialog.dismiss();
                 data.clear();
                 data.addAll(response.body().id);
                 data.sort(new TimestampSorter());
@@ -124,23 +125,23 @@ public class QuarantineActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<GetReportsModel> call, Throwable t) {
-                TextView msg = dialog.findViewById(R.id.progress_msg);
-                msg.setText(R.string.try_again);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar = dialog.findViewById(R.id.progress_bar);
-                        progressBar.setVisibility(View.INVISIBLE);
-                        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
-                        staticProgress.setVisibility(View.VISIBLE);
-                        staticProgress.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                getReports();
-                            }
-                        });
-                    }
-                }, 500);
+//                TextView msg = dialog.findViewById(R.id.progress_msg);
+//                msg.setText(R.string.try_again);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        progressBar = dialog.findViewById(R.id.progress_bar);
+//                        progressBar.setVisibility(View.INVISIBLE);
+//                        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
+//                        staticProgress.setVisibility(View.VISIBLE);
+//                        staticProgress.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                getReports();
+//                            }
+//                        });
+//                    }
+//                }, 500);
                 Toast.makeText(QuarantineActivity.this, getResources().getString(R.string.cannot_get_your_reports), Toast.LENGTH_SHORT).show();
             }
         });
@@ -219,23 +220,24 @@ public class QuarantineActivity extends AppCompatActivity {
     }
     void sendDataToServer(Intent data){
         try {
-            Dialog dialog = createProgressDialog(getApplicationContext(),getResources().getString(R.string.please_wait));
+//            Dialog dialog = createProgressDialog(getApplicationContext(),getResources().getString(R.string.please_wait));
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream .toByteArray();
             String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
-            ReportModel model = new ReportModel(encoded,(float) currentLocation.getLatitude(),(float)currentLocation.getLongitude(),"",location_error);
+            ReportModel model = new ReportModel(encoded,(float) currentLocation.getLatitude(),(float)currentLocation.getLongitude(),"hvjhvjh",location_error);
             Call<GeneralModel> call = apiInterface.send_report(getAccessToken(getApplicationContext()),model);
             call.enqueue(new Callback<GeneralModel>() {
                 @Override
                 public void onResponse(Call<GeneralModel> call, Response<GeneralModel> response) {
-                    dialog.dismiss();
+//                    dialog.dismiss();
+                    getReports();
                     Dialog alertDialog = createAlertDialog(QuarantineActivity.this,getResources().getString(R.string.successful),getResources().getString(R.string.submitter_successfully),"",getResources().getString(R.string.ok));
                     alertDialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            dialog.dismiss();
+                            alertDialog.dismiss();
                         }
                     });
 //                    Toast.makeText(QuarantineActivity.this, "Report Submited", Toast.LENGTH_SHORT).show();
@@ -244,7 +246,7 @@ public class QuarantineActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<GeneralModel> call, Throwable t) {
                     Log.e("TAG",t.getMessage());
-                    dialog.dismiss();
+//                    dialog.dismiss();
                     Toast.makeText(QuarantineActivity.this, getResources().getString(R.string.failed_to_submit_report), Toast.LENGTH_SHORT).show();
                 }
             });
@@ -256,19 +258,18 @@ public class QuarantineActivity extends AppCompatActivity {
     }
     public class TimestampSorter implements Comparator<ReportModel>
     {
+        DateFormat f = new SimpleDateFormat("yyyy-mm-dd HH:MM:SS");
         @Override
         public int compare(ReportModel o1, ReportModel o2) {
-            Date d1 = null;
-            Date d2 = null;
             try {
-                d1 = new SimpleDateFormat("yyyy-mm-dd HH:MM:SS").parse(o1.report_time);
-                d2 = new SimpleDateFormat("yyyy-mm-dd HH:MM:SS").parse(o2.report_time);
-                return (int) (d1.getTime()-d2.getTime());
+                if(f.parse(o2.report_time).before(f.parse(o1.report_time))){
+                    return 10;
+                }else{
+                    return -10;
+                }
             } catch (ParseException e) {
-                e.printStackTrace();
+                throw new IllegalArgumentException(e);
             }
-            return 0;
-
         }
     }
 

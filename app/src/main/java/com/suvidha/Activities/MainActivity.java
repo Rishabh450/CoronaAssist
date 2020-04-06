@@ -2,9 +2,11 @@ package com.suvidha.Activities;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -47,6 +50,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -83,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     MenuItem prevMenuItem;
     private ImageView signout;
     private String currentVersion;
+    private Button btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -348,7 +353,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         nodeName = findViewById(R.id.node_name);
         locationLayout = findViewById(R.id.node_location_layout);
         signout = findViewById(R.id.sign_out);
+        btn = findViewById(R.id.change_to_hindi);
+        Button eng = findViewById(R.id.change_to_english);
 
+        findViewById(R.id.change_to_english).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                eng.setEnabled(false);
+                btn.setEnabled(true);
+                String languageToLoad  = "en";
+                Locale locale = new Locale(languageToLoad);
+                Locale.setDefault(locale);
+                Configuration config = new Configuration();
+                config.locale = locale;
+                getResources().updateConfiguration(config,getResources().getDisplayMetrics());
+
+                recreate();
+            }
+        });
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String languageToLoad  = "hi";
+                btn.setEnabled(false);
+                eng.setEnabled(true);
+                Locale locale = new Locale(languageToLoad);
+                Locale.setDefault(locale);
+                Configuration config = new Configuration();
+                config.locale = locale;
+                getResources().updateConfiguration(config,getResources().getDisplayMetrics());
+
+                recreate();
+            }
+        });
     }
     //suvidhajamshedhpur@gmail.com
 

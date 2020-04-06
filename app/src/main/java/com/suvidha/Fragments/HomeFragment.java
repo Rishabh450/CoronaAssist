@@ -33,6 +33,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.suvidha.Activities.FAQActivity;
 import com.suvidha.Activities.MainActivity;
 import com.suvidha.Activities.QuarantineActivity;
 import com.suvidha.Activities.ShopsActivity;
@@ -104,6 +105,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         iconWater = v.findViewById(R.id.icon_water);
         iconQuarentine = v.findViewById(R.id.icon_quarentine);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+        v.findViewById(R.id.icon_faq).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), FAQActivity.class));
+
+            }
+        });
     }
 
     private void intialiseRetrofit() {
@@ -192,9 +200,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                                 }
                             }, 500);
                             Toast.makeText(getContext(), getResources().getString(R.string.cant_get_location), Toast.LENGTH_LONG).show();
-                            String uri = String.format(Locale.ENGLISH, "geo:%f,%f");
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                            startActivity(intent);
+//                            String uri = String.format(Locale.ENGLISH, "geo:%f,%f");
+//                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+//                            startActivity(intent);
                         } else {
                             quarantineLocation =new Location(location);
                             currentLocation = new Location(location);
