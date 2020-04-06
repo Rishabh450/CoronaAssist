@@ -258,14 +258,14 @@ public class QuarantineActivity extends AppCompatActivity {
     }
     public class TimestampSorter implements Comparator<ReportModel>
     {
-        DateFormat f = new SimpleDateFormat("yyyy-mm-dd HH:MM:SS");
+        DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
         @Override
         public int compare(ReportModel o1, ReportModel o2) {
             try {
                 if(f.parse(o2.report_time).before(f.parse(o1.report_time))){
-                    return 10;
-                }else{
                     return -10;
+                }else{
+                    return 10;
                 }
             } catch (ParseException e) {
                 throw new IllegalArgumentException(e);

@@ -45,6 +45,7 @@ import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.SharedPrefManager;
 
+import java.sql.Timestamp;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
@@ -200,9 +201,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                                 }
                             }, 500);
                             Toast.makeText(getContext(), getResources().getString(R.string.cant_get_location), Toast.LENGTH_LONG).show();
-//                            String uri = String.format(Locale.ENGLISH, "geo:%f,%f");
-//                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-//                            startActivity(intent);
+                            String uri = String.format(Locale.ENGLISH, "geo:%f,%f",22.8046,86.2029);
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                            startActivity(intent);
                         } else {
                             quarantineLocation =new Location(location);
                             currentLocation = new Location(location);
@@ -248,7 +249,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         register = dialog.findViewById(R.id.quarantine_register);
         authority = dialog.findViewById(R.id.quarantine_authority);
         TextView termsandCondition = dialog.findViewById(R.id.terms_n_condition);
-        termsandCondition.setText(Html.fromHtml(getContext().getResources().getString(R.string.terms_and_condition)));
+        termsandCondition.setText(getContext().getResources().getString(R.string.terms_and_condition));
         register.setEnabled(false);
         st.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -347,13 +348,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     }
 
     private void showTimePicker(TextInputEditText et) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
         DatePickerDialog picker = new DatePickerDialog(getContext(),
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         et.setText(dayOfMonth + "-" + month + "-" + year);
                     }
-                }, 2020, 4, 4);
+                },timestamp.getYear(),timestamp.getMonth() , timestamp.getDay());
         picker.show();
     }
 
