@@ -130,6 +130,7 @@ public class SharedPrefManager {
     public void put(String key,float loc){
         doEdit();
         mEditor.putFloat(key,loc);
+        doCommit();
     }
     public float getFloat(String key, float defaultValue) {
         return mPref.getFloat(key,defaultValue);

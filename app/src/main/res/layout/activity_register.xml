@@ -55,7 +55,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
-                        android:text="Create Account"
+                        android:text="@string/create_account"
                         android:textSize="30sp" />
 
 
@@ -71,7 +71,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:drawablePadding="10dp"
-                            android:hint="Name"
+                            android:hint="@string/name"
                             android:inputType="textPersonName"
                             android:singleLine="true" />
 
@@ -89,7 +89,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:drawablePadding="10dp"
-                            android:hint="Email"
+                            android:hint="@string/email"
                             android:inputType="textEmailAddress"
                             android:singleLine="true" />
 
@@ -124,7 +124,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:drawablePadding="10dp"
-                                android:hint="Phone number"
+                                android:hint="@string/phone_number"
                                 android:inputType="phone"
                                 android:singleLine="true" />
 
@@ -163,11 +163,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/border_margin"
+                        android:layout_marginBottom="@dimen/border_margin"
                         >
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Zone"
+                            android:text="@string/zone"
                             android:textSize="16sp"
                             android:layout_marginLeft="@dimen/border_margin"
                             android:layout_marginRight="20dp"
@@ -193,7 +194,7 @@
                         android:gravity="center"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
-                        android:text="Sign up"
+                        android:text="@string/sign_up"
                         android:textColor="@color/white"
                         android:textSize="20sp"
                         app:cornerRadius="0dp" />

@@ -4,6 +4,7 @@ import com.suvidha.Models.CartModel;
 import com.suvidha.Models.EssentialsRequestModel;
 import com.suvidha.Models.GeneralModel;
 import com.suvidha.Models.GetOrdersModel;
+import com.suvidha.Models.GetReportsModel;
 import com.suvidha.Models.GetShopsModel;
 import com.suvidha.Models.ItemModel;
 import com.suvidha.Models.ItemsRequestModel;
@@ -93,6 +94,10 @@ public interface ApiInterface {
     @Headers("Content-Type: application/json")
     @POST("/api/report_quarantine")
     Call<GeneralModel> send_report(@Header("x-access-tokens") String token, @Body ReportModel model);
+
+    @Headers("Content-Type: application/json")
+    @GET("/api/get_user_report")
+    Call<GetReportsModel> get_report(@Header("x-access-tokens") String token);
 
 
 //    @POST("/api/login")

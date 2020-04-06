@@ -12,6 +12,13 @@
         <include layout="@layout/include_toolbar" />
 
     </com.google.android.material.appbar.AppBarLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/main_app_bar"
+        android:layout_above="@+id/report_btn"
+        android:id="@+id/quarantine_rview"
+        />
     <Button
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"

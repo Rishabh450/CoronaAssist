@@ -17,7 +17,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_height="wrap_content"
-        android:text="Suvidha, Jamshedpur"
+        android:text="@string/app_name"
         android:layout_below="@id/logo"
         android:id="@+id/logotext"
         android:layout_centerHorizontal="true"

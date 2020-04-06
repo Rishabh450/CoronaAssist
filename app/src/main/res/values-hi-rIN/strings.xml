@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">सुविधा जमशेदपुर</string>
+    <string name="coming_soon">" जल्द आ रहा है"</string>
+    <string name="bread">" रोटी"</string>
+    <string name="gas">गैस</string>
+    <string name="Quarantine">कोरांटीन</string>
+    <string name="backPress">एप्लिकेशन को बंद करने के लिए फिर से दबाएं</string>
+    <string name="request_passes">अनुरोध निवेदन</string>
+    <string name="groceries_and_essentials">किराने का सामान और अनिवार्य है</string>
+    <string name="milk_and_dairy">दूध और डेयरी</string>
+    <string name="water">पानी</string>
+    <string name="register_quarantine">संगरोध रजिस्टर करें</string>
+    <string name="loc_perm_denied">स्थान अनुमति अस्वीकृत</string>
+    <string name="failed_to_submit_report">रिपोर्ट प्रस्तुत करने में विफल। अपना इंटरनेट संपर्क जांचे</string>
+    <string name="submitter_successfully">रिपोर्ट सफलतापूर्वक सबमिट कर दी गई है</string>
+    <string name="ok">ठीक</string>
+    <string name="cannot_get_your_reports">आपकी रिपोर्ट नहीं मिल सकती</string>
+    <string name="try_again">पुनः प्रयास करें</string>
+    <string name="failed_to_connect">सर्वर से कनेक्ट करने में विफल</string>
+    <string name="successful">सफल</string>
+    <string name="please_wait">कृपया प्रतीक्षा कीजिये</string>
+    <string name="reported_on">इस दिन रिपोर्ट किया गया</string>
+    <string name="at">at</string>
+    <string name="cant_get_location">अपना स्थान प्राप्त नहीं कर सकते। कृपया Google मानचित्र खोलें और पुनः प्रयास करें</string>
+    <string name="successfully_registered_for_quarantine">संगरोध के लिए सफलतापूर्वक पंजीकृत</string>
+    <string name="terms_and_condition"><p>1)कृपया ऐप पर होम संगरोध के लिए केवल उस स्थान पर पंजीकरण करें जहां आप अलगाव के दौर से गुजर रहे हैं। उस समय आपका वर्तमान स्थान जिसे आप ऐप पर होम संगरोध के लिए खुद को पंजीकृत कर रहे हैं, उस पर नजर रखी जाएगी, इसलिए कृपया अपने आप को केवल उसी स्थान पर पंजीकृत करें जहां आप संगरोध के लिए माना जाता है। (उदाहरण: यदि आपको घर पर संगरोध करने के लिए कहा जाता है, तो ऐप खोलें और ऐप पर संगरोध के लिए तभी पंजीकरण करें जब आप किसी अन्य स्थान के बजाय अपने घर पर हों)<br />
+        2)आपकी यह सहमति है कि आपकी सरकार द्वारा निगरानी की जाएगी, होम संगरोध के लिए ऐप के माध्यम से, और यदि आप संगरोध का उल्लंघन करते हैं, तो आपको स्थानीय शासी निकाय द्वारा दंडित किया जाएगा।<br />
+        3)आपको एक तस्वीर क्लिक करनी है और इसे हर 1 घंटा पर सुबह 9 बजे से 9 बजे तक भेजना है।<br />
+        4)हमेशा अपना स्थान हमेशा चालू रखें, ऐसा करने में विफल रहने को उल्लंघन का कार्य माना जाएगा और स्थानीय प्रशासन के अधिकारी आपको निरीक्षण करने के लिए आ सकते हैं यदि उन्हें आपके स्थान से कोई डिफ़ॉल्ट परिवर्तन का पता चलता है।<br />
+        5)होम संगरोध के किसी भी गलत पंजीकरण को एक आपराधिक कृत्य माना जाएगा।</p></string>
+
+    <string name="name">नाम</string>
+    <string name="phone_number">फ़ोन नंबर</string>
+    <string name="quarantine_address">संगरोध पता</string>
+    <string name="authority">संगरोध जारी करने वाले प्राधिकरण का नाम</string>
+    <string name="start_date">आरंभ करने की तिथि</string>
+    <string name="end_date">समाप्ति तिथि</string>
+    <string name="report">सेल्फी लें और रिपोर्ट करें</string>
+    <string name="address">पता</string>
+    <string name="zone">क्षेत्र</string>
+    <string name="tnc">नियम और शर्तें</string>
+
+    <string name="name_cannot_be_empty">नाम फ़ील्ड खाली नहीं हो सकता</string>
+    <string name="address_cannot_be_empty">पता फ़ील्ड खाली नहीं हो सकती</string>
+    <string name="enter_valid_phno">एक मान्य फ़ोन नंबर दर्ज करें</string>
+    <string name="authority_cannot_be_empty">प्राधिकरण क्षेत्र खाली नहीं हो सकता</string>
+    <string name="pick_start_date">प्रारंभ दिनांक चुनें</string>
+    <string name="pick_end_date">अंतिम तिथि चुनें</string>
+    <string name="accept_tnc">कृपया नियम और शर्त स्वीकार करें</string>
+    <string name="failed_to_register_quarantine">संगरोध दर्ज करने में विफल</string>
+    <string name="create_account">खाता बनाएं</string>
+    <string name="email">ईमेल</string>
+    <string name="sign_up">साइन अप करें</string>
+
+
+</resources>

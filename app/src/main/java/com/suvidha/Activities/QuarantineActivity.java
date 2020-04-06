@@ -2,6 +2,7 @@ package com.suvidha.Activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +31,11 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
+import com.suvidha.Adapters.QuarantineAdapter;
+import com.suvidha.Fragments.HistoryFragment;
+import com.suvidha.Models.CartModel;
 import com.suvidha.Models.GeneralModel;
+import com.suvidha.Models.GetReportsModel;
 import com.suvidha.Models.ReportModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
@@ -39,6 +45,12 @@ import com.suvidha.Utilities.SharedPrefManager;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 import java.util.function.IntToDoubleFunction;
 
 import androidx.annotation.NonNull;
@@ -46,16 +58,17 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 import static com.suvidha.Utilities.Utils.CAMERA_PERMISSION_CODE;
-import static com.suvidha.Utilities.Utils.LOCATION_LAT;
-import static com.suvidha.Utilities.Utils.LOCATION_LON;
-
+import static com.suvidha.Utilities.Utils.createAlertDialog;
+import static com.suvidha.Utilities.Utils.createProgressDialog;
+import static com.suvidha.Utilities.Utils.currentLocation;
 import static com.suvidha.Utilities.Utils.getAccessToken;
-import static com.suvidha.Utilities.Utils.is_quarantined;
+
 
 public class QuarantineActivity extends AppCompatActivity {
 
@@ -65,31 +78,89 @@ public class QuarantineActivity extends AppCompatActivity {
     private AppBarLayout toolbar_layout;
     ApiInterface apiInterface;
     private int location_error=0;
-    private static final int THRESHOLD_DIST = 50;
+    private static final int THRESHOLD_DIST = 200;
     private double lat,lon;
     private Button reportBtn;
+    private RecyclerView rview;
+    private QuarantineAdapter mAdapter;
+    private List<ReportModel> data = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quarantine);
         init();
+        setRecyclerView();
         intialiseRetrofit();
-        lat = getIntent().getFloatExtra("lat",0);
-        lon = getIntent().getFloatExtra("lon",0);
+        getReports();
+        lat = getIntent().getDoubleExtra("lat",0);
+        lon = getIntent().getDoubleExtra("lon",0);
         setToolbar();
         calDiffDist();
 
+
+    }
+    private Dialog dialog;
+    private ProgressBar progressBar;
+    private void getReports() {
+        if (dialog == null) {
+            dialog = createProgressDialog(this, getResources().getString(R.string.please_wait));
+        }
+        progressBar = dialog.findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
+        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
+        staticProgress.setVisibility(View.GONE);
+        dialog.show();
+        Call<GetReportsModel> getReportsModelCall = apiInterface.get_report(getAccessToken(this));
+        getReportsModelCall.enqueue(new Callback<GetReportsModel>() {
+            @Override
+            public void onResponse(Call<GetReportsModel> call, Response<GetReportsModel> response) {
+                dialog.dismiss();
+                data.clear();
+                data.addAll(response.body().id);
+                data.sort(new TimestampSorter());
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<GetReportsModel> call, Throwable t) {
+                TextView msg = dialog.findViewById(R.id.progress_msg);
+                msg.setText(R.string.try_again);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar = dialog.findViewById(R.id.progress_bar);
+                        progressBar.setVisibility(View.INVISIBLE);
+                        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
+                        staticProgress.setVisibility(View.VISIBLE);
+                        staticProgress.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                getReports();
+                            }
+                        });
+                    }
+                }, 500);
+                Toast.makeText(QuarantineActivity.this, getResources().getString(R.string.cannot_get_your_reports), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setRecyclerView() {
+        rview.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new QuarantineAdapter(this,data);
+        rview.setAdapter(mAdapter);
 
     }
 
     private void calDiffDist() {
         float qlat= SharedPrefManager.getInstance(this).getFloat(SharedPrefManager.Key.QUARENTINE_LAT_KEY,0);
         float qlon= SharedPrefManager.getInstance(this).getFloat(SharedPrefManager.Key.QUARENTINE_LON_KEY,0);
-        double d = distance((double) qlat,(double) qlon,lat,lon,"K")*1000;
-        Log.e("TAG", String.valueOf(d));
-        Log.e("TAG",qlat+", "+qlon);
-        Log.e("TAG",lat+", "+lon);
+        double d = distance((double) qlat,(double) qlon,currentLocation.getLatitude(),currentLocation.getLongitude(),"K")*1000;
+//        Log.e("TAG", String.valueOf(d));
+//        Log.e("QUARANTINE",qlat+", "+qlon);
+//        Log.e("CURRENT",lat+", "+lon);
+//        Toast.makeText(this, "DIST:"+d+" LAT:"+currentLocation.getLatitude()+" LON:"+currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
         if(d>THRESHOLD_DIST){
             location_error=1;
             toolbar_layout.setBackgroundColor(Color.RED);
@@ -100,6 +171,7 @@ public class QuarantineActivity extends AppCompatActivity {
     }
 
     private void init() {
+        rview = findViewById(R.id.quarantine_rview);
         toolbar = findViewById(R.id.default_toolbar);
         toolbar_layout = findViewById(R.id.main_app_bar);
         reportBtn = findViewById(R.id.report_btn);
@@ -143,33 +215,60 @@ public class QuarantineActivity extends AppCompatActivity {
     private void setToolbar() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Quarantine");
+        getSupportActionBar().setTitle(getResources().getString(R.string.Quarantine));
     }
     void sendDataToServer(Intent data){
         try {
+            Dialog dialog = createProgressDialog(getApplicationContext(),getResources().getString(R.string.please_wait));
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream .toByteArray();
             String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
-            ReportModel model = new ReportModel(encoded,(float) lat,(float)lon,new Timestamp(System.currentTimeMillis()),location_error);
+            ReportModel model = new ReportModel(encoded,(float) currentLocation.getLatitude(),(float)currentLocation.getLongitude(),"",location_error);
             Call<GeneralModel> call = apiInterface.send_report(getAccessToken(getApplicationContext()),model);
             call.enqueue(new Callback<GeneralModel>() {
                 @Override
                 public void onResponse(Call<GeneralModel> call, Response<GeneralModel> response) {
-                    Log.e("TAG","WTF");
-                    Toast.makeText(QuarantineActivity.this, "Report Submited", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    Dialog alertDialog = createAlertDialog(QuarantineActivity.this,getResources().getString(R.string.successful),getResources().getString(R.string.submitter_successfully),"",getResources().getString(R.string.ok));
+                    alertDialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+//                    Toast.makeText(QuarantineActivity.this, "Report Submited", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onFailure(Call<GeneralModel> call, Throwable t) {
                     Log.e("TAG",t.getMessage());
+                    dialog.dismiss();
+                    Toast.makeText(QuarantineActivity.this, getResources().getString(R.string.failed_to_submit_report), Toast.LENGTH_SHORT).show();
                 }
             });
 
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "Failed!", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public class TimestampSorter implements Comparator<ReportModel>
+    {
+        @Override
+        public int compare(ReportModel o1, ReportModel o2) {
+            Date d1 = null;
+            Date d2 = null;
+            try {
+                d1 = new SimpleDateFormat("yyyy-mm-dd HH:MM:SS").parse(o1.report_time);
+                d2 = new SimpleDateFormat("yyyy-mm-dd HH:MM:SS").parse(o2.report_time);
+                return (int) (d1.getTime()-d2.getTime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return 0;
+
         }
     }
 
@@ -192,7 +291,7 @@ public class QuarantineActivity extends AppCompatActivity {
     private void requestCameraPermission() {
         ActivityCompat.requestPermissions(
                 this,
-                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.CAMERA},
+                new String[]{Manifest.permission.CAMERA},
                 CAMERA_PERMISSION_CODE
         );
     }
@@ -213,6 +312,11 @@ public class QuarantineActivity extends AppCompatActivity {
         if (requestCode == CAMERA_PERMISSION_CODE) {
 
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra("android.intent.extras.CAMERA_FACING", android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT);
+                intent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
+                intent.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
+                startActivityForResult(intent,CAMERA_REQUEST);
 
                 Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
 
@@ -225,6 +329,7 @@ public class QuarantineActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -232,7 +337,7 @@ public class QuarantineActivity extends AppCompatActivity {
             if(resultCode == RESULT_OK){
                 sendDataToServer(data);
             }else{
-
+                Toast.makeText(this, getResources().getString(R.string.try_again), Toast.LENGTH_SHORT).show();
             }
         }
     }

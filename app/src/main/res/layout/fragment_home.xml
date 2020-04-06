@@ -20,29 +20,51 @@
             android:layout_margin="@dimen/border_margin"
             android:background="@drawable/home_btn_shape"
             android:gravity="center"
-            android:text="Request Passes"
+            android:text="@string/request_passes"
             android:textAllCaps="false"
             android:textColor="@color/secondary_text_color" />
-
         <Button
-            android:id="@+id/icon_groceries"
+            android:id="@+id/icon_quarentine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/border_margin"
             android:background="@drawable/home_btn_shape"
             android:gravity="center"
-            android:text="Groceries and Essentials"
+            android:text="@string/Quarantine"
+            android:textAllCaps="false"
+            android:textColor="@color/secondary_text_color"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginLeft="@dimen/border_margin"
+            android:text="@string/coming_soon"
+            android:textStyle="bold"
+            android:textColor="@color/primary_text_color"
+
+            />
+        <Button
+            android:id="@+id/icon_groceries"
+            android:layout_width="match_parent"
+            android:enabled="false"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/border_margin"
+            android:background="@drawable/home_btn_shape"
+            android:gravity="center"
+            android:text="@string/groceries_and_essentials"
             android:textAllCaps="false"
             android:textColor="@color/secondary_text_color" />
 
         <Button
             android:id="@+id/icon_milk_and_dairy"
+            android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/border_margin"
             android:background="@drawable/home_btn_shape"
             android:gravity="center"
-            android:text="Milk and Dairy"
+            android:text="@string/milk_and_dairy"
             android:textAllCaps="false"
             android:textColor="@color/secondary_text_color" />
 
@@ -53,7 +75,8 @@
             android:layout_margin="@dimen/border_margin"
             android:background="@drawable/home_btn_shape"
             android:gravity="center"
-            android:text="Bread"
+            android:text="@string/bread"
+            android:enabled="false"
             android:textAllCaps="false"
             android:textColor="@color/secondary_text_color" />
 
@@ -64,8 +87,9 @@
             android:layout_margin="@dimen/border_margin"
             android:background="@drawable/home_btn_shape"
             android:gravity="center"
-            android:text="Gas"
+            android:text="@string/gas"
             android:textAllCaps="false"
+            android:enabled="false"
             android:textColor="@color/secondary_text_color" />
 
         <Button
@@ -75,20 +99,10 @@
             android:layout_margin="@dimen/border_margin"
             android:background="@drawable/home_btn_shape"
             android:gravity="center"
-            android:text="Water"
+            android:text="@string/water"
             android:textAllCaps="false"
+            android:enabled="false"
             android:textColor="@color/secondary_text_color" />
-        <Button
-            android:id="@+id/icon_quarentine"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/border_margin"
-            android:background="@drawable/home_btn_shape"
-            android:gravity="center"
-            android:text="Quarentine"
-            android:textAllCaps="false"
-            android:textColor="@color/secondary_text_color"
-            />
 
     </LinearLayout>
 </ScrollView>

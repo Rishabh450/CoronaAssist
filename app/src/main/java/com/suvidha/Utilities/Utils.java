@@ -35,9 +35,9 @@ public class Utils {
     public static final String password = "Nitsuvidha1!";
     public static final String email = "suvidhajamshedpur@gmail.com";
     public static final String PLAYSTORE_LINK = "https://play.google.com/store/apps/details?id=com.suvidha";
-    public static final int LOCATION_PERMISSION_CODE = 50;
+    public static final int LOCATION_PERMISSION_CODE = 10;
     public static final int CAMERA_PERMISSION_CODE = 51;
-    public static double LOCATION_LAT,LOCATION_LON;
+    public static Location currentLocation;
     public static double DELIVERY_CHARGE = 5;
     public static double APP_CHARGE = 2;
     public static int is_quarantined=1;

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="5dp"
+    android:layout_margin="@dimen/border_margin"
+    >
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/quarantine_item"
+        android:layout_margin="@dimen/border_margin"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/report_time"
+            android:textSize="18sp"
+            android:layout_marginLeft="@dimen/border_margin"
+            android:text="Reported on April 5 at 12:45"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/report_error_txt"
+            android:layout_marginLeft="@dimen/border_margin"
+            android:text="You were in Quarantine location"
+            />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

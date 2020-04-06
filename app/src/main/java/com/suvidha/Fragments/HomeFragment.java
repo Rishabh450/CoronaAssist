@@ -3,12 +3,17 @@ package com.suvidha.Fragments;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,18 +44,21 @@ import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.SharedPrefManager;
 
+import java.util.Locale;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.suvidha.Utilities.Utils.LOCATION_LAT;
-import static com.suvidha.Utilities.Utils.LOCATION_LON;
+import static android.content.Context.LOCATION_SERVICE;
 import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.createProgressDialog;
+import static com.suvidha.Utilities.Utils.currentLocation;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.is_quarantined;
 import static com.suvidha.Utilities.Utils.shopTypesMap;
@@ -127,10 +135,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                 if (checkLocationPermission()) {
                     //first get current location as quarantine location
                     //then open dialog
-                    getCurrentLocation();
+                    if(canGetLocation()){
+                        getCurrentLocation();
+                    }else {
+                        showSettingsAlert();
+                    }
+
                 } else {
                     requestLocationPermissions();
-                    Toast.makeText(getContext(), "You don't have location permission", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "You don't have location permission", Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
@@ -140,7 +153,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                 intent.putExtra("type", shopTypesMap.get(itemId));
                 intent.putExtra("type_name", b.getText().toString());
                 startActivity(intent);
-
         }
     }
 
@@ -179,11 +191,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                                     });
                                 }
                             }, 500);
-                            Toast.makeText(getContext(), "Can't get your location", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), getResources().getString(R.string.cant_get_location), Toast.LENGTH_LONG).show();
+                            String uri = String.format(Locale.ENGLISH, "geo:%f,%f");
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                            startActivity(intent);
                         } else {
                             quarantineLocation =new Location(location);
+                            currentLocation = new Location(location);
                             dialog.dismiss();
-                            Log.e("LOL", String.valueOf(location.getLatitude()));
+                            Log.e("LOL", "OMG");
 //                            LOCATION_LAT = quarantineLocation.getLatitude();
 //                            LOCATION_LON = quarantineLocation.getLongitude();
                             if(is_quarantined==1){
@@ -277,44 +293,45 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                             if (response.body().status == 200) {
                                 //success
                                 is_quarantined = 1;
+
                                 notifyDataLoaded();
                                 SharedPrefManager.getInstance(getContext()).put(SharedPrefManager.Key.QUARENTINE_LAT_KEY, (float) quarantineLocation.getLatitude());
                                 SharedPrefManager.getInstance(getContext()).put(SharedPrefManager.Key.QUARENTINE_LON_KEY, (float) quarantineLocation.getLongitude());
-                                Toast.makeText(getContext(), "Successfully Registered for quarantine", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), getResources().getString(R.string.successfully_registered_for_quarantine), Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                                 dialog.dismiss();
                             } else {
-                                Toast.makeText(getContext(), "Failed to register for quarantine", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), getResources().getString(R.string.failed_to_register_quarantine), Toast.LENGTH_SHORT).show();
                             }
                         }
 
                         @Override
                         public void onFailure(Call<GeneralModel> call, Throwable t) {
-                            Toast.makeText(getContext(), "Failed to register for quarantine", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), getResources().getString(R.string.failed_to_register_quarantine), Toast.LENGTH_SHORT).show();
                         }
                     });
 
                 } else {
                     if (etname.length() == 0) {
-                        name.setError("Name Field cannot be empty");
+                        name.setError(getResources().getString(R.string.name_cannot_be_empty));
                     }
                     if (etaddress.length() == 0) {
-                        address.setError("Address Field cannot be empty");
+                        address.setError(getResources().getString(R.string.address_cannot_be_empty));
                     }
                     if (etphone.length() != 10) {
-                        phone.setError("Enter a valid phone number");
+                        phone.setError(getResources().getString(R.string.enter_valid_phno));
                     }
                     if (etAuthority.length() == 0) {
-                        authority.setError("Authority Name cannot be empty");
+                        authority.setError(getResources().getString(R.string.authority_cannot_be_empty));
                     }
                     if (stDate.length() == 0) {
-                        st.setError("Pick the start date");
+                        st.setError(getResources().getString(R.string.pick_start_date));
                     }
                     if (endDate.length() == 0) {
-                        end.setError("Pick the end date");
+                        end.setError(getResources().getString(R.string.pick_end_date));
                     }
                     if (!tnc.isChecked()) {
-                        Toast.makeText(getContext(), "Please check the terms and condition", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getResources().getString(R.string.accept_tnc), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -341,21 +358,82 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     }
 
     private void requestLocationPermissions() {
+        MainActivity mainActivity = (MainActivity)getActivity();
         ActivityCompat.requestPermissions(
-                (MainActivity) getActivity(),
+                mainActivity,
                 new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                 LOCATION_PERMISSION_CODE
         );
-    }
 
+
+    }
+    public boolean canGetLocation() {
+        boolean result = true;
+        LocationManager lm = null;
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+        if (lm == null)
+
+            lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+
+        // exceptions will be thrown if provider is not permitted.
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {
+
+        }
+        try {
+            network_enabled = lm
+                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {
+        }
+        if (gps_enabled == false || network_enabled == false) {
+            result = false;
+        } else {
+            result = true;
+        }
+
+        return result;
+    }
+    public void showSettingsAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+
+        // Setting Dialog Title
+        alertDialog.setTitle("Error!");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("Please Turn on your GPS ");
+
+        // On pressing Settings button
+        alertDialog.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(
+                                Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                    }
+                });
+
+        alertDialog.show();
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_ID) {
+        Log.e("LOL", "WTH");
+        if (requestCode == LOCATION_PERMISSION_CODE) {
+            Toast.makeText(getContext(), "WTH "+requestCode, Toast.LENGTH_SHORT).show();
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Granted. Start getting the location information
-                createQuarentineDialog();
+                if(canGetLocation()){
+                    getCurrentLocation();
+                    Toast.makeText(getContext(), getResources().getString(R.string.loc_perm_denied), Toast.LENGTH_SHORT).show();
+                }else {
+                    showSettingsAlert();
+                }
+
             }
+        }else {
+            Toast.makeText(getContext(), "CODE "+requestCode, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -363,9 +441,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     public void notifyDataLoaded() {
         Log.e("LOL", String.valueOf(is_quarantined));
         if (is_quarantined == 1) {
-            iconQuarentine.setText("Quarentine");
+            iconQuarentine.setText(getResources().getString(R.string.Quarantine));
         } else {
-            iconQuarentine.setText("Register Quarentine");
+            iconQuarentine.setText(getResources().getString(R.string.register_quarantine));
         }
     }
 

@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.e(TAG, "Response Error " + t.getMessage());
 
                 TextView msg = dialog.findViewById(R.id.progress_msg);
-                msg.setText("Try Again");
+                msg.setText(getResources().getString(R.string.try_again));
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }, 500);
 
-                Toast.makeText(MainActivity.this, "Failed to connect to the server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.failed_to_connect), Toast.LENGTH_SHORT).show();
             }
         });
     }
