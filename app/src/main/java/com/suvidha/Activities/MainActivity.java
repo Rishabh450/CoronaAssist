@@ -1,8 +1,10 @@
 package com.suvidha.Activities;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.Dialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -40,6 +42,7 @@ import com.suvidha.Models.GetOrdersModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
+import com.suvidha.Utilities.LiveLocationService;
 import com.suvidha.Utilities.SharedPrefManager;
 
 import org.jsoup.Jsoup;
@@ -88,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView signout;
     private String currentVersion;
     private Button btn;
+    Intent mServiceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,8 +102,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intialiseRetrofit();
         setListeners();
         getEssentials();
+        LiveLocationService mYourService = new LiveLocationService();
+        mServiceIntent = new Intent(MainActivity.this, mYourService.getClass());
+        if (!isMyServiceRunning(mYourService.getClass())) {
+            startService(mServiceIntent);
+        }
+
 
     }
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i("Service status", "Running");
+                return true;
+            }
+        }
+        Log.i("Service status", "Not running");
+        return false;
+    }
+
 
     @SuppressLint("WrongConstant")
     @Override

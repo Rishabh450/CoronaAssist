@@ -8,4 +8,5 @@ public class LocationModel {
         this.location_lat = location_lat;
         this.location_lon = location_lon;
     }
+
 }
