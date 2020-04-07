@@ -10,11 +10,9 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +26,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,9 +39,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.suvidha.Activities.FAQActivity;
 import com.suvidha.Activities.MainActivity;
+import com.suvidha.Activities.MyPassActivity;
 import com.suvidha.Activities.QuarantineActivity;
 import com.suvidha.Activities.ShopsActivity;
-import com.suvidha.Activities.MyPassActivity;
 import com.suvidha.Models.GeneralModel;
 import com.suvidha.Models.QuarantineModel;
 import com.suvidha.R;
@@ -45,19 +49,13 @@ import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.SharedPrefManager;
 
-import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.content.Context.LOCATION_SERVICE;
 import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.currentLocation;
@@ -348,16 +346,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     }
 
     private void showTimePicker(TextInputEditText et) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        final Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog picker = new DatePickerDialog(getContext(),
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
                 new DatePickerDialog.OnDateSetListener() {
+
                     @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        et.setText(dayOfMonth + "-" + month + "-" + year);
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+
+                        et.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+
                     }
-                },timestamp.getYear(),timestamp.getMonth() , timestamp.getDay());
-        picker.show();
+                }, mYear, mMonth, mDay);
+        datePickerDialog.show();
     }
 
     private boolean checkLocationPermission() {
