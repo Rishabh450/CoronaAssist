@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         LiveLocationService mYourService = new LiveLocationService();
         mServiceIntent = new Intent(MainActivity.this, mYourService.getClass());
         if (!isMyServiceRunning(mYourService.getClass())) {
-            startService(mServiceIntent);
+         startService(mServiceIntent);
         }
 
 

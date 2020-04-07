@@ -38,6 +38,7 @@ import java.util.Map;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 
 import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
 
@@ -90,14 +91,14 @@ public class LiveLocationService extends Service {
         Log.d("serviceStared", "gun");
         final Handler handler = new Handler();
         //to test if the servive is running
-      /*  final Runnable r = new Runnable() {
+        final Runnable r = new Runnable() {
             public void run() {
                 // tv.append("Hello World");
                 Toast.makeText(LiveLocationService.this,"Runningg",Toast.LENGTH_LONG).show();
                 handler.postDelayed(this, 2000);
             }
         };
-        handler.postDelayed(r, 2000);*/
+        handler.postDelayed(r, 2000);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -138,7 +139,18 @@ public class LiveLocationService extends Service {
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         notificationManager.notify(0, n);
-         startForeground(0,n);
+         startForeground(1338,buildForegroundNotification());
+    }
+    private Notification buildForegroundNotification() {
+        NotificationCompat.Builder b=new NotificationCompat.Builder(this);
+
+        b.setOngoing(true)
+                .setContentTitle("COVID19")
+                .setContentText("Live Location being taken")
+                .setSmallIcon(android.R.drawable.stat_sys_download)
+                ;
+
+        return(b.build());
     }
     LocationListener locationListenerGPS = new LocationListener() {
         @Override
