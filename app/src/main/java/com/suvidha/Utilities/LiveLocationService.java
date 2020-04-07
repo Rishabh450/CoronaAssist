@@ -4,6 +4,7 @@ package com.suvidha.Utilities;
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -89,16 +90,9 @@ public class LiveLocationService extends Service {
         // This will be called when your Service is created for the first time
         // Just do any operations you need in this method.
         Log.d("serviceStared", "gun");
-        final Handler handler = new Handler();
+
         //to test if the servive is running
-        final Runnable r = new Runnable() {
-            public void run() {
-                // tv.append("Hello World");
-                Toast.makeText(LiveLocationService.this,"Runningg",Toast.LENGTH_LONG).show();
-                handler.postDelayed(this, 2000);
-            }
-        };
-        handler.postDelayed(r, 2000);
+
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -125,21 +119,72 @@ public class LiveLocationService extends Service {
 
 // build notification
 // the addAction re-use the same intent to keep the example short
-        Notification n  = new Notification.Builder(this)
-                .setContentTitle("New mail from " + "test@gmail.com")
-                .setContentText("Subject")
-                .setSmallIcon(R.drawable.ic_home)
-                .setContentIntent(pIntent)
+        Intent notificationIntent = new Intent(this, MainActivity.class);
 
-                .setAutoCancel(false)
-                .build();
+        /*PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);*/
+
+        /*Notification notification = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.progress_icon)
+                .setContentTitle("My Awesome App")
+                .setContentText("Doing some work...")
+                .setContentIntent(pendingIntent).build();*/
+        NotificationManager mNotificationManager;
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(getApplicationContext(), "notify_001");
+        Intent ii = new Intent(getApplicationContext(), MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, ii, 0);
+
+        NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
+        bigText.bigText("Location being accessed");
+        bigText.setBigContentTitle("Live Location Being Accessed");
+        bigText.setSummaryText("");
+
+        mBuilder.setContentIntent(pendingIntent);
+        mBuilder.setSmallIcon(R.mipmap.ic_launcher_round);
+        mBuilder.setContentTitle("");
+        mBuilder.setContentText("");
+        mBuilder.setPriority(Notification.PRIORITY_MAX);
+        mBuilder.setStyle(bigText);
+
+        mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+// === Removed some obsoletes
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            String channelId = "Your_channel_id";
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    "Channel human readable title",
+                    NotificationManager.IMPORTANCE_HIGH);
+            mNotificationManager.createNotificationChannel(channel);
+            mBuilder.setChannelId(channelId);
+        }
 
 
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0, n);
-         startForeground(1338,buildForegroundNotification());
+        startForeground(1337,mBuilder.build());
+
+    }
+    public Notification getNotification()
+    {
+
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,0);
+
+
+        NotificationCompat.Builder foregroundNotification = new NotificationCompat.Builder(this);
+        foregroundNotification.setOngoing(true);
+
+        foregroundNotification.setContentTitle("MY Foreground Notification")
+                .setContentText("This is the first foreground notification Peace")
+                .setSmallIcon(android.R.drawable.ic_btn_speak_now)
+                .setContentIntent(pendingIntent);
+
+
+        return foregroundNotification.build();
     }
     private Notification buildForegroundNotification() {
         NotificationCompat.Builder b=new NotificationCompat.Builder(this);

@@ -13,6 +13,7 @@ import android.content.res.Configuration;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -106,7 +107,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         LiveLocationService mYourService = new LiveLocationService();
         mServiceIntent = new Intent(MainActivity.this, mYourService.getClass());
         if (!isMyServiceRunning(mYourService.getClass())) {
-         startService(mServiceIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(mServiceIntent);
+            } else {
+                startService(mServiceIntent);
+            }
         }
 
 
