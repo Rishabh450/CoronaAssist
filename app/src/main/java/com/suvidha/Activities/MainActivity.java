@@ -1,8 +1,11 @@
 package com.suvidha.Activities;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.Dialog;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -10,6 +13,7 @@ import android.content.res.Configuration;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -42,6 +46,7 @@ import com.suvidha.Models.GetOrdersModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
+import com.suvidha.Utilities.LiveLocationService;
 import com.suvidha.Utilities.SharedPrefManager;
 
 import org.jsoup.Jsoup;
@@ -90,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView signout;
     private String currentVersion;
     private Button btn;
+    Intent mServiceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +106,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intialiseRetrofit();
         setListeners();
         getEssentials();
+        Log.d(TAG,"checking"+is_quarantined);
+
 
     }
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i("Service status", "Running");
+                return true;
+            }
+        }
+        Log.i("Service status", "Not running");
+        return false;
+    }
+
 
     @SuppressLint("WrongConstant")
     @Override
@@ -153,8 +173,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         zonesList.clear();
                         zonesList.addAll(response.body().id.zones);
 
-                        is_quarantined = response.body().id.is_quarantined;
-                        Log.e(TAG, String.valueOf(is_quarantined));
+                        is_quarantined =SharedPrefManager.getInstance(MainActivity.this).getInt(SharedPrefManager.Key.IS_QUARANTINE);
+                        Log.d(TAG, String.valueOf(is_quarantined)+"start");
+                        LiveLocationService mYourService = new LiveLocationService();
+                        mServiceIntent = new Intent(MainActivity.this, mYourService.getClass());
+                        if (!isMyServiceRunning(mYourService.getClass())) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                if(is_quarantined==1) {
+
+                                    Log.d(TAG,"started1"+is_quarantined);
+                                    startForegroundService(mServiceIntent);
+
+                                }
+
+                            } else {
+                                if(is_quarantined==1) {
+                                    Log.d(TAG,"started2");
+                                    startService(mServiceIntent);
+                                }
+                            }
+                        }
                         if (getSupportFragmentManager().findFragmentById(R.id.frame_container) instanceof HomeFragment) {
                             NotifyFragment callBack = (NotifyFragment) getSupportFragmentManager().findFragmentById(R.id.frame_container);
                             callBack.notifyDataLoaded();

@@ -32,8 +32,6 @@ public class Utils {
 //    public static final String BASE_URL = "http://192.168.43.114:5000";
 //    public static final String BASE_URL = "http://192.168.43.55:5000";
     public static final String BASE_URL = "https://saanayy-token-gen.herokuapp.com/";
-
-
     public static final String password = "Nitsuvidha1!";
     public static final String email = "suvidhajamshedpur@gmail.com";
     public static final String PLAYSTORE_LINK = "https://play.google.com/store/apps/details?id=com.suvidha";
@@ -42,7 +40,7 @@ public class Utils {
     public static Location currentLocation;
     public static double DELIVERY_CHARGE = 5;
     public static double APP_CHARGE = 2;
-    public static int is_quarantined=1;
+    public static int is_quarantined=0;
     public static List<ZonesModel> zonesList=new ArrayList<>();
     public static List<ItemModel> shopItems=new ArrayList<>();
     public static List<CartModel> allOrders = new ArrayList<>();

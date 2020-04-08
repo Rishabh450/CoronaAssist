@@ -8,6 +8,7 @@ import com.suvidha.Models.GetReportsModel;
 import com.suvidha.Models.GetShopsModel;
 import com.suvidha.Models.ItemModel;
 import com.suvidha.Models.ItemsRequestModel;
+import com.suvidha.Models.LocationModel;
 import com.suvidha.Models.LoginResult;
 import com.suvidha.Models.OrderIdModel;
 import com.suvidha.Models.OrderRequestModel;
@@ -79,6 +80,10 @@ public interface ApiInterface {
     @Headers("Content-Type: application/json")
     @POST("/api/police/get_pass")
     Call<SinglePassResult> getPass(@Body Map<String, String> body);
+
+    @Headers("Content-Type: application/json")
+    @POST("/api/violation")
+    Call<GeneralModel> report_violation(@Header("x-access-tokens") String token, @Body LocationModel model);
 
     @GET("/api/police/get_passes/{status}")
     Call<UserPassesResult> getStatusPass(@Path("status") int status);
