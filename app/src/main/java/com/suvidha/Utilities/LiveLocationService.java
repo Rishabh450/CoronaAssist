@@ -67,7 +67,7 @@ public class LiveLocationService extends Service {
     int is_quar;
     float qlat;
     float qlon;
-    private static final int THRESHOLD_DIST = 1;
+    private static final int THRESHOLD_DIST = 200;
 
     LocationManager locationManager;
     private void sendLat(Location location) {
@@ -79,16 +79,17 @@ public class LiveLocationService extends Service {
             public void onResponse(Call<GeneralModel> call, Response<GeneralModel> response) {
                 if (response.body().status == 200) {
                     Log.d("response12","success");
-                    Toast.makeText(LiveLocationService.this, "Response sent", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LiveLocationService.this, "Report sent to Police", Toast.LENGTH_SHORT).show();
 
                 } else {
-                    Toast.makeText(LiveLocationService.this, "Failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LiveLocationService.this, "Report failed", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<GeneralModel> call, Throwable t) {
-                Toast.makeText(LiveLocationService.this, getResources().getString(R.string.failed_to_register_quarantine), Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(LiveLocationService.this, getResources().getString(R.string.failed_to_register_quarantine), Toast.LENGTH_SHORT).show();
+                Log.e("checkererr",t.getMessage());
             }
         });
 
@@ -232,7 +233,7 @@ public class LiveLocationService extends Service {
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 2000,
-                10, locationListenerGPS);
+                30, locationListenerGPS);
 
 
 
@@ -308,8 +309,8 @@ public class LiveLocationService extends Service {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent contentIntent = PendingIntent.getActivity(LiveLocationService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Notification.Builder notificationBuilder = new Notification.Builder(LiveLocationService.this)
-                .setContentTitle("Demo ")
-                .setContentText("Demo Text")
+                .setContentTitle("Quarantine Patient")
+                .setContentText("Your Live Location Is Being Monitored")
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentIntent(contentIntent);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
@@ -342,7 +343,13 @@ public class LiveLocationService extends Service {
 //        Log.e("CURRENT",lat+", "+lon);
 //        Toast.makeText(this, "DIST:"+d+" LAT:"+currentLocation.getLatitude()+" LON:"+currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
             if(d>THRESHOLD_DIST){
-               // sendLat(location);
+                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                notificationManager.notify(0,getNotificationWarn());
+                sendLat(location);
+
+
+
                 // toolbar_layout.setBackgroundColor(Color.RED);
             }else{
            /* location_error = 0;
@@ -365,11 +372,32 @@ public class LiveLocationService extends Service {
 
         }
     };
+    public Notification getNotificationWarn()
+    {
 
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("app_channel", "Demo Notification", NotificationManager.IMPORTANCE_LOW);
+            channel.setSound(null, null);
+            NotificationManager mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mManager.createNotificationChannel(channel);
+        }
+        Intent intent = new Intent(LiveLocationService.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent contentIntent = PendingIntent.getActivity(LiveLocationService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification.Builder notificationBuilder = new Notification.Builder(LiveLocationService.this)
+                .setContentTitle("Warning !!!!")
+                .setContentText("You are out of quarantine premises!!")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentIntent(contentIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            notificationBuilder.setChannelId("app_channel");
+        return notificationBuilder.build();
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "My Service Started", Toast.LENGTH_LONG).show();
+      //  Toast.makeText(this, "My Service Started", Toast.LENGTH_LONG).show();
 
         return START_STICKY;
     }

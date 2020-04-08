@@ -47,6 +47,7 @@ import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.LiveLocationService;
 import com.suvidha.Utilities.SharedPrefManager;
+import com.suvidha.Utilities.UserLocationService;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -96,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btn;
     Intent mServiceIntent;
     private Toolbar toolbar;
+    Intent userService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -174,13 +177,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         is_quarantined =SharedPrefManager.getInstance(MainActivity.this).getInt(SharedPrefManager.Key.IS_QUARANTINE);
                         Log.d(TAG, String.valueOf(is_quarantined)+"start");
+                        UserLocationService userLocationService=new UserLocationService();
                         LiveLocationService mYourService = new LiveLocationService();
+                        userService=new Intent(MainActivity.this,userLocationService.getClass());
                         mServiceIntent = new Intent(MainActivity.this, mYourService.getClass());
+                        if(!isMyServiceRunning(userLocationService.getClass()))
+                        {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                if(is_quarantined==0) {
+
+                                    Log.d(TAG,"started1"+is_quarantined);
+                                    startForegroundService(userService);
+
+                                }
+
+                            } else {
+                                if(is_quarantined==0) {
+                                    Log.d(TAG,"started2");
+                                    startService(userService);
+                                }
+
+                            }
+                        }
                         if (!isMyServiceRunning(mYourService.getClass())) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 if(is_quarantined==1) {
+
                                     Log.d(TAG,"started1"+is_quarantined);
                                     startForegroundService(mServiceIntent);
+
                                 }
 
                             } else {
@@ -188,8 +213,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     Log.d(TAG,"started2");
                                     startService(mServiceIntent);
                                 }
+
                             }
                         }
+
+
                         if (getSupportFragmentManager().findFragmentById(R.id.frame_container) instanceof HomeFragment) {
                             NotifyFragment callBack = (NotifyFragment) getSupportFragmentManager().findFragmentById(R.id.frame_container);
                             callBack.notifyDataLoaded();
