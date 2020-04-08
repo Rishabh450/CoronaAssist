@@ -32,7 +32,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -61,6 +60,7 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final String TAG = "MainActivity";
 
-    private LinearLayout locationLayout;
+//    private LinearLayout locationLayout;
     private TextView nodeName;
 
     private ApiInterface apiInterface;
@@ -92,11 +92,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private BottomNavigationView navigation;
     private ViewPager mPager;
     MenuItem prevMenuItem;
-    private ImageView signout;
     private String currentVersion;
     private Button btn;
     Intent mServiceIntent;
-
+    private Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -180,10 +179,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (!isMyServiceRunning(mYourService.getClass())) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 if(is_quarantined==1) {
-
                                     Log.d(TAG,"started1"+is_quarantined);
                                     startForegroundService(mServiceIntent);
-
                                 }
 
                             } else {
@@ -392,17 +389,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setListeners() {
-        locationLayout.setOnClickListener(this);
+//        locationLayout.setOnClickListener(this);
         //signout.setOnClickListener(this);
     }
 
 
     private void init() {
         nodeName = findViewById(R.id.node_name);
-        locationLayout = findViewById(R.id.node_location_layout);
-        signout = findViewById(R.id.sign_out);
-        signout.setVisibility(View.GONE);
+//        locationLayout = findViewById(R.id.node_location_layout);
         btn = findViewById(R.id.change_to_hindi);
+        toolbar = findViewById(R.id.default_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
         Button eng = findViewById(R.id.change_to_english);
 
         findViewById(R.id.change_to_english).setOnClickListener(new View.OnClickListener() {
@@ -520,13 +518,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    public void changeLanguage(){
+    public void changeLanguage(MenuItem item){
         String languageCode=Locale.getDefault().getISO3Language();
 
         String languageToLoad  = "hi";
 
-        if(languageCode.equalsIgnoreCase("hin"))
-            languageToLoad  = "en";
+        if(languageCode.equalsIgnoreCase("hin")) {
+            languageToLoad = "en";
+            item.setTitle(getResources().getString(R.string.change_to_hindi));
+        }else{
+            item.setTitle(getResources().getString(R.string.change_to_english));
+        }
 
         Locale locale = new Locale(languageToLoad);
         Locale.setDefault(locale);
@@ -552,7 +554,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 signOutClicked();
                 break;
             case R.id.change_language:
-                changeLanguage();
+                changeLanguage(item);
                 break;
         }
         return super.onOptionsItemSelected(item);

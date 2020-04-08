@@ -4,8 +4,8 @@
 
     <item
         android:id="@+id/change_language"
-        android:title="Language" />
+        android:title="@string/change_to_hindi" />
     <item
         android:id="@+id/log_out"
-        android:title="Logout" />
+        android:title="@string/log_out" />
 </menu>

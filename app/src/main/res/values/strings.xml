@@ -62,8 +62,9 @@
     <string name="create_account">Create Account</string>
     <string name="email">Email</string>
     <string name="sign_up">Sign Up</string>
-    <string name="change_to_hindi">use in hindi</string>
-    <string name="change_to_english">use in english</string>
+    <string name="log_out">Log Out</string>
+    <string name="change_to_hindi">हिन्दी</string>
+    <string name="change_to_english">English</string>
     <string name="faq"><p>Suraksha- An Application developed by the Final year students of NIT Jamshedpur along with the co-operation of East Singhbhum District Administration to help and protect the Citizens against Covid-19.<br/><br/>
 Features:<br/><br/>
 \n
@@ -79,5 +80,8 @@ Features:<br/><br/>
     <string name="faq_btn">FAQ</string>
     <string name="main_menu1">हिन्दी</string>
     <string name="main_menu2">Log Out</string>
+    <string name="in_quarantine_location">You were in quarantine location</string>
+    <string name="not_in_quarantine">You were not in quarantine location</string>
+    <string name="error">Error</string>
 
 </resources>

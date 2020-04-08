@@ -59,7 +59,7 @@ public class QuarantineAdapter extends RecyclerView.Adapter<QuarantineAdapter.My
         }else{
             holder.quarantine_item.setBackgroundColor(Color.WHITE);
         }
-        holder.report_error_text.setText((val.location_error == 0?"You were in quarantine location":"You were not in quarantine location"));
+        holder.report_error_text.setText((val.location_error == 0?ctx.getResources().getString(R.string.in_quarantine_location):ctx.getResources().getString(R.string.not_in_quarantine)));
     }
 
     @Override
