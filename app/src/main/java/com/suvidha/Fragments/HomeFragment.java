@@ -369,7 +369,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                                 dialog.dismiss();
                                 dialog.dismiss();
                             } else {
-                                Log.e("heey",call.toString()+" -- "+response.errorBody().toString());
+                                Log.e("heey", String.valueOf(response.body().status));
+                                //Log.e("heey",call.toString()+" -- "+response.errorBody().toString());
                                 Toast.makeText(getContext(), getResources().getString(R.string.failed_to_register_quarantine), Toast.LENGTH_SHORT).show();
                             }
                         }

@@ -3,6 +3,7 @@ package com.suvidha.Utilities;
 
 
 
+
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -34,10 +35,9 @@ import android.widget.Toast;
 
 import com.suvidha.Activities.MainActivity;
 import com.suvidha.Activities.QuarantineActivity;
-import com.suvidha.Models.GeneralModel;
+import com.suvidha.Models.QuarantineNearbyModel;
 import com.suvidha.Models.GetReportsModel;
 import com.suvidha.Models.LocationModel;
-import com.suvidha.Models.QuarantineModel;
 import com.suvidha.Models.ReportModel;
 import com.suvidha.R;
 
@@ -61,7 +61,6 @@ import retrofit2.Response;
 import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.currentLocation;
 import static com.suvidha.Utilities.Utils.getAccessToken;
-import static com.suvidha.Utilities.Utils.is_quarantined;
 
 public class UserLocationService extends Service {
     ApiInterface apiInterface;
@@ -71,11 +70,54 @@ public class UserLocationService extends Service {
     int is_quar;
     float qlat;
     float qlon;
-    private static final int THRESHOLD_DIST = 100;
 
     LocationManager locationManager;
+    private void sendLat(Location location) {
+        LocationModel model=new LocationModel((float)location.getLatitude(),(float)location.getLongitude());
+        Log.d("tester", String.valueOf(model.location_lat));
+        Call<QuarantineNearbyModel> registerResult = apiInterface.check_nearby(getAccessToken(UserLocationService.this), model);
+        registerResult.enqueue(new Callback<QuarantineNearbyModel>() {
+            @Override
+            public void onResponse(Call<QuarantineNearbyModel> call, Response<QuarantineNearbyModel> response) {
+                if (response.body().status == 200) {
+                    Log.d("response12","success");
+                    String x= String.valueOf(response.body().id);
+                    NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                    notificationManager.notify(10,getNotificationWarn(x));
+                   // Toast.makeText(UserLocationService.this,x , Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(UserLocationService.this, "Failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<QuarantineNearbyModel> call, Throwable t) {
+               // Toast.makeText(UserLocationService.this, getResources().getString(R.string.failed_to_register_quarantine), Toast.LENGTH_SHORT).show();
+                Log.e("checkererr",t.getMessage());
+            }
+        });
 
 
+    }
+
+    public class TimestampSorter implements Comparator<ReportModel>
+    {
+        DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
+        @Override
+        public int compare(ReportModel o1, ReportModel o2) {
+            try {
+                if(f.parse(o2.report_time).before(f.parse(o1.report_time))){
+                    return -10;
+                }else{
+                    return 10;
+                }
+            } catch (ParseException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+    }
     @Override
     public IBinder onBind(Intent intent) {
         // This won't be a bound service, so simply return null
@@ -84,28 +126,66 @@ public class UserLocationService extends Service {
     private void intialiseRetrofit() {
         apiInterface = APIClient.getApiClient().create(ApiInterface.class);
     }
-/*    private void sendLat(Location location) {
-       // QuarantineModel model = new QuarantineModel(etname, etaddress, etphone, (float) quarantineLocation.getLatitude(), (float) quarantineLocation.getLongitude(), etAuthority, stDate, endDate);
-        LocationModel model=new LocationModel((float)location.getLatitude(),(float)location.getLongitude());
-        Call<GeneralModel> registerResult = apiInterface.register_quarantine(getAccessToken(UserLocationService.this), model);
-        registerResult.enqueue(new Callback<GeneralModel>() {
+    private void getReports() {
+//        if (dialog == null) {
+//            dialog = createProgressDialog(this, getResources().getString(R.string.please_wait));
+//        }
+//        progressBar = dialog.findViewById(R.id.progress_bar);
+//        progressBar.setVisibility(View.VISIBLE);
+//        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
+//        staticProgress.setVisibility(View.GONE);
+//        dialog.show();
+        Call<GetReportsModel> getReportsModelCall = apiInterface.get_report(getAccessToken(this));
+        getReportsModelCall.enqueue(new Callback<GetReportsModel>() {
             @Override
-            public void onResponse(Call<GeneralModel> call, Response<GeneralModel> response) {
-                if (response.body().status == 200) {
+            public void onResponse(Call<GetReportsModel> call, Response<GetReportsModel> response) {
+//                dialog.dismiss();
+                data.clear();
+                data.addAll(response.body().id);
+                data.sort(new UserLocationService.TimestampSorter());
 
-                } else {
-                    Toast.makeText(UserLocationService.this, getResources().getString(R.string.failed_to_register_quarantine), Toast.LENGTH_SHORT).show();
-                }
             }
 
             @Override
-            public void onFailure(Call<GeneralModel> call, Throwable t) {
-                Toast.makeText(UserLocationService.this, getResources().getString(R.string.failed_to_register_quarantine), Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<GetReportsModel> call, Throwable t) {
+//                TextView msg = dialog.findViewById(R.id.progress_msg);
+//                msg.setText(R.string.try_again);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        progressBar = dialog.findViewById(R.id.progress_bar);
+//                        progressBar.setVisibility(View.INVISIBLE);
+//                        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
+//                        staticProgress.setVisibility(View.VISIBLE);
+//                        staticProgress.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                getReports();
+//                            }
+//                        });
+//                    }
+//                }, 500);
             }
         });
+    }
+    private double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+            return 0;
+        } else {
+            double theta = lon1 - lon2;
+            double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+            dist = Math.acos(dist);
+            dist = Math.toDegrees(dist);
+            dist = dist * 60 * 1.1515;
+            if (unit.equals("K")) {
+                dist = dist * 1.609344;
+            } else if (unit.equals("N")) {
+                dist = dist * 0.8684;
+            }
+            return (dist);
+        }
+    }
 
-
-    }*/
 
 
 
@@ -140,8 +220,9 @@ public class UserLocationService extends Service {
     public void onCreate() {
         // This will be called when your Service is created for the first time
         // Just do any operations you need in this method.
-        Log.d("userserviceStared", "gun");
-
+        Log.d("serviceStared", "gun");
+        qlat=SharedPrefManager.getInstance(UserLocationService.this).getFloat(SharedPrefManager.Key.QUARENTINE_LAT_KEY,0.0f);
+        qlon=SharedPrefManager.getInstance(UserLocationService.this).getFloat(SharedPrefManager.Key.QUARENTINE_LON_KEY,0.0f);
         Log.d("sharedloc", String.valueOf(qlat));
         //to test if the servive is running
         intialiseRetrofit();
@@ -158,17 +239,29 @@ public class UserLocationService extends Service {
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 2000,
-                500, locationListenerGPS);
+                100, locationListenerGPS);
 
 
 
 
         Location lastlocation=getLastKnownLocation();
         Log.d("testloc", String.valueOf(lastlocation));
+        //Toast.makeText(UserLocationService.this, (CharSequence) lastlocation,Toast.LENGTH_LONG).show();
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
+// build notification
+// the addAction re-use the same intent to keep the example short
+        Intent notificationIntent = new Intent(this, MainActivity.class);
 
+        /*PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);*/
+
+        /*Notification notification = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.progress_icon)
+                .setContentTitle("My Awesome App")
+                .setContentText("Doing some work...")
+                .setContentIntent(pendingIntent).build();*/
         NotificationManager mNotificationManager;
 
         NotificationCompat.Builder mBuilder =
@@ -205,20 +298,46 @@ public class UserLocationService extends Service {
 
 
 
-        startForeground(1337,mBuilder.build());
+        startForeground(1337,getNotification());
 
     }
+    public Notification getNotification()
+    {
 
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("app_channel", "Demo Notification", NotificationManager.IMPORTANCE_LOW);
+            channel.setSound(null, null);
+            NotificationManager mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mManager.createNotificationChannel(channel);
+        }
+        Intent intent = new Intent(UserLocationService.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent contentIntent = PendingIntent.getActivity(UserLocationService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification.Builder notificationBuilder = new Notification.Builder(UserLocationService.this)
+                .setContentTitle("Normal User")
+                .setContentText("location service active")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentIntent(contentIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            notificationBuilder.setChannelId("app_channel");
+        return notificationBuilder.build();
+    }
+    private Notification buildForegroundNotification() {
+        NotificationCompat.Builder b=new NotificationCompat.Builder(this);
+
+        b.setOngoing(true)
+                .setContentTitle("COVID19")
+                .setContentText("Live Location being taken")
+                .setSmallIcon(android.R.drawable.stat_sys_download)
+        ;
+
+        return(b.build());
+    }
     LocationListener locationListenerGPS = new LocationListener() {
         @Override
         public void onLocationChanged(android.location.Location location) {
-            double latitude = location.getLatitude();
-            double longitude = location.getLongitude();
-            String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
-            Log.d("UserLocchanged","changed");
-
-
+           sendLat(location);
         }
 
         @Override
@@ -236,11 +355,34 @@ public class UserLocationService extends Service {
 
         }
     };
+    public Notification getNotificationWarn(String nearby)
+    {
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("app_channel", "Demo Notification", NotificationManager.IMPORTANCE_LOW);
+            channel.setSound(null, null);
+            NotificationManager mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mManager.createNotificationChannel(channel);
+        }
+        Intent intent = new Intent(UserLocationService.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent contentIntent = PendingIntent.getActivity(UserLocationService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification.Builder notificationBuilder = new Notification.Builder(UserLocationService.this)
+                .setContentTitle("Warning !!!!")
+                .setContentText(nearby+" Quarantine patients nearby!!")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentIntent(contentIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            notificationBuilder.setChannelId("app_channel");
+        return notificationBuilder.build();
+    }
+
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "My Service Started", Toast.LENGTH_LONG).show();
+      //  Toast.makeText(this, "My Service Started", Toast.LENGTH_LONG).show();
 
         return START_STICKY;
     }
@@ -274,7 +416,13 @@ public class UserLocationService extends Service {
         }
         return bestLocation;
     }
-
+    private boolean checkLocationPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        return false;
+    }
 
 
 

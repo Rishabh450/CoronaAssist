@@ -79,6 +79,15 @@
                 <action android:name="com.suvidha.LONGRUNSERVICE" />
             </intent-filter>
         </service>
+        <service
+            android:name=".Utilities.UserLocationService"
+            android:enabled="true"
+            android:exported="true"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.suvidha.LONGRUNSERVICE" />
+            </intent-filter>
+        </service>
     </application>
     <uses-feature
         android:name="android.hardware.camera.front"
