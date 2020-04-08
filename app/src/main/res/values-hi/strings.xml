@@ -43,6 +43,8 @@
     <string name="report">सेल्फी लें और रिपोर्ट करें</string>
     <string name="address">पता</string>
     <string name="zone">क्षेत्र</string>
+    <string name="state">राज्य</string>
+    <string name="district">जिला</string>
     <string name="tnc">आवेदन पर घर संगरोध के लिए पंजीकरण करते समय ध्यान में रखा जाने वाला अंकं</string>
 
     <string name="name_cannot_be_empty">नाम फ़ील्ड खाली नहीं हो सकता</string>

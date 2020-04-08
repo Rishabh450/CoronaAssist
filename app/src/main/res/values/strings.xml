@@ -48,6 +48,8 @@
     <string name="report">Take Selfie and Report</string>
     <string name="address">Address</string>
     <string name="zone">Zone</string>
+    <string name="state">State</string>
+    <string name="district">District</string>
     <string name="tnc">Points to be kept in mind while registering for home Quarantine on the Application</string>
     <string name="name_cannot_be_empty">Name field cannot be empty</string>
     <string name="address_cannot_be_empty">Address field cannot be empty</string>

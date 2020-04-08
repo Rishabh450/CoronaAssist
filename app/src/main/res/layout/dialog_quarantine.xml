@@ -94,8 +94,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/quarantine_address"
@@ -108,24 +108,71 @@
                 android:singleLine="true" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.textfield.TextInputLayout
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/border_margin"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/quarantine_authority"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawablePadding="10dp"
-            android:hint="@string/authority"
-            android:inputType="textShortMessage"
-            android:singleLine="true" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="@dimen/border_margin"
+            android:layout_marginRight="10dp">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/quarantine_authority"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="10dp"
+                android:hint="@string/authority"
+                android:inputType="textShortMessage"
+                android:singleLine="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/border_margin"
+            android:layout_marginBottom="@dimen/border_margin">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="@string/state"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/register_state"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="@dimen/border_margin"
+                android:spinnerMode="dialog" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/border_margin"
+            android:layout_marginBottom="@dimen/border_margin">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="@string/district"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/register_district"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="@dimen/border_margin"
+                android:spinnerMode="dialog" />
+        </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
 
@@ -145,6 +192,7 @@
                 android:singleLine="true" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.textfield.TextInputLayout
 
             android:layout_width="match_parent"
@@ -167,79 +215,78 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
             android:layout_marginLeft="@dimen/border_margin"
             android:text="@string/tnc"
-            android:textStyle="bold"
             android:textColor="@color/colorPrimary"
-            />
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/border_margin"
             android:layout_marginLeft="@dimen/border_margin"
-            android:layout_marginRight="@dimen/border_margin"
-            >
+            android:layout_marginTop="@dimen/border_margin"
+            android:layout_marginRight="@dimen/border_margin">
 
 
             <TextView
+                android:id="@+id/terms_n_condition"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:textSize="18sp"
-                android:visibility="visible"
-                android:id="@+id/terms_n_condition"
                 android:text=""
-                />
+                android:textSize="18sp"
+                android:visibility="visible" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/border_margin"
-            android:layout_marginTop="@dimen/border_margin"
-            >
+            android:layout_marginTop="@dimen/border_margin">
+
             <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/tnc"
-                />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/border_margin"
                 android:text="I Accept"
-                android:textStyle="bold"
                 android:textSize="18sp"
+                android:textStyle="bold"
 
                 />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end"
             android:layout_marginTop="10dp"
             android:layout_marginRight="@dimen/border_margin"
-            >
+            android:gravity="end"
+            android:orientation="horizontal">
+
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="cancel"
-                android:backgroundTint="@color/white"
                 android:id="@+id/quarantine_cancel"
-                android:textColor="@color/primary_text_color"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                />
-            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Register"
+                android:backgroundTint="@color/white"
+                android:text="cancel"
+                android:textColor="@color/primary_text_color" />
+
+            <Button
+                android:id="@+id/quarantine_register"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/border_margin"
                 android:background="@drawable/btn_shape"
-                android:id="@+id/quarantine_register"
-                android:textColor="@color/secondary_text_color"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                />
+                android:text="Register"
+                android:textColor="@color/secondary_text_color" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
