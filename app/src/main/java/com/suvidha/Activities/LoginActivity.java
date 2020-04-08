@@ -218,7 +218,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Intent intent = null;
                             zonesList.clear();
                             zonesList.addAll(response.body().zone);
-                            if(response.body().location != null){
+                            if(response.body().location.location_lat != 0.0&&response.body().location.location_lon != 0.0){
+                                Log.d("checkingloc", String.valueOf(response.body().location)+" ");
+                                SharedPrefManager.getInstance(LoginActivity.this).put(SharedPrefManager.Key.IS_QUARANTINE,1);
+
+                                SharedPrefManager.getInstance(LoginActivity.this).
+                                        put(SharedPrefManager.Key.QUARENTINE_LAT_KEY,response.body().location.location_lat);
                                 SharedPrefManager.getInstance(LoginActivity.this).
                                         put(SharedPrefManager.Key.QUARENTINE_LAT_KEY,response.body().location.location_lat);
                                 SharedPrefManager.getInstance(LoginActivity.this).

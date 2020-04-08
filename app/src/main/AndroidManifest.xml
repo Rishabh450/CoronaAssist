@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.suvidha">
 
+
     <application
+
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_logo"

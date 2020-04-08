@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.suvidha.Activities.FAQActivity;
+import com.suvidha.Activities.LoginActivity;
 import com.suvidha.Activities.MainActivity;
 import com.suvidha.Activities.QuarantineActivity;
 import com.suvidha.Activities.ShopsActivity;
@@ -304,6 +305,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                                 is_quarantined = 1;
 
                                 notifyDataLoaded();
+                                SharedPrefManager.getInstance(getContext()).put(SharedPrefManager.Key.IS_QUARANTINE,1);
+
+                                SharedPrefManager.getInstance(getContext()).put(SharedPrefManager.Key.QUARENTINE_LAT_KEY, (float) quarantineLocation.getLatitude());
+
                                 SharedPrefManager.getInstance(getContext()).put(SharedPrefManager.Key.QUARENTINE_LAT_KEY, (float) quarantineLocation.getLatitude());
                                 SharedPrefManager.getInstance(getContext()).put(SharedPrefManager.Key.QUARENTINE_LON_KEY, (float) quarantineLocation.getLongitude());
                                 Toast.makeText(getContext(), getResources().getString(R.string.successfully_registered_for_quarantine), Toast.LENGTH_SHORT).show();

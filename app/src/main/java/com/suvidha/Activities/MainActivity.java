@@ -104,15 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intialiseRetrofit();
         setListeners();
         getEssentials();
-        LiveLocationService mYourService = new LiveLocationService();
-        mServiceIntent = new Intent(MainActivity.this, mYourService.getClass());
-        if (!isMyServiceRunning(mYourService.getClass())) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(mServiceIntent);
-            } else {
-                startService(mServiceIntent);
-            }
-        }
+        Log.d(TAG,"checking"+is_quarantined);
 
 
     }
@@ -179,8 +171,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         zonesList.clear();
                         zonesList.addAll(response.body().id.zones);
 
-                        is_quarantined = response.body().id.is_quarantined;
-                        Log.e(TAG, String.valueOf(is_quarantined));
+                        is_quarantined =SharedPrefManager.getInstance(MainActivity.this).getInt(SharedPrefManager.Key.IS_QUARANTINE);
+                        Log.d(TAG, String.valueOf(is_quarantined)+"start");
+                        LiveLocationService mYourService = new LiveLocationService();
+                        mServiceIntent = new Intent(MainActivity.this, mYourService.getClass());
+                        if (!isMyServiceRunning(mYourService.getClass())) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                if(is_quarantined==1) {
+                                    Log.d(TAG,"started1"+is_quarantined);
+                                    startForegroundService(mServiceIntent);
+                                }
+                            } else {
+                                if(is_quarantined==1) {
+                                    Log.d(TAG,"started2");
+                                    startService(mServiceIntent);
+                                }
+                            }
+                        }
                         if (getSupportFragmentManager().findFragmentById(R.id.frame_container) instanceof HomeFragment) {
                             NotifyFragment callBack = (NotifyFragment) getSupportFragmentManager().findFragmentById(R.id.frame_container);
                             callBack.notifyDataLoaded();

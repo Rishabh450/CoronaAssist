@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -30,9 +31,17 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.suvidha.Activities.MainActivity;
+import com.suvidha.Activities.QuarantineActivity;
+import com.suvidha.Models.GetReportsModel;
+import com.suvidha.Models.ReportModel;
 import com.suvidha.R;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,23 +49,112 @@ import java.util.Map;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
+import static com.suvidha.Utilities.Utils.currentLocation;
+import static com.suvidha.Utilities.Utils.getAccessToken;
 
 public class LiveLocationService extends Service {
-
+    ApiInterface apiInterface;
+    private List<ReportModel> data = new ArrayList<>();
     Intent mServiceIntent;
     Location lastKnown;
-    SensorManager sensorManager;
-    String vehicle = "rishabhKaGaadi";
+    int is_quar;
+    float qlat;
+    float qlon;
+    private static final int THRESHOLD_DIST = 100;
+
     LocationManager locationManager;
 
-
+    public class TimestampSorter implements Comparator<ReportModel>
+    {
+        DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
+        @Override
+        public int compare(ReportModel o1, ReportModel o2) {
+            try {
+                if(f.parse(o2.report_time).before(f.parse(o1.report_time))){
+                    return -10;
+                }else{
+                    return 10;
+                }
+            } catch (ParseException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+    }
     @Override
     public IBinder onBind(Intent intent) {
         // This won't be a bound service, so simply return null
         return null;
     }
+    private void intialiseRetrofit() {
+        apiInterface = APIClient.getApiClient().create(ApiInterface.class);
+    }
+    private void getReports() {
+//        if (dialog == null) {
+//            dialog = createProgressDialog(this, getResources().getString(R.string.please_wait));
+//        }
+//        progressBar = dialog.findViewById(R.id.progress_bar);
+//        progressBar.setVisibility(View.VISIBLE);
+//        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
+//        staticProgress.setVisibility(View.GONE);
+//        dialog.show();
+        Call<GetReportsModel> getReportsModelCall = apiInterface.get_report(getAccessToken(this));
+        getReportsModelCall.enqueue(new Callback<GetReportsModel>() {
+            @Override
+            public void onResponse(Call<GetReportsModel> call, Response<GetReportsModel> response) {
+//                dialog.dismiss();
+                data.clear();
+                data.addAll(response.body().id);
+                data.sort(new LiveLocationService.TimestampSorter());
+
+            }
+
+            @Override
+            public void onFailure(Call<GetReportsModel> call, Throwable t) {
+//                TextView msg = dialog.findViewById(R.id.progress_msg);
+//                msg.setText(R.string.try_again);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        progressBar = dialog.findViewById(R.id.progress_bar);
+//                        progressBar.setVisibility(View.INVISIBLE);
+//                        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
+//                        staticProgress.setVisibility(View.VISIBLE);
+//                        staticProgress.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                getReports();
+//                            }
+//                        });
+//                    }
+//                }, 500);
+            }
+        });
+    }
+    private double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+            return 0;
+        } else {
+            double theta = lon1 - lon2;
+            double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+            dist = Math.acos(dist);
+            dist = Math.toDegrees(dist);
+            dist = dist * 60 * 1.1515;
+            if (unit.equals("K")) {
+                dist = dist * 1.609344;
+            } else if (unit.equals("N")) {
+                dist = dist * 0.8684;
+            }
+            return (dist);
+        }
+    }
+
+
+
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
@@ -90,9 +188,11 @@ public class LiveLocationService extends Service {
         // This will be called when your Service is created for the first time
         // Just do any operations you need in this method.
         Log.d("serviceStared", "gun");
-
+        qlat=SharedPrefManager.getInstance(LiveLocationService.this).getFloat(SharedPrefManager.Key.QUARENTINE_LAT_KEY,0.0f);
+        qlon=SharedPrefManager.getInstance(LiveLocationService.this).getFloat(SharedPrefManager.Key.QUARENTINE_LON_KEY,0.0f);
+        Log.d("sharedloc", String.valueOf(qlat));
         //to test if the servive is running
-
+        intialiseRetrofit();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -204,7 +304,21 @@ public class LiveLocationService extends Service {
             double longitude = location.getLongitude();
             String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
             Log.d("Locchanged","changed");
-            Toast.makeText(LiveLocationService.this, msg, Toast.LENGTH_LONG).show();
+          //  Toast.makeText(LiveLocationService.this, msg, Toast.LENGTH_LONG).show();
+
+            double d = distance((double) qlat,(double) qlon,location.getLatitude(),location.getLongitude(),"K")*1000;
+//        Log.e("TAG", String.valueOf(d));
+//        Log.e("QUARANTINE",qlat+", "+qlon);
+//        Log.e("CURRENT",lat+", "+lon);
+//        Toast.makeText(this, "DIST:"+d+" LAT:"+currentLocation.getLatitude()+" LON:"+currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
+            if(d>THRESHOLD_DIST){
+                Toast.makeText(LiveLocationService.this,"You are out of your premises !!",Toast.LENGTH_LONG).show();
+
+                // toolbar_layout.setBackgroundColor(Color.RED);
+            }else{
+           /* location_error = 0;
+            toolbar_layout.setBackgroundColor(getResources().getColor(R.color.green));*/
+            }
         }
 
         @Override
