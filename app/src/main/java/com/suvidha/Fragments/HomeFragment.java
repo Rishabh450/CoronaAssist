@@ -1,6 +1,7 @@
 package com.suvidha.Fragments;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -51,6 +53,7 @@ import com.suvidha.Models.QuarantineModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
+import com.suvidha.Utilities.LiveLocationService;
 import com.suvidha.Utilities.SharedPrefManager;
 import com.suvidha.Utilities.Utils;
 
@@ -236,7 +239,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                 }
         );
     }
-
+    public boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i("Service status", "Running");
+                return true;
+            }
+        }
+        Log.i("Service status", "Not running");
+        return false;
+    }
     private void createQuarentineDialog() {
         Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_quarantine);
@@ -368,6 +381,26 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                                 Toast.makeText(getContext(), getResources().getString(R.string.successfully_registered_for_quarantine), Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                                 dialog.dismiss();
+
+                                LiveLocationService mYourService = new LiveLocationService();
+                                Intent mServiceIntent = new Intent(getContext(), mYourService.getClass());
+                                if (!isMyServiceRunning(mYourService.getClass())) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        if(is_quarantined==1) {
+
+                                            Log.d("MainActivity","started1"+is_quarantined);
+                                            getActivity().startForegroundService(mServiceIntent);
+
+                                        }
+
+                                    } else {
+                                        if(is_quarantined==1) {
+                                            Log.d("MainActivity","started2");
+                                            getActivity().startService(mServiceIntent);
+                                        }
+                                    }
+                                }
+
                             } else {
                                 Log.e("heey", String.valueOf(response.body().status));
                                 //Log.e("heey",call.toString()+" -- "+response.errorBody().toString());
