@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,6 +23,10 @@ import com.suvidha.Models.UserModel;
 import com.suvidha.Models.ZonesModel;
 import com.suvidha.R;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,8 +47,11 @@ public class Utils {
     public static double APP_CHARGE = 2;
     public static int is_quarantined=0;
     public static List<ZonesModel> zonesList=new ArrayList<>();
+    public static List<ZonesModel> statesList=new ArrayList<>();
+    public static List<ZonesModel> districtsList=new ArrayList<>();
     public static List<ItemModel> shopItems=new ArrayList<>();
     public static List<CartModel> allOrders = new ArrayList<>();
+    public static HashMap<String, List<String>> mStateDist = new HashMap<>();
 
     public static Integer currentType;
     public static int local_zone_name = 0;
@@ -133,6 +141,8 @@ public class Utils {
         sharedPrefManager = SharedPrefManager.getInstance(context);
         sharedPrefManager.put(SharedPrefManager.Key.LOGIN_STATUS, true);
         sharedPrefManager.put(SharedPrefManager.Key.ZONE_KEY,zoneId);
+        sharedPrefManager.put(SharedPrefManager.Key.STATE_KEY,user.getState());
+        sharedPrefManager.put(SharedPrefManager.Key.DISTRICT_KEY,user.getDistrict());
         sharedPrefManager.put(SharedPrefManager.Key.USER_NAME, user.getName());
         sharedPrefManager.put(SharedPrefManager.Key.USER_EMAIL, user.getEmail());
         sharedPrefManager.put(SharedPrefManager.Key.USER_PHONE, user.getPhone());
@@ -159,6 +169,29 @@ public class Utils {
             e.printStackTrace();
         }
         return bitmap;
+    }
+
+    public static void parseJson(Context context) {
+        try {
+            InputStream is = context.getAssets().open("statedis.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            String myJson = new String(buffer, "UTF-8");
+            JSONObject obj = new JSONObject(myJson);
+            JSONArray states = obj.getJSONArray("states");
+            for (int i = 0; i < states.length(); i++) {
+                JSONArray district = obj.getJSONArray(states.getString(i));
+                List<String> dis = new ArrayList<>();
+                for (int j = 0; j < district.length(); j++) {
+                    dis.add(district.getString(j).trim());
+                }
+                Utils.mStateDist.put(states.getString(i).trim(), dis);
+            }
+        } catch (Exception e) {
+            Log.d("Register", e.getLocalizedMessage());
+        }
     }
 
 }

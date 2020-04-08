@@ -11,8 +11,10 @@ public class UserModel implements Parcelable {
     public String name;
     public String email;
     public String phone;
-    public String address="";
-    public String zone="";
+    public String address = "";
+    public String zone = "";
+    public String state;
+    public String district;
     public String token;
     public List<String> orders;
     public List<String> passes;
@@ -20,12 +22,14 @@ public class UserModel implements Parcelable {
     public UserModel() {
     }
 
-    public UserModel(String name, String email, String phone, String address, String zone) {
+    public UserModel(String name, String email, String phone, String address, String zone, String state, String district) {
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.address = address;
         this.zone = zone;
+        this.state = state;
+        this.district = district;
     }
 
     public UserModel(String name, String email, List<String> orders, List<String> passes) {
@@ -47,9 +51,10 @@ public class UserModel implements Parcelable {
         this.email = email;
         this.phone = phone;
     }
-    public UserModel(String name,String email){
-        this.name=name;
-        this.email=email;
+
+    public UserModel(String name, String email) {
+        this.name = name;
+        this.email = email;
     }
 
     protected UserModel(Parcel in) {
@@ -60,6 +65,8 @@ public class UserModel implements Parcelable {
         address = in.readString();
         zone = in.readString();
         token = in.readString();
+        state = in.readString();
+        district = in.readString();
     }
 
     public static final Creator<UserModel> CREATOR = new Creator<UserModel>() {
@@ -106,6 +113,22 @@ public class UserModel implements Parcelable {
         this.phone = phone;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -120,5 +143,7 @@ public class UserModel implements Parcelable {
         dest.writeString(address);
         dest.writeString(zone);
         dest.writeString(token);
+        dest.writeString(state);
+        dest.writeString(district);
     }
 }

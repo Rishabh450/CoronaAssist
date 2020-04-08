@@ -53,6 +53,8 @@ public class SharedPrefManager {
         public static final String TOKEN_KEY = "token";
         public static final String ZONE_KEY = "zone";
         public static final String IS_QUARANTINE="isquar";
+        public static final String STATE_KEY = "state";
+        public static final String DISTRICT_KEY = "district";
         public static final String QUARENTINE_LAT_KEY = "quarantinelat";
         public static final String QUARENTINE_LON_KEY = "quarantinelon";
         public static final String USER_ADDRESS = "address";
