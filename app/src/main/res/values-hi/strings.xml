@@ -72,4 +72,7 @@ Email: suvidhajamshedpur@gmail.com \n\n
 Phone: 7061039636 </string>
     <string name="faq_btn">सामान्य प्रश्न</string>
 
+    <string name="main_menu1">English</string>
+    <string name="main_menu2">लॉग आउट</string>
+
 </resources>

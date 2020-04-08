@@ -40,14 +40,14 @@
         android:gravity="center_vertical"
         android:layout_marginRight="@dimen/border_margin"
         >
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:id="@+id/sign_out"
-        android:tint="@color/colorPrimary"
-        android:src="@drawable/ic_signout"
-        android:layout_alignParentRight="true"
-        />
+
+        <ImageView
+            android:id="@+id/sign_out"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_signout"
+            android:tint="@color/colorPrimary" />
     </RelativeLayout>
 
 </LinearLayout>

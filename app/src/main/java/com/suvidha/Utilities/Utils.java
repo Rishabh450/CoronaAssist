@@ -31,7 +31,9 @@ public class Utils {
 
 //    public static final String BASE_URL = "http://192.168.43.114:5000";
 //    public static final String BASE_URL = "http://192.168.43.55:5000";
-    public static final String BASE_URL = "http://202.56.13.210:5000";
+    public static final String BASE_URL = "https://saanayy-token-gen.herokuapp.com/";
+
+
     public static final String password = "Nitsuvidha1!";
     public static final String email = "suvidhajamshedpur@gmail.com";
     public static final String PLAYSTORE_LINK = "https://play.google.com/store/apps/details?id=com.suvidha";
