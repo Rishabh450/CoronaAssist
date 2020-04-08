@@ -178,9 +178,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (!isMyServiceRunning(mYourService.getClass())) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 if(is_quarantined==1) {
+
                                     Log.d(TAG,"started1"+is_quarantined);
                                     startForegroundService(mServiceIntent);
+
                                 }
+
                             } else {
                                 if(is_quarantined==1) {
                                     Log.d(TAG,"started2");
