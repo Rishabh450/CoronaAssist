@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -344,15 +346,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         transaction.commit();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.main_activity_menu,menu);
+        return true;
+    }
+
     private void setListeners() {
         locationLayout.setOnClickListener(this);
-        signout.setOnClickListener(this);
+        //signout.setOnClickListener(this);
     }
+
 
     private void init() {
         nodeName = findViewById(R.id.node_name);
         locationLayout = findViewById(R.id.node_location_layout);
         signout = findViewById(R.id.sign_out);
+        signout.setVisibility(View.GONE);
         btn = findViewById(R.id.change_to_hindi);
         Button eng = findViewById(R.id.change_to_english);
 
@@ -422,6 +433,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    public void signOutClicked(){
+        Dialog dialog = createAlertDialog(this,"Sign Out","Are you sure you want to sign out","Cancel","Ok");
+        dialog.setCancelable(false);
+        dialog.show();
+        dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signOut();
+                dialog.dismiss();
+                startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                finish();
+            }
+        });
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -429,24 +461,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startDialog();
                 break;
             case R.id.sign_out:{
-                Dialog dialog = createAlertDialog(this,"Sign Out","Are you sure you want to sign out","Cancel","Ok");
-                dialog.setCancelable(false);
-                dialog.show();
-                dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        signOut();
-                        dialog.dismiss();
-                        startActivity(new Intent(MainActivity.this,LoginActivity.class));
-                        finish();
-                    }
-                });
+                signOutClicked();
 
             }
         }
@@ -467,11 +482,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    public void changeLanguage(){
+        String languageCode=Locale.getDefault().getISO3Language();
+
+        String languageToLoad  = "hi";
+
+        if(languageCode.equalsIgnoreCase("hin"))
+            languageToLoad  = "en";
+
+        Locale locale = new Locale(languageToLoad);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getResources().updateConfiguration(config,getResources().getDisplayMetrics());
+
+        recreate();
+
+        //Toast.makeText(this,"Change Language "+languageCode,Toast.LENGTH_LONG).show();
+    }
     @Override
     protected void onStart() {
         super.onStart();
         getAllOrders();
         compareAppVersion();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.log_out:
+                signOutClicked();
+                break;
+            case R.id.change_language:
+                changeLanguage();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public interface NotifyFragment {
