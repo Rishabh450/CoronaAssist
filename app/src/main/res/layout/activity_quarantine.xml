@@ -15,6 +15,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:id="@+id/remaining_date"
+        android:layout_below="@+id/main_app_bar"
         android:orientation="vertical"
         android:gravity="center"
         android:background="@color/colorPrimary"
