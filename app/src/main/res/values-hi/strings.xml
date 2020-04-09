@@ -43,6 +43,8 @@
     <string name="report">सेल्फी लें और रिपोर्ट करें</string>
     <string name="address">पता</string>
     <string name="zone">क्षेत्र</string>
+    <string name="state">राज्य</string>
+    <string name="district">जिला</string>
     <string name="tnc">आवेदन पर घर संगरोध के लिए पंजीकरण करते समय ध्यान में रखा जाने वाला अंकं</string>
 
     <string name="name_cannot_be_empty">नाम फ़ील्ड खाली नहीं हो सकता</string>
@@ -56,8 +58,9 @@
     <string name="create_account">खाता बनाएं</string>
     <string name="email">ईमेल</string>
     <string name="sign_up">साइन अप करें</string>
-    <string name="change_to_hindi">Use in hindi</string>
-    <string name="change_to_english">Use in english</string>
+    <string name="change_to_hindi">English</string>
+    <string name="log_out">लॉग आउट</string>
+    <string name="change_to_english">English</string>
     <string name="faq">सुरक्षा- एनआईटी जमशेदपुर के अंतिम वर्ष के छात्रों द्वारा पूर्वी सिंहभूम जिला प्रशासन के सहयोग से कोविद -19 के खिलाफ नागरिकों की मदद और सुरक्षा के लिए एक एप्लीकेशन विकसित किया गया।\n\n
 विशेषताएं:\n\n
 
@@ -71,5 +74,11 @@
 Email: suvidhajamshedpur@gmail.com \n\n
 Phone: 7061039636 </string>
     <string name="faq_btn">सामान्य प्रश्न</string>
+
+    <string name="main_menu1">English</string>
+    <string name="main_menu2">लॉग आउट</string>
+    <string name="in_quarantine_location">आप संगरोध स्थान पर थे</string>
+    <string name="not_in_quarantine">आप संगरोध स्थान पर नहीं थे</string>
+    <string name="error">त्रुटि</string>
 
 </resources>

@@ -48,6 +48,8 @@
     <string name="report">Take Selfie and Report</string>
     <string name="address">Address</string>
     <string name="zone">Zone</string>
+    <string name="state">State</string>
+    <string name="district">District</string>
     <string name="tnc">Points to be kept in mind while registering for home Quarantine on the Application</string>
     <string name="name_cannot_be_empty">Name field cannot be empty</string>
     <string name="address_cannot_be_empty">Address field cannot be empty</string>
@@ -60,20 +62,26 @@
     <string name="create_account">Create Account</string>
     <string name="email">Email</string>
     <string name="sign_up">Sign Up</string>
-    <string name="change_to_hindi">use in hindi</string>
-    <string name="change_to_english">use in english</string>
+    <string name="log_out">Log Out</string>
+    <string name="change_to_hindi">हिन्दी</string>
+    <string name="change_to_english">English</string>
     <string name="faq"><p>Suraksha- An Application developed by the Final year students of NIT Jamshedpur along with the co-operation of East Singhbhum District Administration to help and protect the Citizens against Covid-19.<br/><br/>
 Features:<br/><br/>
 \n
--Home Quarantine Tracking Facility for citizens who are assigned by the government to be Quarantined, so that the govt. can monitor their movements and keep track of them. <br/>
-\n-Issuing local passes for Essential workers to move around Jamshedpur for Essential work via the application and approved by the issuing local authority. (Coming Soon)<br/>
-\n-Delivery of Essential Items such as Grocery, Personal Care, Gas, Water, Medicines, etc via the Application. (Coming Soon)<br/>
+-Home Quarantine Tracking Facility for citizens who are assigned by the government to be Quarantined, so that the govt. can monitor their movements and keep track of them. <br />
+\n-Issuing local passes for Essential workers to move around Jamshedpur for Essential work via the application and approved by the issuing local authority. (Coming Soon)<br />
+\n-Delivery of Essential Items such as Grocery, Personal Care, Gas, Water, Medicines, etc via the Application. (Coming Soon)<br />
 \n
-\nCurrently, the app is on it\'s way to be uploaded on the Google Play Store, and for now it\'s shared via social media for reaching out to people who are told to be under home quarantine and isolation by the government.<br/>
+\nCurrently, the app is on it\'s way to be uploaded on the Google Play Store, and for now it\'s shared via social media for reaching out to people who are told to be under home quarantine and isolation by the government.<br />
 \n
-\nTo contact developers:<br/><br/>
+\nTo contact developers:<br /><br />
 \nEmail: suvidhajamshedpur@gmail.com
 \nPhone: 7061039636 </p> </string>
     <string name="faq_btn">FAQ</string>
+    <string name="main_menu1">हिन्दी</string>
+    <string name="main_menu2">Log Out</string>
+    <string name="in_quarantine_location">You were in quarantine location</string>
+    <string name="not_in_quarantine">You were not in quarantine location</string>
+    <string name="error">Error</string>
 
 </resources>

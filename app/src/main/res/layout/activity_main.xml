@@ -8,12 +8,13 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/toolbar_height"
         android:id="@+id/main_app_bar"
         android:layout_margin="@dimen/border_margin"
         android:background="@color/white"
         >
-        <include layout="@layout/toolbar_layout" />
+        <include layout="@layout/include_toolbar"/>
+<!--        <include layout="@layout/toolbar_layout" />-->
 
     </com.google.android.material.appbar.AppBarLayout>
     <Button
@@ -22,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/main_app_bar"
         android:layout_alignParentRight="true"
+        android:visibility="gone"
         android:text="@string/change_to_hindi"
         android:id="@+id/change_to_hindi"
         />
@@ -32,7 +34,7 @@
         android:layout_below="@id/main_app_bar"
         android:layout_alignParentLeft="true"
         android:layout_marginRight="20dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:text="@string/change_to_english"
 
         android:id="@+id/change_to_english"

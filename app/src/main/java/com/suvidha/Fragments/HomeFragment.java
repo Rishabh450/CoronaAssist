@@ -18,11 +18,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +41,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.suvidha.Activities.FAQActivity;
+import com.suvidha.Activities.LoginActivity;
 import com.suvidha.Activities.MainActivity;
 import com.suvidha.Activities.MyPassActivity;
 import com.suvidha.Activities.QuarantineActivity;
@@ -48,8 +52,14 @@ import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.SharedPrefManager;
+import com.suvidha.Utilities.Utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -80,6 +90,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     private Location quarantineLocation;
     public Dialog dialog;
     public ProgressBar progressBar;
+    private Spinner spinner_zone, spinner_state, spinner_district;
+    private String mSelectedState, mSelectedDistrict;
+    private List<String> mDistricts;
+    private int counter;
 
     public HomeFragment() {
 
@@ -142,9 +156,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                 if (checkLocationPermission()) {
                     //first get current location as quarantine location
                     //then open dialog
-                    if(canGetLocation()){
-                        getCurrentLocation();
-                    }else {
+                    if (canGetLocation()) {
+                        if (is_quarantined == 1) {
+                            intent = new Intent(getContext(), QuarantineActivity.class);
+                            startActivity(intent);
+                        }else {
+                            getCurrentLocation();
+                        }
+                    } else {
                         showSettingsAlert();
                     }
 
@@ -199,24 +218,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                                 }
                             }, 500);
                             Toast.makeText(getContext(), getResources().getString(R.string.cant_get_location), Toast.LENGTH_LONG).show();
-                            String uri = String.format(Locale.ENGLISH, "geo:%f,%f",22.8046,86.2029);
+                            String uri = String.format(Locale.ENGLISH, "geo:%f,%f", 22.8046, 86.2029);
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                             startActivity(intent);
                         } else {
-                            quarantineLocation =new Location(location);
+                            quarantineLocation = new Location(location);
                             currentLocation = new Location(location);
                             dialog.dismiss();
                             Log.e("LOL", "OMG");
 //                            LOCATION_LAT = quarantineLocation.getLatitude();
 //                            LOCATION_LON = quarantineLocation.getLongitude();
-                            if(is_quarantined==1){
-                                Intent intent = new Intent(getContext(), QuarantineActivity.class);
-                                intent.putExtra("lat",location.getLatitude());
-                                intent.putExtra("lon",location.getLongitude());
-                                startActivity(intent);
-                            }else {
-                                createQuarentineDialog();
-                            }
+
+                            createQuarentineDialog();
+
                         }
                     }
                 }
@@ -249,6 +263,47 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         TextView termsandCondition = dialog.findViewById(R.id.terms_n_condition);
         termsandCondition.setText(getContext().getResources().getString(R.string.terms_and_condition));
         register.setEnabled(false);
+        spinner_state = dialog.findViewById(R.id.register_state);
+        spinner_district = dialog.findViewById(R.id.register_district);
+        mDistricts = new ArrayList<>();
+        counter = 0;
+
+        Utils.parseJson(getContext());
+
+        SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance(getContext());
+        String initialState = sharedPrefManager.getString(SharedPrefManager.Key.STATE_KEY, "");
+        String initialDist = sharedPrefManager.getString(SharedPrefManager.Key.DISTRICT_KEY, "");
+
+        Object states[] = Utils.mStateDist.keySet().toArray();
+        Arrays.sort(states);
+        int stInd = Arrays.binarySearch(states, initialState);
+        ArrayAdapter aa1 = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, states);
+        aa1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_state.setAdapter(aa1);
+        spinner_state.setSelection(stInd);
+        mSelectedState = spinner_state.getSelectedItem().toString();
+        mDistricts = Utils.mStateDist.get(mSelectedState);
+        int dInd = Collections.binarySearch(mDistricts, initialDist);
+
+        spinner_state.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mSelectedState = states[position].toString();
+                mDistricts = Utils.mStateDist.get(mSelectedState);
+                ArrayAdapter aa2 = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, mDistricts);
+                aa2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner_district.setAdapter(aa2);
+                if (counter == 0)
+                    spinner_district.setSelection(dInd);
+                counter++;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         st.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -288,10 +343,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                 String stDate = st.getText().toString().trim();
                 String endDate = end.getText().toString().trim();
                 String etAuthority = authority.getText().toString().trim();
+                mSelectedState = spinner_state.getSelectedItem().toString();
+                mSelectedDistrict = spinner_district.getSelectedItem().toString();
                 boolean terms = tnc.isChecked();
-                if (etname.length() != 0 && etphone.length() != 0 && etphone.length() == 10 && etaddress.length() != 0 && stDate.length() != 0 && endDate.length() != 0 && etAuthority.length() != 0 && terms) {
+                if (etname.length() != 0 && etphone.length() != 0 && etphone.length() == 10 && etaddress.length() != 0 && stDate.length() != 0 && endDate.length() != 0 && etAuthority.length() != 0 && terms && mSelectedDistrict.length() != 0 && mSelectedState.length() != 0) {
 //                    register quarantine
-                    QuarantineModel model = new QuarantineModel(etname, etaddress, etphone, (float) quarantineLocation.getLatitude(), (float) quarantineLocation.getLongitude(), etAuthority, stDate, endDate);
+                    QuarantineModel model = new QuarantineModel(etname, etaddress, etphone, (float) quarantineLocation.getLatitude(), (float) quarantineLocation.getLongitude(), etAuthority, stDate, endDate, mSelectedState, mSelectedDistrict);
 
                     Call<GeneralModel> registerResult = apiInterface.register_quarantine(getAccessToken(getContext()), model);
                     registerResult.enqueue(new Callback<GeneralModel>() {
@@ -302,18 +359,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                                 is_quarantined = 1;
 
                                 notifyDataLoaded();
+                                SharedPrefManager.getInstance(getContext()).put(SharedPrefManager.Key.IS_QUARANTINE, 1);
+
+                                SharedPrefManager.getInstance(getContext()).put(SharedPrefManager.Key.QUARENTINE_LAT_KEY, (float) quarantineLocation.getLatitude());
+
                                 SharedPrefManager.getInstance(getContext()).put(SharedPrefManager.Key.QUARENTINE_LAT_KEY, (float) quarantineLocation.getLatitude());
                                 SharedPrefManager.getInstance(getContext()).put(SharedPrefManager.Key.QUARENTINE_LON_KEY, (float) quarantineLocation.getLongitude());
                                 Toast.makeText(getContext(), getResources().getString(R.string.successfully_registered_for_quarantine), Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                                 dialog.dismiss();
                             } else {
+                                Log.e("heey", call.toString() + " -- " + response.errorBody().toString());
                                 Toast.makeText(getContext(), getResources().getString(R.string.failed_to_register_quarantine), Toast.LENGTH_SHORT).show();
                             }
                         }
 
                         @Override
                         public void onFailure(Call<GeneralModel> call, Throwable t) {
+                            Log.e("heey", t.getMessage());
                             Toast.makeText(getContext(), getResources().getString(R.string.failed_to_register_quarantine), Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -375,7 +438,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     }
 
     private void requestLocationPermissions() {
-        MainActivity mainActivity = (MainActivity)getActivity();
+        MainActivity mainActivity = (MainActivity) getActivity();
         ActivityCompat.requestPermissions(
                 mainActivity,
                 new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
@@ -384,6 +447,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
 
 
     }
+
     public boolean canGetLocation() {
         boolean result = true;
         LocationManager lm = null;
@@ -412,6 +476,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
 
         return result;
     }
+
     public void showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
 
@@ -433,24 +498,25 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
 
         alertDialog.show();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         Log.e("LOL", "WTH");
         if (requestCode == LOCATION_PERMISSION_CODE) {
-            Toast.makeText(getContext(), "WTH "+requestCode, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "WTH " + requestCode, Toast.LENGTH_SHORT).show();
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Granted. Start getting the location information
-                if(canGetLocation()){
+                if (canGetLocation()) {
                     getCurrentLocation();
                     Toast.makeText(getContext(), getResources().getString(R.string.loc_perm_denied), Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     showSettingsAlert();
                 }
 
             }
-        }else {
-            Toast.makeText(getContext(), "CODE "+requestCode, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "CODE " + requestCode, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -463,6 +529,4 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
             iconQuarentine.setText(getResources().getString(R.string.register_quarantine));
         }
     }
-
-
 }

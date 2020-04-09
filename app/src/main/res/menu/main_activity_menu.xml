@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/change_language"
+        android:title="@string/change_to_hindi" />
+    <item
+        android:id="@+id/log_out"
+        android:title="@string/log_out" />
+</menu>

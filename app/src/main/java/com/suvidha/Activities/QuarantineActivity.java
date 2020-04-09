@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -11,11 +12,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -24,6 +28,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +61,7 @@ import java.util.function.IntToDoubleFunction;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -64,7 +70,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static com.suvidha.Utilities.Utils.CAMERA_PERMISSION_CODE;
+import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.createAlertDialog;
 import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.currentLocation;
@@ -74,16 +82,18 @@ import static com.suvidha.Utilities.Utils.getAccessToken;
 public class QuarantineActivity extends AppCompatActivity {
 
     private static final int CAMERA_REQUEST = 5;
+    private static final int GPS_REQUEST_CODE = 10;
     private FusedLocationProviderClient mFusedLocationClient;
     private Toolbar toolbar;
     private AppBarLayout toolbar_layout;
     ApiInterface apiInterface;
-    private int location_error=0;
+    private int location_error = 0;
     private static final int THRESHOLD_DIST = 200;
-    private double lat,lon;
+    private double lat, lon;
     private Button reportBtn;
     private RecyclerView rview;
     private QuarantineAdapter mAdapter;
+    private RelativeLayout pFrame;
     private List<ReportModel> data = new ArrayList<>();
 
     @Override
@@ -91,17 +101,107 @@ public class QuarantineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quarantine);
         init();
+        getLocationUpdates();
         setRecyclerView();
         intialiseRetrofit();
         getReports();
-        lat = getIntent().getDoubleExtra("lat",0);
-        lon = getIntent().getDoubleExtra("lon",0);
+//        lat = getIntent().getDoubleExtra("lat", 0);
+//        lon = getIntent().getDoubleExtra("lon", 0);
         setToolbar();
-        calDiffDist();
+        if(currentLocation == null){
+            pFrame.setVisibility(View.VISIBLE);
+            reportBtn.setEnabled(false);
+            reportBtn.setText(getResources().getString(R.string.please_wait));
+        }
+//        calDiffDist();
 
 
     }
-//    private Dialog dialog;
+
+    private void getLocationUpdates() {
+        LocationManager locationManager = (LocationManager)
+                getSystemService(Context.LOCATION_SERVICE);
+        LocationListener locationListener = new MyLocationListener();
+        if (checkLocationPermission()) {
+            //first get current location as quarantine location
+            //then open dialog
+            if (canGetLocation()) {
+                locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,5000, 0, locationListener);
+            } else {
+                showSettingsAlert();
+            }
+
+        } else {
+            requestLocationPermissions();
+//                    Toast.makeText(getContext(), "You don't have location permission", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+    private boolean checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        return false;
+    }
+    private void requestLocationPermissions() {
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                LOCATION_PERMISSION_CODE
+        );
+    }
+    public boolean canGetLocation() {
+        boolean result = true;
+        LocationManager lm = null;
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+        if (lm == null)
+
+            lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+
+        // exceptions will be thrown if provider is not permitted.
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {
+
+        }
+        try {
+            network_enabled = lm
+                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {
+        }
+        if (gps_enabled == false || network_enabled == false) {
+            result = false;
+        } else {
+            result = true;
+        }
+
+        return result;
+    }
+    public void showSettingsAlert() {
+        Dialog dialog = createAlertDialog(this,getResources().getString(R.string.error),"Please turn on GPS","Go Back","Ok");
+        dialog.setCancelable(false);
+        // Setting Dialog Title
+       dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               Intent intent = new Intent(
+                       Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+               startActivityForResult(intent,GPS_REQUEST_CODE);
+               dialog.dismiss();
+           }
+       });
+       dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               finish();
+           }
+       });
+    }
+
+    //    private Dialog dialog;
 //    private ProgressBar progressBar;
     private void getReports() {
 //        if (dialog == null) {
@@ -112,6 +212,7 @@ public class QuarantineActivity extends AppCompatActivity {
 //        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
 //        staticProgress.setVisibility(View.GONE);
 //        dialog.show();
+        pFrame.setVisibility(View.VISIBLE);
         Call<GetReportsModel> getReportsModelCall = apiInterface.get_report(getAccessToken(this));
         getReportsModelCall.enqueue(new Callback<GetReportsModel>() {
             @Override
@@ -121,6 +222,7 @@ public class QuarantineActivity extends AppCompatActivity {
                 data.addAll(response.body().id);
                 data.sort(new TimestampSorter());
                 mAdapter.notifyDataSetChanged();
+                pFrame.setVisibility(View.GONE);
             }
 
             @Override
@@ -142,6 +244,7 @@ public class QuarantineActivity extends AppCompatActivity {
 //                        });
 //                    }
 //                }, 500);
+                pFrame.setVisibility(View.GONE);
                 Toast.makeText(QuarantineActivity.this, getResources().getString(R.string.cannot_get_your_reports), Toast.LENGTH_SHORT).show();
             }
         });
@@ -173,6 +276,8 @@ public class QuarantineActivity extends AppCompatActivity {
 
     private void init() {
         rview = findViewById(R.id.quarantine_rview);
+        pFrame = findViewById(R.id.progress_frame);
+        pFrame.setVisibility(View.GONE);
         toolbar = findViewById(R.id.default_toolbar);
         toolbar_layout = findViewById(R.id.main_app_bar);
         reportBtn = findViewById(R.id.report_btn);
@@ -220,6 +325,7 @@ public class QuarantineActivity extends AppCompatActivity {
     }
     void sendDataToServer(Intent data){
         try {
+            pFrame.setVisibility(View.VISIBLE);
 //            Dialog dialog = createProgressDialog(getApplicationContext(),getResources().getString(R.string.please_wait));
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -232,6 +338,7 @@ public class QuarantineActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<GeneralModel> call, Response<GeneralModel> response) {
 //                    dialog.dismiss();
+                    pFrame.setVisibility(View.GONE);
                     getReports();
                     Dialog alertDialog = createAlertDialog(QuarantineActivity.this,getResources().getString(R.string.successful),getResources().getString(R.string.submitter_successfully),"",getResources().getString(R.string.ok));
                     alertDialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
@@ -246,6 +353,7 @@ public class QuarantineActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<GeneralModel> call, Throwable t) {
                     Log.e("TAG",t.getMessage());
+                    pFrame.setVisibility(View.GONE);
 //                    dialog.dismiss();
                     Toast.makeText(QuarantineActivity.this, getResources().getString(R.string.failed_to_submit_report), Toast.LENGTH_SHORT).show();
                 }
@@ -304,8 +412,52 @@ public class QuarantineActivity extends AppCompatActivity {
         }
         return true;
     }
-    @Override
 
+    private class MyLocationListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location loc) {
+          if(loc!=null) {
+              currentLocation = loc;
+              reportBtn.setEnabled(true);
+              reportBtn.setText(getResources().getString(R.string.report));
+              calDiffDist();
+              Log.e("LOCATION",loc.getLatitude() +" "+ loc.getLongitude());
+              pFrame.setVisibility(View.GONE);
+          }
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            try {
+                if (checkLocationPermission()) {
+                    //first get current location as quarantine location
+                    //then open dialog
+                    if (canGetLocation()) {
+
+                    } else {
+                        showSettingsAlert();
+                    }
+
+                } else {
+                    requestLocationPermissions();
+//                    Toast.makeText(getContext(), "You don't have location permission", Toast.LENGTH_SHORT).show();
+                }
+            }catch (Exception e){
+
+            }
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {}
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -326,7 +478,17 @@ public class QuarantineActivity extends AppCompatActivity {
                 Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
 
             }
+        }else if (requestCode == LOCATION_PERMISSION_CODE){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Granted. Start getting the location information
+                if (canGetLocation()) {
+                    getLocationUpdates();
+                    Toast.makeText(this, getResources().getString(R.string.loc_perm_denied), Toast.LENGTH_SHORT).show();
+                } else {
+                    showSettingsAlert();
+                }
 
+            }
         }
     }
 
@@ -339,6 +501,12 @@ public class QuarantineActivity extends AppCompatActivity {
                 sendDataToServer(data);
             }else{
                 Toast.makeText(this, getResources().getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+            }
+        }else if (requestCode == GPS_REQUEST_CODE){
+            if(resultCode == 1){
+                getLocationUpdates();
+            }else{
+                finish();
             }
         }
     }
