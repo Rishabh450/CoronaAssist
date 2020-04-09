@@ -87,6 +87,7 @@
                 <action android:name="com.suvidha.LONGRUNSERVICE" />
             </intent-filter>
         </service>
+        <receiver android:name=".Receiver.AlarmReceiver"/>
     </application>
     <uses-feature
         android:name="android.hardware.camera.front"

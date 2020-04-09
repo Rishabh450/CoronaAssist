@@ -2,10 +2,13 @@ package com.suvidha.Activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -45,6 +48,7 @@ import com.suvidha.Models.GeneralModel;
 import com.suvidha.Models.GetReportsModel;
 import com.suvidha.Models.ReportModel;
 import com.suvidha.R;
+import com.suvidha.Receiver.AlarmReceiver;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.SharedPrefManager;
@@ -74,6 +78,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.suvidha.Utilities.Utils.CAMERA_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.createAlertDialog;
@@ -98,6 +103,9 @@ public class QuarantineActivity extends AppCompatActivity {
     private QuarantineAdapter mAdapter;
     private RelativeLayout pFrame;
     private List<ReportModel> data = new ArrayList<>();
+    static int MINUTES=120;
+    static int LAST_UPDATE=0;
+    public static final String MY_PREFS_NAME = "Last_Update";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -117,9 +125,12 @@ public class QuarantineActivity extends AppCompatActivity {
             reportBtn.setText(getResources().getString(R.string.please_wait));
         }
 //        calDiffDist();
+          check();
+
 
 
     }
+
 
     private void getLocationUpdates() {
         LocationManager locationManager = (LocationManager)
@@ -255,6 +266,8 @@ public class QuarantineActivity extends AppCompatActivity {
         });
     }
 
+
+
     private void setRecyclerView() {
         rview.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new QuarantineAdapter(this,data);
@@ -266,8 +279,8 @@ public class QuarantineActivity extends AppCompatActivity {
         float qlat= SharedPrefManager.getInstance(this).getFloat(SharedPrefManager.Key.QUARENTINE_LAT_KEY,0);
         float qlon= SharedPrefManager.getInstance(this).getFloat(SharedPrefManager.Key.QUARENTINE_LON_KEY,0);
         double d = distance((double) qlat,(double) qlon,currentLocation.getLatitude(),currentLocation.getLongitude(),"K")*1000;
-        Log.e("TAG", String.valueOf(d));
-        Log.e("QUARANTINE",qlat+", "+qlon);
+//        Log.e("TAG", String.valueOf(d));
+//        Log.e("QUARANTINE",qlat+", "+qlon);
 //        Log.e("CURRENT",lat+", "+lon);
 //        Toast.makeText(this, "DIST:"+d+" LAT:"+currentLocation.getLatitude()+" LON:"+currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
         if(d>THRESHOLD_DIST){
@@ -349,6 +362,7 @@ public class QuarantineActivity extends AppCompatActivity {
                     pFrame.setVisibility(View.GONE);
                     getReports();
                     Dialog alertDialog = createAlertDialog(QuarantineActivity.this,getResources().getString(R.string.successful),getResources().getString(R.string.submitter_successfully),"",getResources().getString(R.string.ok));
+                    setRemainder();
                     alertDialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -520,6 +534,53 @@ public class QuarantineActivity extends AppCompatActivity {
                 finish();
             }
         }
+    }
+    public boolean isTimeUp(){
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        LAST_UPDATE = prefs.getInt("time", LAST_UPDATE); //0 is the default value.
+        return (System.currentTimeMillis()-LAST_UPDATE)/(60*1000)>=MINUTES;
+    }
+    private void check() {
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        long check= prefs.getLong("time", -1); //0 is the default value.
+        if(check == -1) {
+            setRemainder();
+        }
+    }
+
+    public void cancelRemainder(){
+        SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+        editor.putLong("time", System.currentTimeMillis());
+        editor.apply();
+        Log.d("ak47", "cancelRemainder: ");
+        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
+        intent.setAction("com.suvidha.Activities");
+        intent.putExtra("SET","STOP");
+        sendBroadcast(intent);
+    }
+    public void setRemainder(){
+
+        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
+        intent.putExtra("SET","RUN");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                getBaseContext(), 1, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+MINUTES*60*1000,
+                pendingIntent);
+        Log.d("ak47", "setRemainder: ");
+//        // Set notificationId & text.
+//        Intent intent = new Intent(QuarantineActivity.this, AlarmReceiver.class);
+//        intent.putExtra("notificationId", 1);
+//
+//        // getBroadcast(context, requestCode, intent, flags)
+//        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
+//                intent, PendingIntent.FLAG_CANCEL_CURRENT);
+//
+//        AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
+//        long alarmStartTime=System.currentTimeMillis()+1000*10;
+//        Toast.makeText(this,alarmStartTime+" ",Toast.LENGTH_LONG).show();
+//        Log.d("ak47", alarmStartTime+"setRemainder: "+System.currentTimeMillis());
+//        alarm.set(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmIntent);
     }
     //    private class LocationStuff extends AsyncTask<Void, Void, Void> {
 //
