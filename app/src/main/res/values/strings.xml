@@ -83,5 +83,10 @@ Features:<br/><br/>
     <string name="in_quarantine_location">You were in quarantine location</string>
     <string name="not_in_quarantine">You were not in quarantine location</string>
     <string name="error">Error</string>
+    <string name="emergency_no">Emergency Number</string>
+    <string name="emergency_phone_no" translatable="false">1234567890</string>
+    <string name="Emergency">Emergency</string>
+    <string name="CANCEL">CANCEL</string>
+    <string name="OK">Call</string>
 
 </resources>

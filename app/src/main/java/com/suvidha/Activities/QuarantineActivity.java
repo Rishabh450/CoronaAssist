@@ -40,6 +40,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.suvidha.Adapters.QuarantineAdapter;
+import com.suvidha.Fragment.Emegency_Dialog;
 import com.suvidha.Fragments.HistoryFragment;
 import com.suvidha.Models.CartModel;
 import com.suvidha.Models.GeneralModel;
@@ -84,7 +85,7 @@ import static com.suvidha.Utilities.Utils.currentLocation;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 
 
-public class QuarantineActivity extends AppCompatActivity {
+public class QuarantineActivity extends AppCompatActivity implements Emegency_Dialog.DialogListener {
 
     private static final int CAMERA_REQUEST = 5;
     private static final int GPS_REQUEST_CODE = 10;
@@ -374,6 +375,13 @@ public class QuarantineActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Failed!", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void call() {
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + R.string.emergency_phone_no));
+        startActivity(intent);
+    }
+
     public class TimestampSorter implements Comparator<ReportModel>
     {
         DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
