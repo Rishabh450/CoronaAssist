@@ -20,8 +20,6 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 import com.suvidha.Models.Pass;
 import com.suvidha.Models.RegistrationResult;
 import com.suvidha.Models.SinglePassResult;
@@ -44,7 +42,7 @@ public class ScanPassActivity extends AppCompatActivity {
     private static final String TAG = "scan";
 
     // Views
-    IntentIntegrator integrator;
+
     FloatingActionButton fabScan;
     TextView tvpassID, tvPassType, tvDuration, tvDate, tvReason, tvVehicleNum, tvStatusText, tvDestination, tvIdentity, tvPassanger, tvSenior, tvName;
     ImageView ivQR, ivStatusImage;
@@ -233,17 +231,17 @@ public class ScanPassActivity extends AppCompatActivity {
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            if (result.getContents() == null) {
-                Toast.makeText(ScanPassActivity.this, "No Scanned item found", Toast.LENGTH_LONG).show();
-            } else {
-//                Toast.makeText(ScanPassActivity.this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-                consumeQRCode(result.getContents());
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
+//        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+//        if (result != null) {
+//            if (result.getContents() == null) {
+//                Toast.makeText(ScanPassActivity.this, "No Scanned item found", Toast.LENGTH_LONG).show();
+//            } else {
+////                Toast.makeText(ScanPassActivity.this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+//                consumeQRCode(result.getContents());
+//            }
+//        } else {
+//            super.onActivityResult(requestCode, resultCode, data);
+//        }
     }
 
     private void consumeQRCode(String contents) {

@@ -11,11 +11,13 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.hardware.Camera;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -61,6 +63,7 @@ import java.util.function.IntToDoubleFunction;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -88,7 +91,7 @@ public class QuarantineActivity extends AppCompatActivity {
     private AppBarLayout toolbar_layout;
     ApiInterface apiInterface;
     private int location_error = 0;
-    private static final int THRESHOLD_DIST = 200;
+    private static final int THRESHOLD_DIST = 300;
     private double lat, lon;
     private Button reportBtn;
     private RecyclerView rview;
@@ -134,7 +137,7 @@ public class QuarantineActivity extends AppCompatActivity {
 
         } else {
             requestLocationPermissions();
-//                    Toast.makeText(getContext(), "You don't have location permission", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContexgetLocationUpdatest(), "You don't have location permission", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -220,7 +223,9 @@ public class QuarantineActivity extends AppCompatActivity {
 //                dialog.dismiss();
                 data.clear();
                 data.addAll(response.body().id);
-                data.sort(new TimestampSorter());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    data.sort(new TimestampSorter());
+                }
                 mAdapter.notifyDataSetChanged();
                 pFrame.setVisibility(View.GONE);
             }
@@ -261,8 +266,8 @@ public class QuarantineActivity extends AppCompatActivity {
         float qlat= SharedPrefManager.getInstance(this).getFloat(SharedPrefManager.Key.QUARENTINE_LAT_KEY,0);
         float qlon= SharedPrefManager.getInstance(this).getFloat(SharedPrefManager.Key.QUARENTINE_LON_KEY,0);
         double d = distance((double) qlat,(double) qlon,currentLocation.getLatitude(),currentLocation.getLongitude(),"K")*1000;
-//        Log.e("TAG", String.valueOf(d));
-//        Log.e("QUARANTINE",qlat+", "+qlon);
+        Log.e("TAG", String.valueOf(d));
+        Log.e("QUARANTINE",qlat+", "+qlon);
 //        Log.e("CURRENT",lat+", "+lon);
 //        Toast.makeText(this, "DIST:"+d+" LAT:"+currentLocation.getLatitude()+" LON:"+currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
         if(d>THRESHOLD_DIST){
@@ -282,16 +287,19 @@ public class QuarantineActivity extends AppCompatActivity {
         toolbar_layout = findViewById(R.id.main_app_bar);
         reportBtn = findViewById(R.id.report_btn);
         reportBtn.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                if(checkCameraPermission()){
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    intent.putExtra("android.intent.extras.CAMERA_FACING", android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT);
-                    intent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
-                    intent.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
-                    startActivityForResult(intent,CAMERA_REQUEST);
-                }else{
-                    requestCameraPermission();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if(checkCameraPermission()){
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.putExtra("android.intent.extras.CAMERA_FACING", Camera.CameraInfo.CAMERA_FACING_FRONT);
+                        intent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
+                        intent.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
+                        startActivityForResult(intent,CAMERA_REQUEST);
+                    }else{
+                        requestCameraPermission();
+                    }
                 }
             }
         });
@@ -405,10 +413,13 @@ public class QuarantineActivity extends AppCompatActivity {
         );
     }
 
+
     public boolean checkCameraPermission(){
-        if (checkSelfPermission(Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            return false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
         }
         return true;
     }

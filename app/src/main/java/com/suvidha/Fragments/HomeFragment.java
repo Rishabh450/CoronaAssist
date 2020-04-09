@@ -62,6 +62,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -316,17 +317,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
 
             }
         });
-
+        end.setEnabled(false);
         st.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showTimePicker(st);
+                showTimePicker(st,end);
             }
         });
         end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showTimePicker(end);
+                showTimePicker(end,null);
             }
         });
         tnc.setOnClickListener(new View.OnClickListener() {
@@ -441,7 +442,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         });
     }
 
-    private void showTimePicker(TextInputEditText et) {
+    private void showTimePicker(TextInputEditText et,TextInputEditText et_end) {
         final Calendar c = Calendar.getInstance();
         int mYear = c.get(Calendar.YEAR);
         int mMonth = c.get(Calendar.MONTH);
@@ -454,11 +455,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                     @Override
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
-
+                        if(et_end!=null){
+                            et_end.setEnabled(true);
+                        }
                         et.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
 
                     }
                 }, mYear, mMonth, mDay);
+        datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
+        c.add(Calendar.DAY_OF_MONTH,20);
+        datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis());
         datePickerDialog.show();
     }
 

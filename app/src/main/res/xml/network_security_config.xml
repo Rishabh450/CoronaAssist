@@ -5,5 +5,6 @@
         <!--        <domain includeSubdomains="true">192.168.43.193</domain>-->
         <!--        sanay-->
         <domain includeSubdomains="true">https://saanayy-token-gen.herokuapp.com/</domain>
+<!--        <domain includeSubdomains="true">http://192.168.43.114:5000</domain>-->
     </domain-config>
 </network-security-config>

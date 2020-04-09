@@ -11,11 +11,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.suvidha.Models.CartModel;
 import com.suvidha.Models.ItemModel;
 import com.suvidha.Models.LocationModel;
@@ -157,17 +152,17 @@ public class Utils {
     public static Bitmap getQRCode(String Id) {
         // Handle Null pointer exception carefully.
 
-        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+//        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         Bitmap bitmap = null;
-        try {
-            BitMatrix bitMatrix = multiFormatWriter.encode(Id, BarcodeFormat.QR_CODE, 200, 200);
-            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            bitmap = barcodeEncoder.createBitmap(bitMatrix);
-            return bitmap;
-
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            BitMatrix bitMatrix = multiFormatWriter.encode(Id, BarcodeFormat.QR_CODE, 200, 200);
+//            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+//            bitmap = barcodeEncoder.createBitmap(bitMatrix);
+//            return bitmap;
+//
+//        } catch (WriterException e) {
+//            e.printStackTrace();
+//        }
         return bitmap;
     }
 
