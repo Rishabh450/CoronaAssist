@@ -100,7 +100,7 @@ public class QuarantineActivity extends AppCompatActivity {
     private QuarantineAdapter mAdapter;
     private RelativeLayout pFrame;
     private List<ReportModel> data = new ArrayList<>();
-    static int MINUTES=1;
+    static int MINUTES=120;
     static int LAST_UPDATE=0;
     public static final String MY_PREFS_NAME = "Last_Update";
 
