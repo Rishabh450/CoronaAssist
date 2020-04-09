@@ -112,7 +112,7 @@ public class QuarantineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quarantine);
         init();
-        getLocationUpdates();
+
         setRecyclerView();
         intialiseRetrofit();
         getReports();
