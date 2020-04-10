@@ -103,6 +103,7 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
     private List<ReportModel> data = new ArrayList<>();
     static int MINUTES=120;
     static int LAST_UPDATE=0;
+    private TextView dayleftcount,daysleftmessege;
     public static final String MY_PREFS_NAME = "Last_Update";
 
     @Override
@@ -235,6 +236,7 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
                 data.sort(new TimestampSorter());
                 mAdapter.notifyDataSetChanged();
                 pFrame.setVisibility(View.GONE);
+                setLeftDays(response.body().left);
             }
 
             @Override
@@ -262,6 +264,13 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
         });
     }
 
+    private void setLeftDays(int left) {
+        if(left<=0){
+            daysleftmessege.setText(getResources().getString( R.string.police_verification));
+            left=0;
+        }
+        dayleftcount.setText(String.valueOf(left));
+    }
 
 
     private void setRecyclerView() {
@@ -285,6 +294,8 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
     }
 
     private void init() {
+        dayleftcount=findViewById(R.id.leftdays);
+        daysleftmessege=findViewById(R.id.leftdaysmessage);
         rview = findViewById(R.id.quarantine_rview);
         pFrame = findViewById(R.id.progress_frame);
         pFrame.setVisibility(View.GONE);

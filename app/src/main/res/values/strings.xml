@@ -88,5 +88,7 @@ Features:<br/><br/>
     <string name="Emergency">Emergency</string>
     <string name="CANCEL">CANCEL</string>
     <string name="OK">Call</string>
+    <string name="day_message_left">Days Left</string>
+    <string name="police_verification">Waiting for police confirmation</string>
 
 </resources>

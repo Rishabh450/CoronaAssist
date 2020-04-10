@@ -84,4 +84,6 @@ Phone: 7061039636 </string>
     <string name="Emergency">आपातकालीन </string>
     <string name="CANCEL">रद्द</string>
     <string name="OK">कॉल</string>
+    <string name="day_message_left">दिन शेष</string>
+    <string name="police_verification">पुलिस की पुष्टि का इंतजार</string>
 </resources>
