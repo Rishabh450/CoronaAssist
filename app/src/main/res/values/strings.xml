@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Suraksha Jamshedpur</string>
+    <string name="app_name">Suraksha</string>
     <string name="action_settings" translatable="false">Settings</string>
     <string name="warning_cart_not_empty" translatable="false">You\'ll lose the cart items if you go back. Do you want to continue?</string>
     <string name="view_order_summary" translatable="false">VIEW ORDER SUMMARY</string>
@@ -69,7 +69,7 @@
 Features:<br/><br/>
 \n
 -Home Quarantine Tracking Facility for citizens who are assigned by the government to be Quarantined, so that the govt. can monitor their movements and keep track of them. <br />
-\n-Issuing local passes for Essential workers to move around Jamshedpur for Essential work via the application and approved by the issuing local authority. (Coming Soon)<br />
+\n-Issuing local passes for Essential workers to move around your city for Essential work via the application and approved by the issuing local authority. (Coming Soon)<br />
 \n-Delivery of Essential Items such as Grocery, Personal Care, Gas, Water, Medicines, etc via the Application. (Coming Soon)<br />
 \n
 \nCurrently, the app is on it\'s way to be uploaded on the Google Play Store, and for now it\'s shared via social media for reaching out to people who are told to be under home quarantine and isolation by the government.<br />
@@ -88,5 +88,6 @@ Features:<br/><br/>
     <string name="Emergency">Emergency</string>
     <string name="CANCEL">CANCEL</string>
     <string name="OK">Call</string>
+    <string name="log_out_warning">Are you sure you want to log out?</string>
 
 </resources>

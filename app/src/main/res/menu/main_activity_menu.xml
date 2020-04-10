@@ -5,7 +5,7 @@
         android:id="@+id/emergency"
         android:title="@string/emergency_no"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_warning_black_24dp"
+        android:icon="@mipmap/ic_plus"
         />
     <item
         android:id="@+id/change_language"

@@ -19,18 +19,20 @@ public class Emegency_Dialog extends AppCompatDialogFragment {
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.emergency_dialog, null);
-        builder.setView(view)
-                .setTitle(R.string.Emergency)
-                .setNegativeButton(R.string.CANCEL, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                    }
-                }).setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+        view.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+        view.findViewById(R.id.ok).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 listener.call();
             }
         });
+        builder.setView(view)
+                .setTitle(R.string.Emergency);
 
         return builder.create();
     }

@@ -312,9 +312,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public boolean checkCallPermission(){
-        if (checkSelfPermission(Manifest.permission.CALL_PHONE)
-                != PackageManager.PERMISSION_GRANTED) {
-            return false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CALL_PHONE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
         }
         return true;
     }
@@ -530,7 +532,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void signOutClicked(){
-        Dialog dialog = createAlertDialog(this,"Sign Out","Are you sure you want to sign out","Cancel","Ok");
+        Dialog dialog = createAlertDialog(this,getResources().getString(R.string.log_out),getResources().getString(R.string.log_out_warning),getResources().getString(R.string.CANCEL),getResources().getString(R.string.ok));
         dialog.setCancelable(false);
         dialog.show();
         dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
