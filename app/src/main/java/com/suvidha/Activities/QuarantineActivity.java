@@ -114,6 +114,8 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quarantine);
         init();
+        getLocation();
+        getLocationUpdates();
 
         setRecyclerView();
         intialiseRetrofit();
@@ -155,7 +157,7 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
             //then open dialog
             if (canGetLocation()) {
                 locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,0, 0, locationListener);
+                        LocationManager.GPS_PROVIDER,1000, 20, locationListener);
             } else {
                 showSettingsAlert();
             }
@@ -474,6 +476,8 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
         @Override
         public void onLocationChanged(Location loc) {
           if(loc!=null) {
+              lat=loc.getLatitude();
+              lon=loc.getLongitude();
 
           }
 
