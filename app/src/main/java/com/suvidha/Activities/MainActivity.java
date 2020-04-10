@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void getEssentials() {
         if (dialog == null) {
-            dialog = createProgressDialog(this, "Please wait");
+            dialog = createProgressDialog(this, getResources().getString(R.string.please_wait));
         }
         progressBar = dialog.findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.VISIBLE);
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         zonesList.addAll(response.body().id.zones);
 
                         is_quarantined =SharedPrefManager.getInstance(MainActivity.this).getInt(SharedPrefManager.Key.IS_QUARANTINE);
-                        Log.d(TAG, String.valueOf(is_quarantined)+"start");
+//                        Log.d(TAG, String.valueOf(is_quarantined)+"start");
                         UserLocationService userLocationService=new UserLocationService();
                         LiveLocationService mYourService = new LiveLocationService();
                         userService=new Intent(MainActivity.this,userLocationService.getClass());
@@ -191,14 +191,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 if(is_quarantined==0) {
 
-                                    Log.d(TAG,"started1"+is_quarantined);
+//                                    Log.d(TAG,"started1"+is_quarantined);
                                     startForegroundService(userService);
 
                                 }
 
                             } else {
                                 if(is_quarantined==0) {
-                                    Log.d(TAG,"started2");
+//                                    Log.d(TAG,"started2");
                                     startService(userService);
                                 }
 
@@ -207,15 +207,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (!isMyServiceRunning(mYourService.getClass())) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 if(is_quarantined==1) {
-
-                                    Log.d(TAG,"started1"+is_quarantined);
+//                                    Log.d(TAG,"started1"+is_quarantined);
                                     startForegroundService(mServiceIntent);
 
                                 }
 
                             } else {
                                 if(is_quarantined==1) {
-                                    Log.d(TAG,"started2");
+//                                    Log.d(TAG,"started2");
                                     startService(mServiceIntent);
                                 }
 
@@ -295,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onFailure(Call<GetOrdersModel> call, Throwable t) {
                 Log.e(TAG, t.getMessage());
-                Toast.makeText(MainActivity.this, "Failed to connect to the server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.failed_to_connect), Toast.LENGTH_SHORT).show();
             }
         });
     }

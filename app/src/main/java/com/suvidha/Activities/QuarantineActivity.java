@@ -373,17 +373,22 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
 
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if(checkCameraPermission()){
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        intent.putExtra("android.intent.extras.CAMERA_FACING", Camera.CameraInfo.CAMERA_FACING_FRONT);
-                        intent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
-                        intent.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
-                        startActivityForResult(intent,CAMERA_REQUEST);
-                    }else{
-                        requestCameraPermission();
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if(checkCameraPermission()){
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            intent.putExtra("android.intent.extras.CAMERA_FACING", Camera.CameraInfo.CAMERA_FACING_FRONT);
+                            intent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
+                            intent.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
+                            startActivityForResult(intent,CAMERA_REQUEST);
+                        }else{
+                            requestCameraPermission();
+                        }
                     }
+                }catch (Exception e){
+                    Log.e("Wait",e.getMessage());
                 }
+
             }
         });
     }

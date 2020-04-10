@@ -232,7 +232,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                     if (canGetLocation()) {
                         if (is_quarantined == 1) {
                             Location location=getLastKnownLocation();
-                            if(location.getLongitude()!=0&&location.getLatitude()!=0) {
+                            if(location!=null) {
                                 Log.d("lastknown",location.getLatitude()+" "+location.getLongitude());
 
                                 intent = new Intent(getContext(), QuarantineActivity.class);
