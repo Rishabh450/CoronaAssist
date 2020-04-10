@@ -91,5 +91,6 @@ Features:<br/><br/>
     <string name="log_out_warning">Are you sure you want to log out?</string>
     <string name="day_message_left">Days Left</string>
     <string name="police_verification">Waiting for police confirmation</string>
+    <string name="call">Call</string>
 
 </resources>

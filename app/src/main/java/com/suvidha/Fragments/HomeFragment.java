@@ -112,6 +112,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         init(v);
         intialiseRetrofit();
         setListeners();
+        notifyDataLoaded();
         return v;
     }
 
@@ -343,6 +344,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
 
     private void setDialog(Dialog dialog) {
         name = dialog.findViewById(R.id.quarantine_register_name);
+        name.setText(SharedPrefManager.getInstance(getContext()).getString(SharedPrefManager.Key.USER_NAME));
         phone = dialog.findViewById(R.id.quarantine_mobile);
         address = dialog.findViewById(R.id.quarantine_address);
         tnc = dialog.findViewById(R.id.tnc);

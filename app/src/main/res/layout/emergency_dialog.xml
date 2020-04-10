@@ -60,7 +60,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ok"
+            android:text="@string/call"
             android:background="@drawable/btn_shape"
             android:id="@+id/ok"
             android:layout_marginRight="@dimen/border_margin"

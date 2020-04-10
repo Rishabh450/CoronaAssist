@@ -38,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
@@ -64,6 +65,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.IntToDoubleFunction;
 
 import androidx.annotation.NonNull;
@@ -97,8 +99,8 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
     private AppBarLayout toolbar_layout;
     ApiInterface apiInterface;
     private int location_error = 0;
-    private static final int THRESHOLD_DIST = 200;
-    private double lat, lon;
+    private static final int THRESHOLD_DIST = 50;
+//    private double lat, lon;
     private Button reportBtn;
     private RecyclerView rview;
     private QuarantineAdapter mAdapter;
@@ -137,8 +139,11 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
     private void getLocation()
     {
         Intent intent=getIntent();
-      lat=  intent.getFloatExtra("lat",0.0f);
-      lon= intent.getFloatExtra("lon",0.0f);
+        currentLocation = new Location("Dummy Provider");
+        currentLocation.setLatitude(intent.getFloatExtra("lat",0.0f));
+        currentLocation.setLongitude(intent.getFloatExtra("lon",0.0f));
+//      lat=  intent.getFloatExtra("lat",0.0f);
+//      lon= intent.getFloatExtra("lon",0.0f);
 
         reportBtn.setEnabled(true);
         reportBtn.setText(getResources().getString(R.string.report));
@@ -156,8 +161,10 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
             //first get current location as quarantine location
             //then open dialog
             if (canGetLocation()) {
-                locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,1000, 20, locationListener);
+                Log.e("TAG","LOLOLO");
+                getCurrentLocation();
+//                locationManager.requestLocationUpdates(
+//                        LocationManager.GPS_PROVIDER,5000, -1, locationListener);
             } else {
                 showSettingsAlert();
             }
@@ -167,6 +174,42 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
 //                    Toast.makeText(getContexgetLocationUpdatest(), "You don't have location permission", Toast.LENGTH_SHORT).show();
         }
 
+    }
+    private void getCurrentLocation() {
+
+        mFusedLocationClient.getLastLocation().addOnCompleteListener(
+                new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        Location location = task.getResult();
+                        if (location == null) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    getCurrentLocation();
+                                }
+                            }, 1000);
+                            String uri = String.format(Locale.ENGLISH, "geo:%f,%f", 22.8046, 86.2029);
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                            startActivity(intent);
+                        } else {
+                            currentLocation = new Location(location);
+//                            Log.e("LOL", "OMG");
+                            calDiffDist();
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    getCurrentLocation();
+                                }
+                            }, 1000);
+
+//                            LOCATION_LAT = quarantineLocation.getLatitude();
+//                            LOCATION_LON = quarantineLocation.getLongitude();
+
+                        }
+                    }
+                }
+        );
     }
     private boolean checkLocationPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
@@ -302,10 +345,10 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
     private void calDiffDist() {
         float qlat= SharedPrefManager.getInstance(this).getFloat(SharedPrefManager.Key.QUARENTINE_LAT_KEY,0);
         float qlon= SharedPrefManager.getInstance(this).getFloat(SharedPrefManager.Key.QUARENTINE_LON_KEY,0);
-        double d = distance((double) qlat,(double) qlon,lat,lon,"K")*1000;
-//        Log.e("TAG", String.valueOf(d));
-//        Log.e("QUARANTINE",qlat+", "+qlon);
-//        Log.e("CURRENT",lat+", "+lon);
+        double d = distance((double) qlat,(double) qlon,currentLocation.getLatitude(),currentLocation.getLongitude(),"K")*1000;
+        Log.e("TAG", String.valueOf(d));
+        Log.e("QUARANTINE",qlat+", "+qlon);
+        Log.e("CURRENT",currentLocation.getLatitude()+", "+currentLocation.getLongitude());
 //        Toast.makeText(this, "DIST:"+d+" LAT:"+currentLocation.getLatitude()+" LON:"+currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
         if(d>THRESHOLD_DIST){
             location_error=1;
@@ -317,6 +360,7 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
     }
 
     private void init() {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         dayleftcount=findViewById(R.id.leftdays);
         daysleftmessege=findViewById(R.id.leftdaysmessage);
         rview = findViewById(R.id.quarantine_rview);
@@ -379,7 +423,7 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream .toByteArray();
             String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
-            ReportModel model = new ReportModel(encoded,(float) lat,(float)lon,"hvjhvjh",location_error);
+            ReportModel model = new ReportModel(encoded,(float) currentLocation.getLatitude(),(float)currentLocation.getLongitude(),"hvjhvjh",location_error);
             Call<GeneralModel> call = apiInterface.send_report(getAccessToken(getApplicationContext()),model);
             call.enqueue(new Callback<GeneralModel>() {
                 @Override
@@ -475,9 +519,10 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
 
         @Override
         public void onLocationChanged(Location loc) {
+            Log.e("LOL","LOL");
           if(loc!=null) {
-              lat=loc.getLatitude();
-              lon=loc.getLongitude();
+              currentLocation = loc;
+              calDiffDist();
 
           }
 

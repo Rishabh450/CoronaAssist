@@ -43,6 +43,7 @@
             android:layout_marginLeft="@dimen/border_margin"
             android:text="@string/coming_soon"
             android:textStyle="bold"
+            android:visibility="gone"
             android:textColor="@color/primary_text_color"
 
             />
@@ -51,6 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/border_margin"
+            android:visibility="gone"
             android:background="@drawable/home_btn_shape"
             android:gravity="center"
             android:enabled="false"
@@ -61,6 +63,7 @@
             android:id="@+id/icon_groceries"
             android:layout_width="match_parent"
             android:enabled="false"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/border_margin"
             android:background="@drawable/home_btn_shape"
@@ -79,6 +82,7 @@
             android:gravity="center"
             android:text="@string/milk_and_dairy"
             android:textAllCaps="false"
+            android:visibility="gone"
             android:textColor="@color/secondary_text_color" />
 
         <Button
@@ -89,6 +93,7 @@
             android:background="@drawable/home_btn_shape"
             android:gravity="center"
             android:text="@string/bread"
+            android:visibility="gone"
             android:enabled="false"
             android:textAllCaps="false"
             android:textColor="@color/secondary_text_color" />
@@ -97,6 +102,7 @@
             android:id="@+id/icon_gas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_margin="@dimen/border_margin"
             android:background="@drawable/home_btn_shape"
             android:gravity="center"
@@ -109,6 +115,7 @@
             android:id="@+id/icon_water"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_margin="@dimen/border_margin"
             android:background="@drawable/home_btn_shape"
             android:gravity="center"

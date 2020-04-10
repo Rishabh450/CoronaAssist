@@ -87,4 +87,5 @@ Phone: 7061039636 </string>
     <string name="log_out_warning">क्या आप लॉग आउट करना चाहते हैं?</string>
     <string name="day_message_left">दिन शेष</string>
     <string name="police_verification">पुलिस की पुष्टि का इंतजार</string>
+    <string name="call">Call</string>
 </resources>
