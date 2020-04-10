@@ -97,7 +97,7 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
     private AppBarLayout toolbar_layout;
     ApiInterface apiInterface;
     private int location_error = 0;
-    private static final int THRESHOLD_DIST = 300;
+    private static final int THRESHOLD_DIST = 200;
     private double lat, lon;
     private Button reportBtn;
     private RecyclerView rview;

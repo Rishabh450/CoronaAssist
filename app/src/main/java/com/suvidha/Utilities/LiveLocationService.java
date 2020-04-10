@@ -67,7 +67,7 @@ public class LiveLocationService extends Service {
     int is_quar;
     float qlat;
     float qlon;
-    private static final int THRESHOLD_DIST = 300;
+    private static final int THRESHOLD_DIST = 200;
 
     LocationManager locationManager;
     private void sendLat(Location location) {
