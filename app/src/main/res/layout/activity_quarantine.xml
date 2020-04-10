@@ -20,22 +20,26 @@
         android:orientation="vertical"
         android:gravity="center"
         android:background="@color/colorPrimary"
-        android:layout_height="200dp">
+        android:layout_height="wrap_content">
     <TextView
         android:layout_width="match_parent"
+        android:id="@+id/leftdays"
         android:layout_height="wrap_content"
         android:text="15"
         android:textColor="@color/white"
         android:gravity="center"
         android:textSize="80sp"
         />
-     <TextView
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:textColor="@color/white"
-         android:textSize="20sp"
-         android:text="Days Left"
-         />
+
+        <TextView
+            android:id="@+id/leftdaysmessage"
+            android:layout_width="match_parent"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:text="@string/day_message_left"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

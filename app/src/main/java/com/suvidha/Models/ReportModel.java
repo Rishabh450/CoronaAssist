@@ -16,6 +16,7 @@ public class ReportModel {
         this.location_lon = location_lon;
         this.report_time = report_time;
         this.location_error = location_error;
+
     }
 
 
