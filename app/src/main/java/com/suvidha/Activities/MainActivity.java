@@ -1,5 +1,6 @@
 package com.suvidha.Activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Dialog;
@@ -38,6 +39,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.suvidha.Fragment.Emegency_Dialog;
 import com.suvidha.Fragments.HistoryFragment;
 import com.suvidha.Fragments.HomeFragment;
 import com.suvidha.Models.EssentialsRequestModel;
@@ -62,6 +64,7 @@ import java.util.Locale;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
@@ -70,6 +73,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.APP_CHARGE;
+import static com.suvidha.Utilities.Utils.CAMERA_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
 import static com.suvidha.Utilities.Utils.PLAYSTORE_LINK;
 import static com.suvidha.Utilities.Utils.allOrders;
@@ -81,11 +85,12 @@ import static com.suvidha.Utilities.Utils.local_zone_name;
 import static com.suvidha.Utilities.Utils.zonesList;
 import static com.suvidha.Utilities.Utils.is_quarantined;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, Emegency_Dialog.DialogListener {
 
     private static final String TAG = "MainActivity";
+    private static final int CALL_PHONE_CODE = 7;
 
-//    private LinearLayout locationLayout;
+    //    private LinearLayout locationLayout;
     private TextView nodeName;
 
     private ApiInterface apiInterface;
@@ -293,6 +298,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(MainActivity.this, "Failed to connect to the server", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void call() {
+        if(checkCallPermission()) {
+            String phone=getResources().getString(R.string.emergency_phone_no);
+            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
+            startActivity(intent);
+        }else{
+            requestCallPermission();
+        }
+    }
+
+    public boolean checkCallPermission(){
+        if (checkSelfPermission(Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }
+        return true;
+    }
+
+    private void requestCallPermission() {
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.CALL_PHONE},
+                CALL_PHONE_CODE
+        );
     }
 
     private class GetCurrentVersion extends AsyncTask<Void, Void, Void> {
@@ -584,8 +616,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.change_language:
                 changeLanguage(item);
                 break;
+            case R.id.emergency:
+                showEmegencyDialog();
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showEmegencyDialog() {
+        Emegency_Dialog emegency_dialog =new Emegency_Dialog();
+        emegency_dialog.show(getSupportFragmentManager(),"Emergency");
     }
 
     public interface NotifyFragment {

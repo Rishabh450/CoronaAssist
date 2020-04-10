@@ -80,5 +80,8 @@ Phone: 7061039636 </string>
     <string name="in_quarantine_location">आप संगरोध स्थान पर थे</string>
     <string name="not_in_quarantine">आप संगरोध स्थान पर नहीं थे</string>
     <string name="error">त्रुटि</string>
-
+    <string name="emergency_no">आपातकालीन नंबर</string>
+    <string name="Emergency">आपातकालीन </string>
+    <string name="CANCEL">रद्द</string>
+    <string name="OK">कॉल</string>
 </resources>

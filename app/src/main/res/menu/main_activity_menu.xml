@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <item
+        android:id="@+id/emergency"
+        android:title="@string/emergency_no"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_warning_black_24dp"
+        />
     <item
         android:id="@+id/change_language"
         android:title="@string/change_to_hindi" />

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:gravity="center"
+    android:weightSum="4"
+    android:layout_height="wrap_content">
+    <ImageButton
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_warning_black_24dp"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:orientation="vertical"
+        android:layout_weight="3"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/emergency_no"
+            android:textSize="20sp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/emergency_phone_no"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>
