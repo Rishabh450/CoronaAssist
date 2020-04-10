@@ -113,23 +113,35 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quarantine);
         init();
-        getLocationUpdates();
+
         setRecyclerView();
         intialiseRetrofit();
         getReports();
 //        lat = getIntent().getDoubleExtra("lat", 0);
 //        lon = getIntent().getDoubleExtra("lon", 0);
         setToolbar();
-        if(currentLocation == null){
+        /*if(currentLocation == null){
             pFrame.setVisibility(View.VISIBLE);
             reportBtn.setEnabled(false);
             reportBtn.setText(getResources().getString(R.string.please_wait));
-        }
+        }*/
 //        calDiffDist();
           check();
 
 
 
+    }
+    private void getLocation()
+    {
+        Intent intent=getIntent();
+      lat=  intent.getFloatExtra("lat",0.0f);
+      lon= intent.getFloatExtra("lon",0.0f);
+
+        reportBtn.setEnabled(true);
+        reportBtn.setText(getResources().getString(R.string.report));
+        calDiffDist();
+
+        pFrame.setVisibility(View.GONE);
     }
 
 
@@ -142,7 +154,7 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
             //then open dialog
             if (canGetLocation()) {
                 locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,5000, 0, locationListener);
+                        LocationManager.GPS_PROVIDER,0, 0, locationListener);
             } else {
                 showSettingsAlert();
             }
@@ -279,7 +291,7 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
     private void calDiffDist() {
         float qlat= SharedPrefManager.getInstance(this).getFloat(SharedPrefManager.Key.QUARENTINE_LAT_KEY,0);
         float qlon= SharedPrefManager.getInstance(this).getFloat(SharedPrefManager.Key.QUARENTINE_LON_KEY,0);
-        double d = distance((double) qlat,(double) qlon,currentLocation.getLatitude(),currentLocation.getLongitude(),"K")*1000;
+        double d = distance((double) qlat,(double) qlon,lat,lon,"K")*1000;
 //        Log.e("TAG", String.valueOf(d));
 //        Log.e("QUARANTINE",qlat+", "+qlon);
 //        Log.e("CURRENT",lat+", "+lon);
@@ -354,7 +366,7 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream .toByteArray();
             String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
-            ReportModel model = new ReportModel(encoded,(float) currentLocation.getLatitude(),(float)currentLocation.getLongitude(),"hvjhvjh",location_error);
+            ReportModel model = new ReportModel(encoded,(float) lat,(float)lon,"hvjhvjh",location_error);
             Call<GeneralModel> call = apiInterface.send_report(getAccessToken(getApplicationContext()),model);
             call.enqueue(new Callback<GeneralModel>() {
                 @Override
@@ -451,12 +463,7 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
         @Override
         public void onLocationChanged(Location loc) {
           if(loc!=null) {
-              currentLocation = loc;
-              reportBtn.setEnabled(true);
-              reportBtn.setText(getResources().getString(R.string.report));
-              calDiffDist();
-              Log.e("LOCATION",loc.getLatitude() +" "+ loc.getLongitude());
-              pFrame.setVisibility(View.GONE);
+
           }
 
         }

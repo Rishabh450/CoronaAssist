@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
@@ -70,6 +71,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.currentLocation;
@@ -144,6 +146,72 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         iconWater.setOnClickListener(this);
         iconQuarentine.setOnClickListener(this);
     }
+    private void getLocationUpdates() {
+        LocationManager locationManager = (LocationManager)
+                getActivity(). getSystemService(Context.LOCATION_SERVICE);
+        LocationListener locationListener = new  HomeFragment.MyLocationListener();
+        if (checkLocationPermission()) {
+            //first get current location as quarantine location
+            //then open dialog
+            if (canGetLocation()) {
+                locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,1000, 0, locationListener);
+            } else {
+                showSettingsAlert();
+            }
+
+        } else {
+            requestLocationPermissions();
+//                    Toast.makeText(getContexgetLocationUpdatest(), "You don't have location permission", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+    private class MyLocationListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location loc) {
+            if(loc!=null) {
+                double lat=loc.getLatitude();
+                double lon=loc.getLongitude();
+                Intent intent = new Intent(getContext(), QuarantineActivity.class);
+                intent.putExtra("lat",(float)lat);
+                intent.putExtra("lon",(float)lon);
+                startActivity(intent);
+
+
+            }
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            try {
+                if (checkLocationPermission()) {
+                    //first get current location as quarantine location
+                    //then open dialog
+                    if (canGetLocation()) {
+
+                    } else {
+                        showSettingsAlert();
+                    }
+
+                } else {
+                    requestLocationPermissions();
+//                    Toast.makeText(getContext(), "You don't have location permission", Toast.LENGTH_SHORT).show();
+                }
+            }catch (Exception e){
+
+            }
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {}
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+    }
+
 
 
     @Override
@@ -162,8 +230,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                     //then open dialog
                     if (canGetLocation()) {
                         if (is_quarantined == 1) {
-                            intent = new Intent(getContext(), QuarantineActivity.class);
-                            startActivity(intent);
+                            Location location=getLastKnownLocation();
+                            if(location.getLongitude()!=0&&location.getLatitude()!=0) {
+                                Log.d("lastknown",location.getLatitude()+" "+location.getLongitude());
+
+                                intent = new Intent(getContext(), QuarantineActivity.class);
+                                intent.putExtra("lat",(float)location.getLatitude());
+                                intent.putExtra("lon",(float)location.getLongitude());
+                                startActivity(intent);
+                            }
+                            else
+                            {
+                                getLocationUpdates();
+                            }
                         }else {
                             getCurrentLocation();
                         }
@@ -201,8 +280,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                     public void onComplete(@NonNull Task<Location> task) {
                         Location location = task.getResult();
                         if (location == null) {
-                            //select the node
-//                            Log.e(TAG, "Response Error " + .getMessage());
 
                             TextView msg = dialog.findViewById(R.id.progress_msg);
                             msg.setText("Try Again");
@@ -494,7 +571,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         boolean network_enabled = false;
         if (lm == null)
 
-            lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+            lm = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
 
         // exceptions will be thrown if provider is not permitted.
         try {
@@ -557,6 +634,36 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         } else {
             Toast.makeText(getContext(), "CODE " + requestCode, Toast.LENGTH_SHORT).show();
         }
+    }
+    private Location getLastKnownLocation() {
+        LocationManager mLocationManager;
+        mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+        List<String> providers = mLocationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (getActivity(). checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    Activity#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for Activity#requestPermissions for more details.
+
+
+                }
+            }
+            Location l = mLocationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
     }
 
     @Override
