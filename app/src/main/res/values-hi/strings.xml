@@ -87,4 +87,12 @@ Phone: 7061039636 </string>
     <string name="day_message_left">दिन शेष</string>
     <string name="police_verification">पुलिस की पुष्टि का इंतजार</string>
     <string name="call">कॉल</string>
+    <string name="cannot_sign_out">आप लॉग आउट नहीं कर सकते</string>
+    <string name="type">प्रकार</string>
+    <string name="home_quarantine">घर में संगरोध</string>
+    <string name="special_quarantine_center">विशेष संगरोध केंद्र</string>
+    <string name="select_type">कृपया प्रकार चुनें</string>
+    <string name="turn_on_gps">कृपया जीपीएस चालू करें</string>
+    <string name="back">पीछे</string>
+    <string name="services">सेवाएं at </string>
 </resources>

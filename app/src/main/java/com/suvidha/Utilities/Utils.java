@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.suvidha.Models.AddressModel;
 import com.suvidha.Models.CartModel;
 import com.suvidha.Models.ItemModel;
 import com.suvidha.Models.LocationModel;
@@ -41,11 +42,17 @@ public class Utils {
     public static double DELIVERY_CHARGE = 5;
     public static double APP_CHARGE = 2;
     public static int is_quarantined=0;
+    public static int is_pass = 0;
+    public static String district;
+    public static int is_ngo = 0;
+    public static int is_shopper = 0;
+    public static int is_quarantine = 0;
     public static List<ZonesModel> zonesList=new ArrayList<>();
     public static List<ZonesModel> statesList=new ArrayList<>();
     public static List<ZonesModel> districtsList=new ArrayList<>();
     public static List<ItemModel> shopItems=new ArrayList<>();
     public static List<CartModel> allOrders = new ArrayList<>();
+    public static List<AddressModel> address = new ArrayList<>();
     public static HashMap<String, List<String>> mStateDist = new HashMap<>();
 
     public static Integer currentType;
@@ -131,11 +138,10 @@ public class Utils {
     public static boolean isLoggedIn(Context ctx){
         return SharedPrefManager.getInstance(ctx).isLoggedIn();
     }
-    public static void setLoginSession(UserModel user, Context context,int zoneId){
+    public static void setLoginSession(UserModel user, Context context){
         SharedPrefManager sharedPrefManager;
         sharedPrefManager = SharedPrefManager.getInstance(context);
         sharedPrefManager.put(SharedPrefManager.Key.LOGIN_STATUS, true);
-        sharedPrefManager.put(SharedPrefManager.Key.ZONE_KEY,zoneId);
         sharedPrefManager.put(SharedPrefManager.Key.STATE_KEY,user.getState());
         sharedPrefManager.put(SharedPrefManager.Key.DISTRICT_KEY,user.getDistrict());
         sharedPrefManager.put(SharedPrefManager.Key.USER_NAME, user.getName());

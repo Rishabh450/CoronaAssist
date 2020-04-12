@@ -12,41 +12,59 @@
         android:layout_margin="@dimen/border_margin"
         android:paddingBottom="50dp"
         android:orientation="vertical">
-
-
-        <Button
-            android:id="@+id/icon_quarentine"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/border_margin"
-            android:background="@drawable/home_btn_shape"
-            android:gravity="center"
-            android:text="@string/Quarantine"
-            android:textAllCaps="false"
-            android:textColor="@color/secondary_text_color"
-            />
-        <Button
-            android:id="@+id/icon_faq"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/border_margin"
-            android:background="@drawable/home_btn_shape"
-            android:gravity="center"
-            android:text="@string/faq_btn"
-            android:textAllCaps="false"
-            android:textColor="@color/secondary_text_color"
-            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
+            android:id="@+id/services_txt"
             android:layout_marginLeft="@dimen/border_margin"
-            android:text="@string/coming_soon"
+            android:text="@string/services"
             android:textStyle="bold"
-            android:visibility="gone"
             android:textColor="@color/primary_text_color"
-
+            android:layout_marginBottom="@dimen/border_margin"
             />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/grey"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:layout_marginLeft="@dimen/border_margin"
+            >
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="160dp"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:id="@+id/icon_quarentine"
+
+                android:gravity="center_horizontal"
+                >
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp"
+
+                    android:src="@mipmap/ic_quarantine"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:gravity="center"
+                    android:id="@+id/txt_quarantine"
+                    android:textColor="@color/primary_text_color"
+                    android:textStyle="bold"
+                    android:layout_alignParentBottom="true"
+                    android:text="@string/Quarantine"
+                    android:textAllCaps="false"
+                    />
+            </RelativeLayout>
+        </LinearLayout>
+
         <Button
             android:id="@+id/icon_request_passes"
             android:layout_width="match_parent"

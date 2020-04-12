@@ -127,7 +127,25 @@
                 android:singleLine="true" />
 
         </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="@dimen/border_margin"
+            android:layout_marginRight="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/quarantine_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="10dp"
+                android:focusable="false"
+                android:hint="@string/type"
+                android:inputType="textShortMessage"
+                android:singleLine="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -235,7 +253,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:text=""
-                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="16sp"
                 android:visibility="visible" />
         </LinearLayout>
 

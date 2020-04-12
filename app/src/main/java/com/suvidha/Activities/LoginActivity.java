@@ -53,9 +53,9 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 import static com.suvidha.Utilities.Utils.CAMERA_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
+import static com.suvidha.Utilities.Utils.address;
 import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.isLoggedIn;
 import static com.suvidha.Utilities.Utils.password;
@@ -90,8 +90,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         buildGoogleApiClient();
         tv = findViewById(R.id.logotext);
 
-        Shader textShader=new LinearGradient(0,0, 300, 20,
-                new int[]{Color.parseColor("#F0931F"),Color.parseColor("#0B9243")},
+        Shader textShader = new LinearGradient(0, 0, 300, 20,
+                new int[]{Color.parseColor("#F0931F"), Color.parseColor("#0B9243")},
                 new float[]{0, 1}, Shader.TileMode.CLAMP);
         tv.getPaint().setShader(textShader);
         intialiseRetrofit();
@@ -130,7 +130,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             settingsrequest();
         }
     }
-
 
     // This is the method that will be called if user has disabled the location services in the device settings
     // This will show a dialog asking user to enable location services or not
@@ -203,9 +202,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent);
                 finish();
             } else {
-                Log.e(TAG, account.getDisplayName());
-                Log.e(TAG, account.getEmail());
                 UserModel user = new UserModel(account.getDisplayName(), account.getEmail());
+
+//                postData(user);
                 ApiInterface loginService =
                         ServiceGenerator.createService(ApiInterface.class, user.email, password);
                 Call<LoginResult> loginResultCall = loginService.login(user);
@@ -216,20 +215,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Log.d(TAG, "onResponse: " + response.body().id.token);
                             //store access token
                             Intent intent = null;
-                            zonesList.clear();
-                            zonesList.addAll(response.body().zone);
-                            if(response.body().location.location_lat != 0.0&&response.body().location.location_lon != 0.0){
-                                Log.d("checkingloc", String.valueOf(response.body().location)+" ");
-                                SharedPrefManager.getInstance(LoginActivity.this).put(SharedPrefManager.Key.IS_QUARANTINE,1);
-
+                            if (response.body().location.location_lat != 0.0 && response.body().location.location_lon != 0.0) {
+//                                Log.d("checkingloc", String.valueOf(response.body().location) + " ");
+                                SharedPrefManager.getInstance(LoginActivity.this).put(SharedPrefManager.Key.IS_QUARANTINE, 1);
                                 SharedPrefManager.getInstance(LoginActivity.this).
-                                        put(SharedPrefManager.Key.QUARENTINE_LAT_KEY,response.body().location.location_lat);
+                                        put(SharedPrefManager.Key.QUARENTINE_LAT_KEY, response.body().location.location_lat);
                                 SharedPrefManager.getInstance(LoginActivity.this).
-                                        put(SharedPrefManager.Key.QUARENTINE_LAT_KEY,response.body().location.location_lat);
-                                SharedPrefManager.getInstance(LoginActivity.this).
-                                        put(SharedPrefManager.Key.QUARENTINE_LON_KEY,response.body().location.location_lon);
+                                        put(SharedPrefManager.Key.QUARENTINE_LON_KEY, response.body().location.location_lon);
                             }
                             SharedPrefManager.getInstance(LoginActivity.this).storeToken(response.body().id.token);
+                            if(response.body().available != null){
+                                address.clear();
+                                address.addAll(response.body().available);
+                            }
                             if (response.body().status == 205 || response.body().id.phone == null) {
                                 // goto register activity
                                 intent = new Intent(LoginActivity.this, RegisterActivity.class);
@@ -237,10 +235,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 startActivity(intent);
                                 finish();
 
+
                             } else {
                                 //go to main activity
-                                Log.e("TAG", String.valueOf(getZoneId(response.body().id,response.body().zone)));
-                                setLoginSession(response.body().id, LoginActivity.this,getZoneId(response.body().id,response.body().zone));
+                                setLoginSession(response.body().id, LoginActivity.this);
                                 intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
@@ -255,21 +253,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Log.d(TAG, "onResponseError: " + t.getMessage());
                     }
                 });
-//            Intent intent = new Intent(this,MainActivity.class);
-//            startActivity(intent);
-//            finish();
+
             }
         }
     }
 
+
+
     private void getPermissions() {
-        if(checkCameraPermission()){
+        if (checkCameraPermission()) {
             requestCameraPermission();
         }
-        if(checkLocationPermissions()){
+        if (checkLocationPermissions()) {
             requestLocationPermissions();
         }
     }
+
     private boolean checkLocationPermissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -277,12 +276,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         return false;
     }
-    private boolean checkCameraPermission(){
+
+    private boolean checkCameraPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
         return false;
     }
+
     private void requestLocationPermissions() {
         ActivityCompat.requestPermissions(
                 this,
@@ -290,20 +291,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 LOCATION_PERMISSION_CODE
         );
     }
+
     private void requestCameraPermission() {
         ActivityCompat.requestPermissions(
                 this,
                 new String[]{Manifest.permission.CAMERA},
                 CAMERA_PERMISSION_CODE
         );
-    }
-    private int getZoneId(UserModel user, List<ZonesModel> zone) {
-        for(int i=0;i<zone.size();i++){
-            if(user.zone.compareTo(zone.get(i).name)==0){
-                return zone.get(i).id;
-            }
-        }
-        return 0;
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
@@ -324,12 +318,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button:
-                dialog = createProgressDialog(this,"Please Wait");
+                dialog = createProgressDialog(this, "Please Wait");
                 signIn();
                 break;
             // ...
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -360,6 +355,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

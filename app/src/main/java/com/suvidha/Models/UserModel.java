@@ -12,61 +12,35 @@ public class UserModel implements Parcelable {
     public String email;
     public String phone;
     public String address = "";
-    public String zone = "";
     public String state;
     public String district;
     public String token;
     public List<String> orders;
     public List<String> passes;
 
-    public UserModel() {
-    }
-
-    public UserModel(String name, String email, String phone, String address, String zone, String state, String district) {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-        this.address = address;
-        this.zone = zone;
-        this.state = state;
-        this.district = district;
-    }
-
-    public UserModel(String name, String email, List<String> orders, List<String> passes) {
-        this.name = name;
-        this.email = email;
-        this.orders = orders;
-        this.passes = passes;
-    }
-
-    public UserModel(String id, String name, String email, String phone) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-    }
-
-    public UserModel(String name, String email, String phone) {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-    }
-
     public UserModel(String name, String email) {
         this.name = name;
         this.email = email;
     }
 
-    protected UserModel(Parcel in) {
+    public UserModel(Parcel in) {
         id = in.readString();
         name = in.readString();
         email = in.readString();
         phone = in.readString();
         address = in.readString();
-        zone = in.readString();
         token = in.readString();
         state = in.readString();
         district = in.readString();
+    }
+
+    public UserModel(String name, String email, String phone, String address, String state,String district) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+        this.state = state;
+        this.district = district;
     }
 
     public static final Creator<UserModel> CREATOR = new Creator<UserModel>() {
@@ -141,7 +115,6 @@ public class UserModel implements Parcelable {
         dest.writeString(email);
         dest.writeString(phone);
         dest.writeString(address);
-        dest.writeString(zone);
         dest.writeString(token);
         dest.writeString(state);
         dest.writeString(district);

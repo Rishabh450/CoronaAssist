@@ -1,25 +1,20 @@
 package com.suvidha.Activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.hardware.Camera;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,8 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,9 +36,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.suvidha.Adapters.QuarantineAdapter;
-import com.suvidha.Fragment.Emegency_Dialog;
-import com.suvidha.Fragments.HistoryFragment;
-import com.suvidha.Models.CartModel;
 import com.suvidha.Models.GeneralModel;
 import com.suvidha.Models.GetReportsModel;
 import com.suvidha.Models.ReportModel;
@@ -56,22 +46,16 @@ import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.SharedPrefManager;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.IntToDoubleFunction;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -81,16 +65,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.suvidha.Utilities.Utils.CAMERA_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.createAlertDialog;
-import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.currentLocation;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 
 
-public class QuarantineActivity extends AppCompatActivity implements Emegency_Dialog.DialogListener {
+public class QuarantineActivity extends AppCompatActivity  {
 
     private static final int CAMERA_REQUEST = 5;
     private static final int GPS_REQUEST_CODE = 10;
@@ -99,7 +81,7 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
     private AppBarLayout toolbar_layout;
     ApiInterface apiInterface;
     private int location_error = 0;
-    private static final int THRESHOLD_DIST = 50;
+    private static final int THRESHOLD_DIST = 300;
 //    private double lat, lon;
     private Button reportBtn;
     private RecyclerView rview;
@@ -110,6 +92,7 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
     static int LAST_UPDATE=0;
     private TextView dayleftcount,daysleftmessege;
     public static final String MY_PREFS_NAME = "Last_Update";
+    int flag = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -162,9 +145,10 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
             //then open dialog
             if (canGetLocation()) {
                 Log.e("TAG","LOLOLO");
-                getCurrentLocation();
-//                locationManager.requestLocationUpdates(
-//                        LocationManager.GPS_PROVIDER,5000, -1, locationListener);
+                if(flag == 0)
+                    getCurrentLocation();
+                locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,5000, -1, locationListener);
             } else {
                 showSettingsAlert();
             }
@@ -254,7 +238,7 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
         return result;
     }
     public void showSettingsAlert() {
-        Dialog dialog = createAlertDialog(this,getResources().getString(R.string.error),"Please turn on GPS","Go Back","Ok");
+        Dialog dialog = createAlertDialog(this,getResources().getString(R.string.error),getResources().getString(R.string.turn_on_gps),getResources().getString(R.string.back),getResources().getString(R.string.ok));
         dialog.setCancelable(false);
         // Setting Dialog Title
        dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
@@ -462,12 +446,6 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
         }
     }
 
-    @Override
-    public void call() {
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + R.string.emergency_phone_no));
-        startActivity(intent);
-    }
-
     public class TimestampSorter implements Comparator<ReportModel>
     {
         DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
@@ -525,6 +503,7 @@ public class QuarantineActivity extends AppCompatActivity implements Emegency_Di
         @Override
         public void onLocationChanged(Location loc) {
             Log.e("LOL","LOL");
+            flag = 1;
           if(loc!=null) {
               currentLocation = loc;
               calDiffDist();

@@ -7,40 +7,35 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/border_margin"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:weightSum="4">
+        android:orientation="vertical"
+        android:layout_margin="@dimen/border_margin"
+        >
 
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:layout_weight="1"
-            android:background="@color/white"
-            android:src="@mipmap/ic_plus" />
+
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:layout_marginLeft="@dimen/border_margin"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/emergency_no"
-                android:textSize="20sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:gravity="center"
                 android:textStyle="bold"
-                android:text="@string/emergency_phone_no"
-                android:textSize="20sp" />
-
+                android:textColor="@color/black"
+                />
         </LinearLayout>
-
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/dialog_rec"
+            android:layout_marginTop="@dimen/border_margin"
+            />
 
     </LinearLayout>
     <LinearLayout
@@ -51,16 +46,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/CANCEL"
-            android:backgroundTint="@color/white"
-            android:id="@+id/cancel"
-            android:textColor="@color/primary_text_color"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/call"
+            android:text="@string/ok"
             android:background="@drawable/btn_shape"
             android:id="@+id/ok"
             android:layout_marginRight="@dimen/border_margin"

@@ -4,9 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Dialog;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -28,18 +26,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.suvidha.Fragment.Emegency_Dialog;
+import com.suvidha.Adapters.EmergencyAdapter;
 import com.suvidha.Fragments.HistoryFragment;
 import com.suvidha.Fragments.HomeFragment;
 import com.suvidha.Models.EssentialsRequestModel;
@@ -67,25 +65,32 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.APP_CHARGE;
-import static com.suvidha.Utilities.Utils.CAMERA_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
 import static com.suvidha.Utilities.Utils.PLAYSTORE_LINK;
 import static com.suvidha.Utilities.Utils.allOrders;
 import static com.suvidha.Utilities.Utils.clearLoginSession;
 import static com.suvidha.Utilities.Utils.createAlertDialog;
 import static com.suvidha.Utilities.Utils.createProgressDialog;
+import static com.suvidha.Utilities.Utils.district;
 import static com.suvidha.Utilities.Utils.getAccessToken;
+import static com.suvidha.Utilities.Utils.is_ngo;
+import static com.suvidha.Utilities.Utils.is_pass;
+import static com.suvidha.Utilities.Utils.is_quarantine;
+import static com.suvidha.Utilities.Utils.is_shopper;
 import static com.suvidha.Utilities.Utils.local_zone_name;
 import static com.suvidha.Utilities.Utils.zonesList;
 import static com.suvidha.Utilities.Utils.is_quarantined;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, Emegency_Dialog.DialogListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
     private static final int CALL_PHONE_CODE = 7;
@@ -103,20 +108,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Intent mServiceIntent;
     private Toolbar toolbar;
     Intent userService;
+    private EmergencyAdapter emergencyAdapter;
+    private List<String> emergencyList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+
         setBottomNavigation();
         intialiseRetrofit();
-        setListeners();
         getEssentials();
-        Log.d(TAG,"checking"+is_quarantined);
+        setListeners();
+        Log.d(TAG, "checking" + is_quarantined);
 
 
     }
+
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -135,12 +144,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onBackPressed() {
 
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.frame_container);
-        if(f instanceof HistoryFragment){
+        if (f instanceof HistoryFragment) {
             //go to home fragment
             navigation.setSelectedItemId(R.id.navigation_home);
             loadFragment(new HomeFragment());
 
-        }else{
+        } else {
             Handler backHandler = new Handler();
 
             if (backFlag == 1) {
@@ -155,8 +164,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }, 2500);
         }
-
     }
+
     private void getEssentials() {
         if (dialog == null) {
             dialog = createProgressDialog(this, getResources().getString(R.string.please_wait));
@@ -176,20 +185,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (response.body().status == 200) {
 
                         dialog.dismiss();
-                        onStart();
-                        zonesList.clear();
-                        zonesList.addAll(response.body().id.zones);
+                        is_quarantined = response.body().id.is_quarantined;
+                        SharedPrefManager.getInstance(MainActivity.this).put(SharedPrefManager.Key.IS_QUARANTINE,is_quarantined);
+                        is_ngo = response.body().id.support.is_ngo;
+                        is_pass = response.body().id.support.is_pass;
+                        is_shopper = response.body().id.support.is_shopper;
+                        is_quarantine = response.body().id.support.is_quarantine;
+                        district = response.body().id.support.district;
 
-                        is_quarantined =SharedPrefManager.getInstance(MainActivity.this).getInt(SharedPrefManager.Key.IS_QUARANTINE);
-//                        Log.d(TAG, String.valueOf(is_quarantined)+"start");
-                        UserLocationService userLocationService=new UserLocationService();
+                        emergencyList.clear();
+                        emergencyList.addAll(response.body().id.emergency_contact);
+                        if(emergencyAdapter!=null)
+                            emergencyAdapter.notifyDataSetChanged();
+
+                        Log.d(TAG, String.valueOf(is_quarantined)+"start");
+
+                        if (getSupportFragmentManager().findFragmentById(R.id.frame_container) instanceof HomeFragment) {
+
+                            NotifyFragment callBack = (NotifyFragment) getSupportFragmentManager().findFragmentById(R.id.frame_container);
+                            callBack.notifyDataLoaded();
+                        }
+                        UserLocationService userLocationService = new UserLocationService();
                         LiveLocationService mYourService = new LiveLocationService();
-                        userService=new Intent(MainActivity.this,userLocationService.getClass());
+                        userService = new Intent(MainActivity.this, userLocationService.getClass());
                         mServiceIntent = new Intent(MainActivity.this, mYourService.getClass());
-                        if(!isMyServiceRunning(userLocationService.getClass()))
-                        {
+                        if (!isMyServiceRunning(userLocationService.getClass())) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                if(is_quarantined==0) {
+                                if (is_quarantined == 0) {
 
 //                                    Log.d(TAG,"started1"+is_quarantined);
                                     startForegroundService(userService);
@@ -197,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 }
 
                             } else {
-                                if(is_quarantined==0) {
+                                if (is_quarantined == 0) {
 //                                    Log.d(TAG,"started2");
                                     startService(userService);
                                 }
@@ -206,38 +228,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         if (!isMyServiceRunning(mYourService.getClass())) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                if(is_quarantined==1) {
+                                if (is_quarantined == 1) {
 //                                    Log.d(TAG,"started1"+is_quarantined);
                                     startForegroundService(mServiceIntent);
 
                                 }
 
                             } else {
-                                if(is_quarantined==1) {
+                                if (is_quarantined == 1) {
 //                                    Log.d(TAG,"started2");
                                     startService(mServiceIntent);
                                 }
-
+                            }
+                        }else{
+                            if(is_quarantined == 0){
+                                stopService(mServiceIntent);
                             }
                         }
 
 
-                        if (getSupportFragmentManager().findFragmentById(R.id.frame_container) instanceof HomeFragment) {
-                            NotifyFragment callBack = (NotifyFragment) getSupportFragmentManager().findFragmentById(R.id.frame_container);
-                            callBack.notifyDataLoaded();
-                        }
                         //response.body().id.shop_types;
                         APP_CHARGE = response.body().id.cess_rate;
                         DELIVERY_CHARGE = response.body().id.delivery_cost;
 
                         local_zone_name = SharedPrefManager.getInstance(MainActivity.this).getInt(SharedPrefManager.Key.ZONE_KEY);
-                        nodeName.setText(zonesList.get(local_zone_name).name);
                     } else {
                         TextView msg = dialog.findViewById(R.id.progress_msg);
                         msg.setText("Try Again");
                     }
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                     TextView msg = dialog.findViewById(R.id.progress_msg);
                     msg.setText("Try Again");
                 }
@@ -246,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onFailure(Call<EssentialsRequestModel> call, Throwable t) {
-                Log.e(TAG, "Response Error " + t.getMessage());
+                t.printStackTrace();
 
                 TextView msg = dialog.findViewById(R.id.progress_msg);
                 msg.setText(getResources().getString(R.string.try_again));
@@ -299,18 +319,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    @Override
-    public void call() {
-        if(checkCallPermission()) {
-            String phone=getResources().getString(R.string.emergency_phone_no);
-            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
-            startActivity(intent);
-        }else{
-            requestCallPermission();
-        }
-    }
-
-    public boolean checkCallPermission(){
+    public boolean checkCallPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CALL_PHONE)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -371,6 +380,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.onPostExecute(aVoid);
         }
     }
+
     private void compareAppVersion() {
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(this.getPackageName(), 0);
@@ -380,8 +390,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, e1.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
+
     private void showUpdateDialog() {
-        Dialog dialog = createAlertDialog(this,"Update Required","A newer version of apk is available at playstore. Please Update","Cancel","Update");
+        Dialog dialog = createAlertDialog(this, "Update Required", "A newer version of apk is available at playstore. Please Update", "Cancel", "Update");
         dialog.setCancelable(true);
         dialog.show();
         dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
@@ -405,9 +416,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public ProgressBar progressBar;
 
 
-        private void intialiseRetrofit() {
-            apiInterface = APIClient.getApiClient().create(ApiInterface.class);
-        }
+    private void intialiseRetrofit() {
+        apiInterface = APIClient.getApiClient().create(ApiInterface.class);
+    }
 
     private void setBottomNavigation() {
         loadFragment(new HomeFragment());
@@ -444,8 +455,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater=getMenuInflater();
-        inflater.inflate(R.menu.main_activity_menu,menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_menu, menu);
         return true;
     }
 
@@ -469,12 +480,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
                 eng.setEnabled(false);
                 btn.setEnabled(true);
-                String languageToLoad  = "en";
+                String languageToLoad = "en";
                 Locale locale = new Locale(languageToLoad);
                 Locale.setDefault(locale);
                 Configuration config = new Configuration();
                 config.locale = locale;
-                getResources().updateConfiguration(config,getResources().getDisplayMetrics());
+                getResources().updateConfiguration(config, getResources().getDisplayMetrics());
 
                 recreate();
             }
@@ -482,14 +493,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String languageToLoad  = "hi";
+                String languageToLoad = "hi";
                 btn.setEnabled(false);
                 eng.setEnabled(true);
                 Locale locale = new Locale(languageToLoad);
                 Locale.setDefault(locale);
                 Configuration config = new Configuration();
                 config.locale = locale;
-                getResources().updateConfiguration(config,getResources().getDisplayMetrics());
+                getResources().updateConfiguration(config, getResources().getDisplayMetrics());
 
                 recreate();
             }
@@ -530,8 +541,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    public void signOutClicked(){
-        Dialog dialog = createAlertDialog(this,getResources().getString(R.string.log_out),getResources().getString(R.string.log_out_warning),getResources().getString(R.string.CANCEL),getResources().getString(R.string.ok));
+    public void signOutClicked() {
+        Dialog dialog = createAlertDialog(this, getResources().getString(R.string.log_out), getResources().getString(R.string.log_out_warning), getResources().getString(R.string.CANCEL), getResources().getString(R.string.ok));
         dialog.setCancelable(false);
         dialog.show();
         dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
@@ -545,7 +556,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
                 signOut();
                 dialog.dismiss();
-                startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 finish();
             }
         });
@@ -557,7 +568,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.node_location_layout:
                 startDialog();
                 break;
-            case R.id.sign_out:{
+            case R.id.sign_out: {
                 signOutClicked();
 
             }
@@ -568,7 +579,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
-        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this,gso);
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, gso);
         googleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -579,15 +590,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    public void changeLanguage(MenuItem item){
-        String languageCode=Locale.getDefault().getISO3Language();
+    public void changeLanguage(MenuItem item) {
+        String languageCode = Locale.getDefault().getISO3Language();
 
-        String languageToLoad  = "hi";
+        String languageToLoad = "hi";
 
-        if(languageCode.equalsIgnoreCase("hin")) {
+        if (languageCode.equalsIgnoreCase("hin")) {
             languageToLoad = "en";
             item.setTitle(getResources().getString(R.string.change_to_hindi));
-        }else{
+        } else {
             item.setTitle(getResources().getString(R.string.change_to_english));
         }
 
@@ -595,24 +606,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Locale.setDefault(locale);
         Configuration config = new Configuration();
         config.locale = locale;
-        getResources().updateConfiguration(config,getResources().getDisplayMetrics());
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
 
         recreate();
 
         //Toast.makeText(this,"Change Language "+languageCode,Toast.LENGTH_LONG).show();
     }
+
     @Override
     protected void onStart() {
         super.onStart();
+        getEssentials();
         getAllOrders();
         compareAppVersion();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.log_out:
-                signOutClicked();
+                if (is_quarantined == 1) {
+                    Toast.makeText(this, getResources().getString(R.string.cannot_sign_out), Toast.LENGTH_SHORT).show();
+                } else {
+                    signOutClicked();
+                }
                 break;
             case R.id.change_language:
                 changeLanguage(item);
@@ -620,17 +637,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.emergency:
                 showEmegencyDialog();
                 break;
+            case R.id.faq:{
+                Intent intent = new Intent(this,FAQActivity.class);
+                startActivity(intent);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void showEmegencyDialog() {
-        Emegency_Dialog emegency_dialog =new Emegency_Dialog();
-        emegency_dialog.show(getSupportFragmentManager(),"Emergency");
+        if (checkCallPermission()) {
+            Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.emergency_dialog);
+            dialog.show();
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            lp.copyFrom(dialog.getWindow().getAttributes());
+            lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+            dialog.getWindow().setAttributes(lp);
+            dialog.findViewById(R.id.ok).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+            RecyclerView emerRec = dialog.findViewById(R.id.dialog_rec);
+            emerRec.setLayoutManager(new LinearLayoutManager(this));
+            emergencyAdapter = new EmergencyAdapter(this,emergencyList);
+            emerRec.setAdapter(emergencyAdapter);
+        } else {
+            requestCallPermission();
+        }
+
+
     }
 
     public interface NotifyFragment {
         void notifyDataLoaded();
+
         Location l = new Location("");
 
 

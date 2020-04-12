@@ -67,7 +67,7 @@ public class LiveLocationService extends Service {
     int is_quar;
     float qlat;
     float qlon;
-    private static final int THRESHOLD_DIST = 50;
+    private static final int THRESHOLD_DIST = 300;
 
     LocationManager locationManager;
     private void sendLat(Location location) {
@@ -136,7 +136,9 @@ public class LiveLocationService extends Service {
 //                dialog.dismiss();
                 data.clear();
                 data.addAll(response.body().id);
-                data.sort(new LiveLocationService.TimestampSorter());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    data.sort(new TimestampSorter());
+                }
 
             }
 
@@ -201,13 +203,14 @@ public class LiveLocationService extends Service {
     public void onDestroy() {
         super.onDestroy();
         // stoptimertask();
-
-
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction("restartservice");
-        broadcastIntent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-        broadcastIntent.setClass(this, Restarter.class);
-        this.sendBroadcast(broadcastIntent);
+        int is_quarantine = SharedPrefManager.getInstance(this).getInt(SharedPrefManager.Key.IS_QUARANTINE);
+        if(is_quarantine == 1) {
+            Intent broadcastIntent = new Intent();
+            broadcastIntent.setAction("restartservice");
+            broadcastIntent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+            broadcastIntent.setClass(this, Restarter.class);
+            this.sendBroadcast(broadcastIntent);
+        }
     }
 
     @Override
@@ -221,15 +224,17 @@ public class LiveLocationService extends Service {
         //to test if the servive is running
         intialiseRetrofit();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    Activity#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for Activity#requestPermissions for more details.
-            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    Activity#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for Activity#requestPermissions for more details.
+                return;
+            }
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 2000,

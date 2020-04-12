@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.suvidha.Models.AddressModel;
 import com.suvidha.Models.RegistrationResult;
 import com.suvidha.Models.UserModel;
 import com.suvidha.R;
@@ -37,7 +38,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.suvidha.Utilities.Utils.address;
 import static com.suvidha.Utilities.Utils.getAccessToken;
+import static com.suvidha.Utilities.Utils.mStateDist;
 import static com.suvidha.Utilities.Utils.setLoginSession;
 import static com.suvidha.Utilities.Utils.zonesList;
 
@@ -58,7 +61,6 @@ public class RegisterActivity extends AppCompatActivity {
     //Retrofit
     ApiInterface apiInterface;
     private UserModel userData;
-    String[] zones = {"Adityapur", "Bistupur", "Sakchi", "Mango"};
     private String mSelectedState, mSelectedDistrict;
     private List<String> mDistricts;
 
@@ -67,10 +69,12 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         userData = getIntent().getParcelableExtra("user_data");
+        setSpinnerData();
         intialiseAllViews();
         intialiseRetrofit();
         mDistricts = new ArrayList<>();
-        Utils.parseJson(this);
+
+//        Utils.parseJson(this);
         setSpinner();
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +84,17 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setSpinnerData() {
+        for(AddressModel model:address){
+            List<String> district = mStateDist.get(model.state);
+            if(district == null){
+                district = new ArrayList<>();
+            }
+            district.add(model.district);
+            mStateDist.put(model.state,district);
+        }
     }
 
     private void setSpinner() {
@@ -142,14 +157,13 @@ public class RegisterActivity extends AppCompatActivity {
         String phone = etPhone.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String address = etAddress.getText().toString().trim();
-        int zoneid = spinner_zone.getSelectedItemPosition() + 1;
-        String zoneName = spinner_zone.getSelectedItem().toString();
-        mSelectedState = spinner_state.getSelectedItem().toString();
-        mSelectedDistrict = spinner_district.getSelectedItem().toString();
+
+        mSelectedState = spinner_state.getSelectedItem().toString().trim();
+        mSelectedDistrict = spinner_district.getSelectedItem().toString().trim();
 
         if (name.length() != 0 && phone.length() != 0 && phone.length() == 10 && isVerified && etEmail.length() != 0 && address.length() != 0 && mSelectedState.length() != 0 && mSelectedDistrict.length() != 0) {
 //            List<String> passes = new ArrayList<>();
-            final UserModel user = new UserModel(name, email, phone, address, "", mSelectedState, mSelectedDistrict);
+            final UserModel user = new UserModel(name, email, phone, address, mSelectedState, mSelectedDistrict);
 //            Log.e(TAG,getAccessToken(RegisterActivity.this));
             Call<RegistrationResult> registerCall = apiInterface.register(getAccessToken(RegisterActivity.this), user);
             registerCall.enqueue(new Callback<RegistrationResult>() {
@@ -159,7 +173,7 @@ public class RegisterActivity extends AppCompatActivity {
 //                    Toast.makeText(RegisterActivity.this, "Registration Successful." + response.message(), Toast.LENGTH_LONG).show();
                     Log.e(TAG, "onResponse: " + response.body().getId());
                     if (response.body().getStatus() == 201) {
-                        setLoginSession(user, RegisterActivity.this, zoneid);
+                        setLoginSession(user, RegisterActivity.this);
                         sharedPrefManager.put(SharedPrefManager.Key.USER_ID, response.body().getId());
                         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                         startActivity(intent);
@@ -185,9 +199,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
             if (address.length() == 0) {
                 etAddress.setError("address cannot be empty");
-            }
-            if (zoneName.length() == 0) {
-                Log.e(TAG, "This case is impossible");
             }
             if (phone.length() != 10) {
                 etPhone.setError("Invalid phone number");
