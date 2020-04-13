@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.MainActivity">
+    tools:context=".Activities.MainActivity"
+    >
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
         android:id="@+id/main_app_bar"
         android:layout_margin="@dimen/border_margin"
-        android:background="@color/white"
+        android:background="@color/colorPrimary"
         >
         <include layout="@layout/include_toolbar"/>
 <!--        <include layout="@layout/toolbar_layout" />-->
@@ -54,8 +55,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/navigation"
-        android:layout_below="@id/change_to_hindi"
-        android:layout_marginTop="@dimen/border_margin"
+        android:background="@mipmap/ic_background"
+        android:paddingTop="66dp"
          />
 
 

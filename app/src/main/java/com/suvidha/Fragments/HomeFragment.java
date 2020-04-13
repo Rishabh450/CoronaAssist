@@ -239,7 +239,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                             Log.e("LOL", "OMG");
 //                            LOCATION_LAT = quarantineLocation.getLatitude();
 //                            LOCATION_LON = quarantineLocation.getLongitude();
-                            if(is_quarantine == 0) {
+                            if(is_quarantined == 0) {
                                 createQuarentineDialog();
                             }else{
                                 Intent intent;

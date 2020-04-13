@@ -98,9 +98,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setSpinner() {
-        ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, getList());
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner_zone.setAdapter(aa);
         Object states[] = Utils.mStateDist.keySet().toArray();
         Arrays.sort(states);
         ArrayAdapter aa1 = new ArrayAdapter(this, android.R.layout.simple_spinner_item, states);
@@ -108,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
         spinner_state.setAdapter(aa1);
         mSelectedState = spinner_state.getSelectedItem().toString();
         mDistricts = Utils.mStateDist.get(mSelectedState);
-
+        updateDistrictSpinner();
         spinner_state.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -130,13 +127,6 @@ public class RegisterActivity extends AppCompatActivity {
         spinner_district.setAdapter(aa2);
     }
 
-    private List<String> getList() {
-        List<String> list = new ArrayList<>();
-        for (int i = 1; i < zonesList.size(); i++) {
-            list.add(zonesList.get(i).name);
-        }
-        return list;
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
