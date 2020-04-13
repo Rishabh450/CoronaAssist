@@ -116,12 +116,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+        Log.d("TAGG"," hey");
 
         setBottomNavigation();
         intialiseRetrofit();
         getEssentials();
         setListeners();
         Log.d(TAG, "checking" + is_quarantined);
+
 
 
     }

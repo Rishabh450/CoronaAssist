@@ -228,6 +228,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void getLats() {
         Log.d("ngomodel","in");
 
+
         Call<FetchNgomodel> getReportsModelCall = apiInterface.get_ngo(getAccessToken(this));
         getReportsModelCall.enqueue(new Callback<FetchNgomodel>() {
 
