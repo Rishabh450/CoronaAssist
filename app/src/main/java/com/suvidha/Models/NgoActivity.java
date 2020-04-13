@@ -1,13 +1,13 @@
 package com.suvidha.Models;
 
 public class NgoActivity {
-   public long datetime;
+   public String datetime;
    public String address;
    public String city;
    public float lat;
    public float lon;
 
-    public NgoActivity(long datetime, String address, String city, float lat, float lon) {
+    public NgoActivity(String datetime, String address, String city, float lat, float lon) {
         this.datetime = datetime;
         this.address = address;
         this.city = city;
@@ -15,11 +15,11 @@ public class NgoActivity {
         this.lon = lon;
     }
 
-    public long getDatetime() {
+    public String  getDatetime() {
         return datetime;
     }
 
-    public void setDatetime(long datetime) {
+    public void setDatetime(String datetime) {
         this.datetime = datetime;
     }
 

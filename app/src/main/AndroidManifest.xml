@@ -11,7 +11,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.MapsActivity"></activity>
+        <activity android:name=".Activities.NgoActivity"></activity>
+        <activity android:name=".Activities.LoginActivity" />
         <activity android:name=".Activities.NearbyAlerts" />
         <activity
             android:name=".Activities.MainActivity"
@@ -19,7 +20,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activities.LoginActivity"
+            android:name=".Activities.MapsActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,6 +53,9 @@
         <activity android:name=".Activities.QuarantineActivity" />
         <activity android:name=".Activities.FAQActivity" />
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
         <receiver
             android:name=".Utilities.Restarter"
             android:enabled="true"
@@ -81,9 +85,6 @@
                 <action android:name="com.suvidha.LONGRUNSERVICE" />
             </intent-filter>
         </service>
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
     </application>
     <uses-feature
         android:name="android.hardware.camera"
@@ -94,15 +95,14 @@
     <uses-feature
         android:name="android.hardware.camera.front"
         android:required="false" />
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

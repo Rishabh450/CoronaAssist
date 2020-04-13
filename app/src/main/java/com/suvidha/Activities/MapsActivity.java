@@ -67,7 +67,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     Location lastKnown;
     ImageView emergency;
     ApiInterface apiInterface;
-
+    List<NgoModel> data;
     String vehicle = "rishabhKaGaadi";
 
     @Override
@@ -97,8 +97,47 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnMarkerClickListener(this);
         Log.d("readyyy", "yes");
-        getLats();
+       // getLats();
+        Call<FetchNgomodel> getReportsModelCall = apiInterface.get_ngo(getAccessToken(this));
+        getReportsModelCall.enqueue(new Callback<FetchNgomodel>() {
+
+            @Override
+            public void onResponse(Call<FetchNgomodel > call, Response<FetchNgomodel> response) {
+              List<NgoModel> data=  response.body().getId();
+              Log.d("ngomodel",getAccessToken(MapsActivity.this));
+
+                Log.d("responsengo0",data.get(0).getName()+" ") ;
+
+                for(int i=0;i<data.size();i++)
+                {
+                    for(int j=0;j<data.get(i).activities.size();j++)
+                    {
+                        float lat=data.get(i).activities.get(j).lat;
+                        float lon=data.get(i).activities.get(j).lon;
+                        LatLng sydney = new LatLng(lat, lon);
+                        mMap.setBuildingsEnabled(true);
+                        mMap.clear();
+                        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        // LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
+                        MarkerOptions marker = new MarkerOptions().position(sydney).title(data.get(i).name);
+                        mMap.addMarker(marker);
+                    }
+                }
+
+//                dialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<FetchNgomodel> call, Throwable t) {
+                Log.d("failedhey", String.valueOf(t));
+
+            }
+
+
+        });
+
 
 /*
         LatLng sydney = new LatLng(34.34, 86.7);
@@ -114,12 +153,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onLocationChanged(Location location) {
 
 
-                mMap.setBuildingsEnabled(true);
-                mMap.clear();
-                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
-                MarkerOptions marker = new MarkerOptions().position(sydney).title("Your current location");
-                mMap.addMarker(marker);
+
 
 
             }
@@ -229,30 +263,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Log.d("ngomodel","in");
 
 
-        Call<FetchNgomodel> getReportsModelCall = apiInterface.get_ngo(getAccessToken(this));
-        getReportsModelCall.enqueue(new Callback<FetchNgomodel>() {
 
-            @Override
-            public void onResponse(Call<FetchNgomodel > call, Response<FetchNgomodel> response) {
-              List<NgoModel> models=  response.body().getId();
-              Log.d("ngomodel" ,models.get(0).getName()+" ");
-
-//                dialog.dismiss();
-            }
-
-            @Override
-            public void onFailure(Call<FetchNgomodel> call, Throwable t) {
-                Log.d("failedhey", String.valueOf(t));
-
-            }
-
-
-        });
     }
     @Override
     public boolean onMarkerClick(Marker marker) {
-        String vehicle= marker.getTitle();
+        String ngo= marker.getTitle();
+        Intent intent=new Intent(MapsActivity.this,NgoActivity.class);
+        intent.putExtra("name",ngo);
+        startActivity(intent);
 
-        return false;
+
+        return true;
     }
 }
