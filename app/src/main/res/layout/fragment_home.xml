@@ -71,13 +71,37 @@
                         android:textStyle="bold" />
                 </RelativeLayout>
             </LinearLayout>
+            <TextView
+                android:id="@+id/corona_awareness"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginLeft="@dimen/border_margin"
+                android:layout_marginBottom="@dimen/border_margin"
+                android:text="@string/corona_awareness"
+                android:textColor="@color/secondary_text_color"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/grey" />
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:elevation="5dp"
+                    app:cardCornerRadius="20dp"
+                    android:layout_marginTop="@dimen/border_margin"
+                    >
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="800dp"
+                    android:layout_height="wrap_content"
                     android:src="@mipmap/ic_awareness"
+                    android:scaleType="fitXY"
+
                     />
+                </androidx.cardview.widget.CardView>
 
 
 
