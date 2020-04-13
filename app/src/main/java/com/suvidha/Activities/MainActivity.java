@@ -31,6 +31,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -59,16 +69,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -85,6 +85,7 @@ import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.is_ngo;
 import static com.suvidha.Utilities.Utils.is_pass;
 import static com.suvidha.Utilities.Utils.is_quarantine;
+import static com.suvidha.Utilities.Utils.is_quarantined;
 import static com.suvidha.Utilities.Utils.is_shopper;
 import static com.suvidha.Utilities.Utils.local_zone_name;
 import static com.suvidha.Utilities.Utils.zonesList;
@@ -116,16 +117,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
-        Log.d("TAGG"," hey");
 
         setBottomNavigation();
         intialiseRetrofit();
         getEssentials();
         setListeners();
         Log.d(TAG, "checking" + is_quarantined);
-
-
-
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {

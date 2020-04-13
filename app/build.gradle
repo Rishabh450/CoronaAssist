@@ -47,6 +47,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
+    implementation 'com.google.firebase:firebase-auth:19.3.0'
     repositories {
         mavenCentral()
     }

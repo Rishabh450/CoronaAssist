@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey"
@@ -104,9 +103,8 @@
                         >
 
                         <TextView
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:text="+91" />
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -116,7 +114,7 @@
                             android:layout_marginRight="10dp"
                             android:layout_marginBottom="10dp"
 
-                            android:layout_weight="6">
+                            android:layout_weight="7">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/register_mobile"
@@ -132,11 +130,9 @@
 
                         <Button
                             style="@style/Widget.AppCompat.Button.Borderless"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="2"
                             android:id="@+id/register_verify_btn"
-                            android:visibility="invisible"
                             android:text="Verify" />
                     </LinearLayout>
 
@@ -246,6 +242,7 @@
                         android:text="@string/sign_up"
                         android:textColor="@color/white"
                         android:textSize="20sp"
+                        android:enabled="false"
                         app:cornerRadius="0dp" />
 
                 </LinearLayout>
