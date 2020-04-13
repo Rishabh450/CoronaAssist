@@ -101,5 +101,6 @@ Features:<br /><br />
     <string name="turn_on_gps">Please Turn On GPS</string>
     <string name="back">Go Back</string>
     <string name="services">Services at </string>
+    <string name="corona_awareness">Corona Awareness</string>
 
 </resources>
