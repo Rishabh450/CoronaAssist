@@ -12,8 +12,23 @@ public class QuarantineModel {
     public String end_date;
     public String state;
     public String district;
+    public int type;
 
-    public QuarantineModel(String name, String address, String phone, float location_lat, float location_lon, String authority, String start_date, String end_date,String state,String district) {
+    public QuarantineModel(String name, String address, String phone, float location_lat, float location_lon, String authority, String start_date, String end_date, String state, String district, int type) {
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+        this.location_lat = location_lat;
+        this.location_lon = location_lon;
+        this.authority = authority;
+        this.start_date = start_date;
+        this.end_date = end_date;
+        this.state = state;
+        this.district = district;
+        this.type = type;
+    }
+
+    public QuarantineModel(String name, String address, String phone, float location_lat, float location_lon, String authority, String start_date, String end_date, String state, String district) {
         this.name = name;
         this.address = address;
         this.phone = phone;

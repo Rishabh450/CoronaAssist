@@ -1,121 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:overScrollMode="never"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="@dimen/border_margin"
+    android:orientation="vertical">
 
-    <LinearLayout
+
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/border_margin"
-        android:paddingBottom="50dp"
-        android:orientation="vertical">
+
+        android:fillViewport="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="@dimen/border_margin"
+            android:paddingBottom="50dp">
+            <TextView
+                android:id="@+id/services_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/border_margin"
+                android:layout_marginBottom="@dimen/border_margin"
+                android:text="@string/services"
+                android:textColor="@color/secondary_text_color"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/grey" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:layout_marginLeft="@dimen/border_margin"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <RelativeLayout
+                    android:id="@+id/icon_quarentine"
+                    android:layout_width="0dp"
+                    android:layout_height="160dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="150dp"
+
+                        android:src="@mipmap/ic_quarantine" />
+
+                    <TextView
+                        android:id="@+id/txt_quarantine"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:gravity="center"
+                        android:text="@string/Quarantine"
+                        android:textAllCaps="false"
+                        android:textColor="@color/secondary_text_color"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+            </LinearLayout>
 
 
-        <Button
-            android:id="@+id/icon_quarentine"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/border_margin"
-            android:background="@drawable/home_btn_shape"
-            android:gravity="center"
-            android:text="@string/Quarantine"
-            android:textAllCaps="false"
-            android:textColor="@color/secondary_text_color"
-            />
-        <Button
-            android:id="@+id/icon_faq"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/border_margin"
-            android:background="@drawable/home_btn_shape"
-            android:gravity="center"
-            android:text="@string/faq_btn"
-            android:textAllCaps="false"
-            android:textColor="@color/secondary_text_color"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_marginLeft="@dimen/border_margin"
-            android:text="@string/coming_soon"
-            android:textStyle="bold"
-            android:textColor="@color/primary_text_color"
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="800dp"
+                    android:src="@mipmap/ic_awareness"
+                    />
 
-            />
-        <Button
-            android:id="@+id/icon_request_passes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/border_margin"
-            android:background="@drawable/home_btn_shape"
-            android:gravity="center"
-            android:enabled="false"
-            android:text="@string/request_passes"
-            android:textAllCaps="false"
-            android:textColor="@color/secondary_text_color" />
-        <Button
-            android:id="@+id/icon_groceries"
-            android:layout_width="match_parent"
-            android:enabled="false"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/border_margin"
-            android:background="@drawable/home_btn_shape"
-            android:gravity="center"
-            android:text="@string/groceries_and_essentials"
-            android:textAllCaps="false"
-            android:textColor="@color/secondary_text_color" />
 
-        <Button
-            android:id="@+id/icon_milk_and_dairy"
-            android:enabled="false"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/border_margin"
-            android:background="@drawable/home_btn_shape"
-            android:gravity="center"
-            android:text="@string/milk_and_dairy"
-            android:textAllCaps="false"
-            android:textColor="@color/secondary_text_color" />
 
-        <Button
-            android:id="@+id/icon_bread"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/border_margin"
-            android:background="@drawable/home_btn_shape"
-            android:gravity="center"
-            android:text="@string/bread"
-            android:enabled="false"
-            android:textAllCaps="false"
-            android:textColor="@color/secondary_text_color" />
+            <Button
+                android:id="@+id/icon_request_passes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/border_margin"
+                android:background="@drawable/home_btn_shape"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="@string/request_passes"
+                android:textAllCaps="false"
+                android:textColor="@color/secondary_text_color"
+                android:visibility="gone" />
 
-        <Button
-            android:id="@+id/icon_gas"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/border_margin"
-            android:background="@drawable/home_btn_shape"
-            android:gravity="center"
-            android:text="@string/gas"
-            android:textAllCaps="false"
-            android:enabled="false"
-            android:textColor="@color/secondary_text_color" />
+            <Button
+                android:id="@+id/icon_groceries"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/border_margin"
+                android:background="@drawable/home_btn_shape"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="@string/groceries_and_essentials"
+                android:textAllCaps="false"
+                android:textColor="@color/secondary_text_color"
+                android:visibility="gone" />
 
-        <Button
-            android:id="@+id/icon_water"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/border_margin"
-            android:background="@drawable/home_btn_shape"
-            android:gravity="center"
-            android:text="@string/water"
-            android:textAllCaps="false"
-            android:enabled="false"
-            android:textColor="@color/secondary_text_color" />
+            <Button
+                android:id="@+id/icon_milk_and_dairy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/border_margin"
+                android:background="@drawable/home_btn_shape"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="@string/milk_and_dairy"
+                android:textAllCaps="false"
+                android:textColor="@color/secondary_text_color"
+                android:visibility="gone" />
 
-    </LinearLayout>
-</ScrollView>
+            <Button
+                android:id="@+id/icon_bread"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/border_margin"
+                android:background="@drawable/home_btn_shape"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="@string/bread"
+                android:textAllCaps="false"
+                android:textColor="@color/secondary_text_color"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/icon_gas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/border_margin"
+                android:background="@drawable/home_btn_shape"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="@string/gas"
+                android:textAllCaps="false"
+                android:textColor="@color/secondary_text_color"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/icon_water"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/border_margin"
+                android:background="@drawable/home_btn_shape"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="@string/water"
+                android:textAllCaps="false"
+                android:textColor="@color/secondary_text_color"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

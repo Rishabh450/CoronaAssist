@@ -1,21 +1,21 @@
 package com.suvidha.Activities;
 
 import android.Manifest;
-import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.hardware.Camera;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -26,42 +26,36 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.suvidha.Adapters.QuarantineAdapter;
-import com.suvidha.Fragments.HistoryFragment;
-import com.suvidha.Models.CartModel;
 import com.suvidha.Models.GeneralModel;
 import com.suvidha.Models.GetReportsModel;
 import com.suvidha.Models.ReportModel;
 import com.suvidha.R;
+import com.suvidha.Receiver.AlarmReceiver;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.SharedPrefManager;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import java.util.function.IntToDoubleFunction;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -74,12 +68,11 @@ import retrofit2.Response;
 import static com.suvidha.Utilities.Utils.CAMERA_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.createAlertDialog;
-import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.currentLocation;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 
 
-public class QuarantineActivity extends AppCompatActivity {
+public class QuarantineActivity extends AppCompatActivity  {
 
     private static final int CAMERA_REQUEST = 5;
     private static final int GPS_REQUEST_CODE = 10;
@@ -88,35 +81,60 @@ public class QuarantineActivity extends AppCompatActivity {
     private AppBarLayout toolbar_layout;
     ApiInterface apiInterface;
     private int location_error = 0;
-    private static final int THRESHOLD_DIST = 200;
-    private double lat, lon;
+    private static final int THRESHOLD_DIST = 300;
+//    private double lat, lon;
     private Button reportBtn;
     private RecyclerView rview;
     private QuarantineAdapter mAdapter;
     private RelativeLayout pFrame;
     private List<ReportModel> data = new ArrayList<>();
+    static int MINUTES=120;
+    static int LAST_UPDATE=0;
+    private TextView dayleftcount,daysleftmessege;
+    public static final String MY_PREFS_NAME = "Last_Update";
+    int flag = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quarantine);
         init();
+        getLocation();
         getLocationUpdates();
+
         setRecyclerView();
         intialiseRetrofit();
         getReports();
 //        lat = getIntent().getDoubleExtra("lat", 0);
 //        lon = getIntent().getDoubleExtra("lon", 0);
         setToolbar();
-        if(currentLocation == null){
+        /*if(currentLocation == null){
             pFrame.setVisibility(View.VISIBLE);
             reportBtn.setEnabled(false);
             reportBtn.setText(getResources().getString(R.string.please_wait));
-        }
+        }*/
 //        calDiffDist();
+          check();
+
 
 
     }
+    private void getLocation()
+    {
+        Intent intent=getIntent();
+        currentLocation = new Location("Dummy Provider");
+        currentLocation.setLatitude(intent.getFloatExtra("lat",0.0f));
+        currentLocation.setLongitude(intent.getFloatExtra("lon",0.0f));
+//      lat=  intent.getFloatExtra("lat",0.0f);
+//      lon= intent.getFloatExtra("lon",0.0f);
+
+        reportBtn.setEnabled(true);
+        reportBtn.setText(getResources().getString(R.string.report));
+        calDiffDist();
+
+        pFrame.setVisibility(View.GONE);
+    }
+
 
     private void getLocationUpdates() {
         LocationManager locationManager = (LocationManager)
@@ -126,17 +144,56 @@ public class QuarantineActivity extends AppCompatActivity {
             //first get current location as quarantine location
             //then open dialog
             if (canGetLocation()) {
+                Log.e("TAG","LOLOLO");
+                if(flag == 0)
+                    getCurrentLocation();
                 locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,5000, 0, locationListener);
+                        LocationManager.GPS_PROVIDER,5000, -1, locationListener);
             } else {
                 showSettingsAlert();
             }
 
         } else {
             requestLocationPermissions();
-//                    Toast.makeText(getContext(), "You don't have location permission", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContexgetLocationUpdatest(), "You don't have location permission", Toast.LENGTH_SHORT).show();
         }
 
+    }
+    private void getCurrentLocation() {
+
+        mFusedLocationClient.getLastLocation().addOnCompleteListener(
+                new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        Location location = task.getResult();
+                        if (location == null) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    getCurrentLocation();
+                                }
+                            }, 1000);
+                            String uri = String.format(Locale.ENGLISH, "geo:%f,%f", 22.8046, 86.2029);
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                            startActivity(intent);
+                        } else {
+                            currentLocation = new Location(location);
+//                            Log.e("LOL", "OMG");
+                            calDiffDist();
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    getCurrentLocation();
+                                }
+                            }, 1000);
+
+//                            LOCATION_LAT = quarantineLocation.getLatitude();
+//                            LOCATION_LON = quarantineLocation.getLongitude();
+
+                        }
+                    }
+                }
+        );
     }
     private boolean checkLocationPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
@@ -181,7 +238,7 @@ public class QuarantineActivity extends AppCompatActivity {
         return result;
     }
     public void showSettingsAlert() {
-        Dialog dialog = createAlertDialog(this,getResources().getString(R.string.error),"Please turn on GPS","Go Back","Ok");
+        Dialog dialog = createAlertDialog(this,getResources().getString(R.string.error),getResources().getString(R.string.turn_on_gps),getResources().getString(R.string.back),getResources().getString(R.string.ok));
         dialog.setCancelable(false);
         // Setting Dialog Title
        dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
@@ -220,9 +277,12 @@ public class QuarantineActivity extends AppCompatActivity {
 //                dialog.dismiss();
                 data.clear();
                 data.addAll(response.body().id);
-                data.sort(new TimestampSorter());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    data.sort(new TimestampSorter());
+                }
                 mAdapter.notifyDataSetChanged();
                 pFrame.setVisibility(View.GONE);
+                setLeftDays(response.body().left);
             }
 
             @Override
@@ -250,6 +310,15 @@ public class QuarantineActivity extends AppCompatActivity {
         });
     }
 
+    private void setLeftDays(int left) {
+        if(left<=0){
+            daysleftmessege.setText(getResources().getString( R.string.police_verification));
+            left=0;
+        }
+        dayleftcount.setText(String.valueOf(left));
+    }
+
+
     private void setRecyclerView() {
         rview.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new QuarantineAdapter(this,data);
@@ -261,9 +330,9 @@ public class QuarantineActivity extends AppCompatActivity {
         float qlat= SharedPrefManager.getInstance(this).getFloat(SharedPrefManager.Key.QUARENTINE_LAT_KEY,0);
         float qlon= SharedPrefManager.getInstance(this).getFloat(SharedPrefManager.Key.QUARENTINE_LON_KEY,0);
         double d = distance((double) qlat,(double) qlon,currentLocation.getLatitude(),currentLocation.getLongitude(),"K")*1000;
-//        Log.e("TAG", String.valueOf(d));
-//        Log.e("QUARANTINE",qlat+", "+qlon);
-//        Log.e("CURRENT",lat+", "+lon);
+        Log.e("TAG", String.valueOf(d));
+        Log.e("QUARANTINE",qlat+", "+qlon);
+        Log.e("CURRENT",currentLocation.getLatitude()+", "+currentLocation.getLongitude());
 //        Toast.makeText(this, "DIST:"+d+" LAT:"+currentLocation.getLatitude()+" LON:"+currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
         if(d>THRESHOLD_DIST){
             location_error=1;
@@ -275,6 +344,9 @@ public class QuarantineActivity extends AppCompatActivity {
     }
 
     private void init() {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        dayleftcount=findViewById(R.id.leftdays);
+        daysleftmessege=findViewById(R.id.leftdaysmessage);
         rview = findViewById(R.id.quarantine_rview);
         pFrame = findViewById(R.id.progress_frame);
         pFrame.setVisibility(View.GONE);
@@ -282,17 +354,25 @@ public class QuarantineActivity extends AppCompatActivity {
         toolbar_layout = findViewById(R.id.main_app_bar);
         reportBtn = findViewById(R.id.report_btn);
         reportBtn.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                if(checkCameraPermission()){
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    intent.putExtra("android.intent.extras.CAMERA_FACING", android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT);
-                    intent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
-                    intent.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
-                    startActivityForResult(intent,CAMERA_REQUEST);
-                }else{
-                    requestCameraPermission();
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if(checkCameraPermission()){
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            intent.putExtra("android.intent.extras.CAMERA_FACING", Camera.CameraInfo.CAMERA_FACING_FRONT);
+                            intent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
+                            intent.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
+                            startActivityForResult(intent,CAMERA_REQUEST);
+                        }else{
+                            requestCameraPermission();
+                        }
+                    }
+                }catch (Exception e){
+                    Log.e("Wait",e.getMessage());
                 }
+
             }
         });
     }
@@ -341,6 +421,7 @@ public class QuarantineActivity extends AppCompatActivity {
                     pFrame.setVisibility(View.GONE);
                     getReports();
                     Dialog alertDialog = createAlertDialog(QuarantineActivity.this,getResources().getString(R.string.successful),getResources().getString(R.string.submitter_successfully),"",getResources().getString(R.string.ok));
+                    setRemainder();
                     alertDialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -364,6 +445,7 @@ public class QuarantineActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Failed!", Toast.LENGTH_SHORT).show();
         }
     }
+
     public class TimestampSorter implements Comparator<ReportModel>
     {
         DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
@@ -405,10 +487,13 @@ public class QuarantineActivity extends AppCompatActivity {
         );
     }
 
+
     public boolean checkCameraPermission(){
-        if (checkSelfPermission(Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            return false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
         }
         return true;
     }
@@ -417,13 +502,12 @@ public class QuarantineActivity extends AppCompatActivity {
 
         @Override
         public void onLocationChanged(Location loc) {
+            Log.e("LOL","LOL");
+            flag = 1;
           if(loc!=null) {
               currentLocation = loc;
-              reportBtn.setEnabled(true);
-              reportBtn.setText(getResources().getString(R.string.report));
               calDiffDist();
-              Log.e("LOCATION",loc.getLatitude() +" "+ loc.getLongitude());
-              pFrame.setVisibility(View.GONE);
+
           }
 
         }
@@ -509,6 +593,53 @@ public class QuarantineActivity extends AppCompatActivity {
                 finish();
             }
         }
+    }
+    public boolean isTimeUp(){
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        LAST_UPDATE = prefs.getInt("time", LAST_UPDATE); //0 is the default value.
+        return (System.currentTimeMillis()-LAST_UPDATE)/(60*1000)>=MINUTES;
+    }
+    private void check() {
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        long check= prefs.getLong("time", -1); //0 is the default value.
+        if(check == -1) {
+            setRemainder();
+        }
+    }
+
+    public void cancelRemainder(){
+        SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+        editor.putLong("time", System.currentTimeMillis());
+        editor.apply();
+        Log.d("ak47", "cancelRemainder: ");
+        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
+        intent.setAction("com.suvidha.Activities");
+        intent.putExtra("SET","STOP");
+        sendBroadcast(intent);
+    }
+    public void setRemainder(){
+
+        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
+        intent.putExtra("SET","RUN");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                getBaseContext(), 1, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+MINUTES*60*1000,
+                pendingIntent);
+        Log.d("ak47", "setRemainder: ");
+//        // Set notificationId & text.
+//        Intent intent = new Intent(QuarantineActivity.this, AlarmReceiver.class);
+//        intent.putExtra("notificationId", 1);
+//
+//        // getBroadcast(context, requestCode, intent, flags)
+//        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
+//                intent, PendingIntent.FLAG_CANCEL_CURRENT);
+//
+//        AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
+//        long alarmStartTime=System.currentTimeMillis()+1000*10;
+//        Toast.makeText(this,alarmStartTime+" ",Toast.LENGTH_LONG).show();
+//        Log.d("ak47", alarmStartTime+"setRemainder: "+System.currentTimeMillis());
+//        alarm.set(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmIntent);
     }
     //    private class LocationStuff extends AsyncTask<Void, Void, Void> {
 //

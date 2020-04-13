@@ -15,6 +15,7 @@ import com.suvidha.Models.OrderRequestModel;
 import com.suvidha.Models.Pass;
 import com.suvidha.Models.PassGenerationResult;
 import com.suvidha.Models.QuarantineModel;
+import com.suvidha.Models.QuarantineNearbyModel;
 import com.suvidha.Models.RegistrationResult;
 import com.suvidha.Models.ReportModel;
 import com.suvidha.Models.ShopRequestModel;
@@ -80,9 +81,12 @@ public interface ApiInterface {
     @Headers("Content-Type: application/json")
     @POST("/api/police/get_pass")
     Call<SinglePassResult> getPass(@Body Map<String, String> body);
+    @Headers("Content-Type: application/json")
+    @POST("/api/get_quarantine_near")
+    Call<QuarantineNearbyModel> check_nearby(@Header("x-access-tokens") String token, @Body LocationModel model);
 
     @Headers("Content-Type: application/json")
-    @POST("/api/violation")
+    @POST("/api/report_violation")
     Call<GeneralModel> report_violation(@Header("x-access-tokens") String token, @Body LocationModel model);
 
     @GET("/api/police/get_passes/{status}")

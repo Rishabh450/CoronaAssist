@@ -4,6 +4,9 @@
         <!--        suraj-->
         <!--        <domain includeSubdomains="true">192.168.43.193</domain>-->
         <!--        sanay-->
-        <domain includeSubdomains="true">https://saanayy-token-gen.herokuapp.com/</domain>
+        <domain includeSubdomains="true">http://13.127.163.197:5000/</domain>
+<!--        <trust-anchors>-->
+<!--            <certificates src="system" />-->
+<!--        </trust-anchors>-->
     </domain-config>
 </network-security-config>

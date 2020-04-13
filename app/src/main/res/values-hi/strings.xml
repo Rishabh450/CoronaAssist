@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">सुरक्षा जमशेदपुर</string>
+    <string name="app_name">सुरक्षा</string>
     <string name="coming_soon">" जल्द आ रहा है"</string>
     <string name="bread">" रोटी"</string>
     <string name="gas">गैस</string>
@@ -65,7 +65,7 @@
 विशेषताएं:\n\n
 
 -होम संगरोध ट्रैकिंग सुविधा उन नागरिकों के लिए जो सरकार द्वारा सौंपे गए हैं, ताकि सरकार उनकी गतिविधियों पर नजर रख सकते हैं और उन पर नज़र रख सकते हैं। \n
--आवेदन के माध्यम से आवश्यक काम के लिए जमशेदपुर घूमने के लिए आवश्यक पास के लिए स्थानीय पास जारी करने और जारी करने वाले स्थानीय प्राधिकारी द्वारा अनुमोदित। (जल्द आ रहा है)\n
+-आवेदन के माध्यम से आवश्यक काम के लिए आपके शहर घूमने के लिए आवश्यक पास के लिए स्थानीय पास जारी करने और जारी करने वाले स्थानीय प्राधिकारी द्वारा अनुमोदित। (जल्द आ रहा है)\n
 -आवेदन के माध्यम से आवश्यक वस्तुओं जैसे किराने, व्यक्तिगत देखभाल, गैस, पानी, दवाएं आदि का वितरण। (जल्द आ रहा है)\n
 
 वर्तमान में, यह ऐप Google Play Store पर अपलोड करने का तरीका है, और अब इसे सोशल मीडिया के माध्यम से उन लोगों तक पहुंचाने के लिए साझा किया जाता है, जिन्हें सरकार द्वारा घरेलू संगरोध और अलगाव के तहत बताया जाता है।\n
@@ -80,5 +80,19 @@ Phone: 7061039636 </string>
     <string name="in_quarantine_location">आप संगरोध स्थान पर थे</string>
     <string name="not_in_quarantine">आप संगरोध स्थान पर नहीं थे</string>
     <string name="error">त्रुटि</string>
-
+    <string name="emergency_no">आपातकालीन नंबर</string>
+    <string name="Emergency">आपातकालीन </string>
+    <string name="CANCEL">रद्द</string>
+    <string name="log_out_warning">क्या आप लॉग आउट करना चाहते हैं?</string>
+    <string name="day_message_left">दिन शेष</string>
+    <string name="police_verification">पुलिस की पुष्टि का इंतजार</string>
+    <string name="call">कॉल</string>
+    <string name="cannot_sign_out">आप लॉग आउट नहीं कर सकते</string>
+    <string name="type">प्रकार</string>
+    <string name="home_quarantine">घर में संगरोध</string>
+    <string name="special_quarantine_center">विशेष संगरोध केंद्र</string>
+    <string name="select_type">कृपया प्रकार चुनें</string>
+    <string name="turn_on_gps">कृपया जीपीएस चालू करें</string>
+    <string name="back">पीछे</string>
+    <string name="services">सेवाएं at </string>
 </resources>

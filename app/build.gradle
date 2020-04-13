@@ -7,7 +7,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.suvidha"
-        minSdkVersion 24
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 3
         versionName "2.0"
@@ -51,9 +51,5 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.10.1'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
-    implementation 'com.journeyapps:zxing-android-embedded:4.0.0'
-    implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
     implementation 'androidx.multidex:multidex:2.0.1'
-
-
 }

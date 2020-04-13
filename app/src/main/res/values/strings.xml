@@ -1,19 +1,19 @@
 <resources>
-    <string name="app_name">Suraksha Jamshedpur</string>
+    <string name="app_name">Suraksha</string>
     <string name="action_settings" translatable="false">Settings</string>
     <string name="warning_cart_not_empty" translatable="false">You\'ll lose the cart items if you go back. Do you want to continue?</string>
     <string name="view_order_summary" translatable="false">VIEW ORDER SUMMARY</string>
     <string name="place_order_msg" translatable="false">Do you want to continue placing the order?</string>
     <string name="backPress">Press back again to close the application</string>
-    <string name="terms_and_condition">-Please register for home quarantine on the App only at location where you would be undergoing Isolation. Your current location at the time which you would be registering yourself for home quarantine on the App would be monitored, so please register yourself only where you are supposed to Quarantine. (Eg: If you\'re told to quarantine at home, open the app and register on the app only when you are at your house rather than any other location)<br/><br/>\n
+    <string name="terms_and_condition">1. Please register for home quarantine on the App only at location where you would be undergoing Isolation. Your current location at the time which you would be registering yourself for home quarantine on the App would be monitored, so please register yourself only where you are supposed to Quarantine. (Eg: If you\'re told to quarantine at home, open the app and register on the app only when you are at your house rather than any other location)<br/><br/><br/>\n
 
--You\'ll be monitored my the govt. through the app for home quarantine, and if you violate the quarantine, you\'ll be punished by the local governing body.\n<br/><br/>
+2. You\'ll be monitored my the govt. through the app for home quarantine, and if you violate the quarantine, you\'ll be punished by the local governing body.\n<br/><br/><br/>
 
--You are supposed to click a picture and send it every 2 Hour from 9AM to 9PM on the report quarantine feature below.  Failure to do so will require the officials to call you and monitor you.\n<br/><br/>
+3. You are supposed to click a picture and send it every 2 Hour from 9AM to 9PM on the report quarantine feature below.  Failure to do so will require the officials to call you and monitor you.\n<br/><br/><br/>
 
--Always keep your location on at all times, failing to do so will be considered as an act of violation and the local governing authorities can come to inspect you if they find out any default change from your location.\n<br/><br/>
+4. Always keep your location on at all times, failing to do so will be considered as an act of violation and the local governing authorities can come to inspect you if they find out any default change from your location.\n<br/><br/><br/>
 
--Any False registrations of home quarantine will be considered a Criminal act.</string>
+5. Any False registrations of home quarantine will be considered a Criminal act.</string>
     <string name="request_passes">Request Passes</string>
     <string name="Quarantine">Quarantine</string>
     <string name="coming_soon">Coming Soon</string>
@@ -69,7 +69,7 @@
 Features:<br/><br/>
 \n
 -Home Quarantine Tracking Facility for citizens who are assigned by the government to be Quarantined, so that the govt. can monitor their movements and keep track of them. <br />
-\n-Issuing local passes for Essential workers to move around Jamshedpur for Essential work via the application and approved by the issuing local authority. (Coming Soon)<br />
+\n-Issuing local passes for Essential workers to move around your city for Essential work via the application and approved by the issuing local authority. (Coming Soon)<br />
 \n-Delivery of Essential Items such as Grocery, Personal Care, Gas, Water, Medicines, etc via the Application. (Coming Soon)<br />
 \n
 \nCurrently, the app is on it\'s way to be uploaded on the Google Play Store, and for now it\'s shared via social media for reaching out to people who are told to be under home quarantine and isolation by the government.<br />
@@ -83,5 +83,21 @@ Features:<br/><br/>
     <string name="in_quarantine_location">You were in quarantine location</string>
     <string name="not_in_quarantine">You were not in quarantine location</string>
     <string name="error">Error</string>
+    <string name="emergency_no">Emergency Number</string>
+    <string name="emergency_phone_no" translatable="false">1234567890</string>
+    <string name="Emergency">Emergency</string>
+    <string name="CANCEL">CANCEL</string>
+    <string name="log_out_warning">Are you sure you want to log out?</string>
+    <string name="day_message_left">Days Left</string>
+    <string name="police_verification">Waiting for police confirmation</string>
+    <string name="call">Call</string>
+    <string name="cannot_sign_out">You cannot log out</string>
+    <string name="type">Type</string>
+    <string name="home_quarantine">Home Quarantine</string>
+    <string name="special_quarantine_center">Special Quarantine Center</string>
+    <string name="select_type">Please select type</string>
+    <string name="turn_on_gps">Please Turn On GPS</string>
+    <string name="back">Go Back</string>
+    <string name="services">Services at </string>
 
 </resources>

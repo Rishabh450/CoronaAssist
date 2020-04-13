@@ -7,19 +7,13 @@ import java.util.List;
 public class LoginResult {
     public UserModel id;
     public int status;
-    public List<ZonesModel> zone;
+    public List<AddressModel> available;
     public LocationModel location;
 
-    public LoginResult(UserModel id, int status, List<ZonesModel> zone, LocationModel location) {
+    public LoginResult(UserModel id, int status, List<AddressModel> available, LocationModel location) {
         this.id = id;
         this.status = status;
-        this.zone = zone;
+        this.available = available;
         this.location = location;
-    }
-
-    public LoginResult(UserModel id, int status, List<ZonesModel> zone) {
-        this.id = id;
-        this.status = status;
-        this.zone = zone;
     }
 }
