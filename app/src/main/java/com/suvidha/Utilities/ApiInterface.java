@@ -2,6 +2,7 @@ package com.suvidha.Utilities;
 
 import com.suvidha.Models.CartModel;
 import com.suvidha.Models.EssentialsRequestModel;
+import com.suvidha.Models.FetchNgomodel;
 import com.suvidha.Models.GeneralModel;
 import com.suvidha.Models.GetOrdersModel;
 import com.suvidha.Models.GetReportsModel;
@@ -10,6 +11,7 @@ import com.suvidha.Models.ItemModel;
 import com.suvidha.Models.ItemsRequestModel;
 import com.suvidha.Models.LocationModel;
 import com.suvidha.Models.LoginResult;
+import com.suvidha.Models.NgoModel;
 import com.suvidha.Models.OrderIdModel;
 import com.suvidha.Models.OrderRequestModel;
 import com.suvidha.Models.Pass;
@@ -61,6 +63,10 @@ public interface ApiInterface {
     @Headers("Content-Type: application/json")
     @POST("/api/get_shops")
     Call<ShopRequestModel> getAllShops(@Header("x-access-tokens") String token, @Body GetShopsModel model);
+    @Headers("Content-Type: application/json")
+
+    @GET("/api/get_ngo_list")
+    Call<FetchNgomodel>  get_ngo(@Header("x-access-tokens") String token);
 
     @Headers("Content-Type: application/json")
     @GET("/api/get_essentials")

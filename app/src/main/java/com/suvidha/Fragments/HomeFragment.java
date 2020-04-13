@@ -129,6 +129,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         iconMilk = v.findViewById(R.id.icon_milk_and_dairy);
         iconBread = v.findViewById(R.id.icon_bread);
         iconGas = v.findViewById(R.id.icon_gas);
+        Log.d("accesstokengetting",getAccessToken(getContext()));
         iconWater = v.findViewById(R.id.icon_water);
         iconQuarentine = v.findViewById(R.id.icon_quarentine);
         text_quarantine = v.findViewById(R.id.txt_quarantine);
@@ -239,7 +240,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                             Log.e("LOL", "OMG");
 //                            LOCATION_LAT = quarantineLocation.getLatitude();
 //                            LOCATION_LON = quarantineLocation.getLongitude();
-                            if(is_quarantine == 0) {
+                            if(is_quarantined == 0) {
                                 createQuarentineDialog();
                             }else{
                                 Intent intent;
