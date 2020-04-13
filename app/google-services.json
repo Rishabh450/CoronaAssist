@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "883469772339",
+    "firebase_url": "https://coronaassistant-17451.firebaseio.com",
+    "project_id": "coronaassistant-17451",
+    "storage_bucket": "coronaassistant-17451.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883469772339:android:92eba99768b5649ffce546",
+        "android_client_info": {
+          "package_name": "com.suvidha"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "883469772339-kp796i2b2mnmcv89lfnk4g5tutgkjojq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoMZ7x3_-zJxEPF5wOBZopr0rs0lwS1ZE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "883469772339-kp796i2b2mnmcv89lfnk4g5tutgkjojq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
