@@ -5,13 +5,10 @@ import android.app.ActivityManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,7 +24,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -36,7 +32,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
@@ -45,8 +40,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
-import com.suvidha.Activities.FAQActivity;
-import com.suvidha.Activities.LoginActivity;
 import com.suvidha.Activities.MainActivity;
 import com.suvidha.Activities.MyPassActivity;
 import com.suvidha.Activities.QuarantineActivity;
@@ -63,11 +56,8 @@ import com.suvidha.Utilities.Utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -80,7 +70,6 @@ import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.currentLocation;
 import static com.suvidha.Utilities.Utils.district;
 import static com.suvidha.Utilities.Utils.getAccessToken;
-import static com.suvidha.Utilities.Utils.is_quarantine;
 import static com.suvidha.Utilities.Utils.is_quarantined;
 import static com.suvidha.Utilities.Utils.shopTypesMap;
 
@@ -391,11 +380,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                 dialog.dismiss();
             }
         });
+        if (sharedPrefManager.containsKey(SharedPrefManager.Key.USER_PHONE)) {
+            phone.setText(sharedPrefManager.getString(SharedPrefManager.Key.USER_PHONE));
+            phone.setEnabled(false);
+        } else {
+            phone.setEnabled(true);
+        }
+
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String etname = name.getText().toString().trim();
                 String etphone = phone.getText().toString().trim();
+                
                 String etaddress = address.getText().toString().trim();
                 String stDate = st.getText().toString().trim();
                 String endDate = end.getText().toString().trim();

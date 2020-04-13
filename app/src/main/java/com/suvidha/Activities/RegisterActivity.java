@@ -1,38 +1,42 @@
 package com.suvidha.Activities;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.suvidha.Models.AddressModel;
 import com.suvidha.Models.RegistrationResult;
+import com.suvidha.Models.SMSverifcation;
 import com.suvidha.Models.UserModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
+import com.suvidha.Utilities.SMSClient;
+import com.suvidha.Utilities.SMSInterface;
 import com.suvidha.Utilities.SharedPrefManager;
 import com.suvidha.Utilities.Utils;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,24 +46,28 @@ import static com.suvidha.Utilities.Utils.address;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.mStateDist;
 import static com.suvidha.Utilities.Utils.setLoginSession;
-import static com.suvidha.Utilities.Utils.zonesList;
 
 public class RegisterActivity extends AppCompatActivity {
 
 
     //Field varibales
     private static final int READ_PHONE_STATE = 201;
+    private static final String API_KEY = "37538f7f-7dc7-11ea-9fa5-0200cd936042";
     private final String TAG = "register";
-    private SharedPrefManager sharedPrefManager;
+    Dialog d;
+    String sessionId = "";
+    ProgressDialog progressDialog;
 
+
+    //Retrofit
+    ApiInterface apiInterface;
+    private SharedPrefManager sharedPrefManager;
     //Views
     private TextInputEditText etName, etPhone, etEmail, etAddress;
     private Button verifyPhone;
     private Spinner spinner_zone, spinner_state, spinner_district;
     private Button btnRegister;
     private boolean isVerified = true;
-    //Retrofit
-    ApiInterface apiInterface;
     private UserModel userData;
     private String mSelectedState, mSelectedDistrict;
     private List<String> mDistricts;
@@ -68,10 +76,23 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        // Restore instance state
+
         userData = getIntent().getParcelableExtra("user_data");
         setSpinnerData();
         intialiseAllViews();
         intialiseRetrofit();
+        if (sharedPrefManager.containsKey(SharedPrefManager.Key.USER_PHONE)) {
+            etPhone.setEnabled(false);
+            btnRegister.setEnabled(true);
+            verifyPhone.setEnabled(false);
+            etPhone.setText(sharedPrefManager.getString(SharedPrefManager.Key.USER_PHONE));
+        } else {
+            etPhone.setEnabled(true);
+            btnRegister.setEnabled(false);
+            verifyPhone.setEnabled(true);
+        }
         mDistricts = new ArrayList<>();
 
 //        Utils.parseJson(this);
@@ -84,21 +105,149 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+        verifyPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String phone = etPhone.getText().toString().trim();
+                if (phone.length() != 0) {
+                    showMessage("Sending", "Wait while we send you the otp");
+                    sendOTP(phone);
+                    createOTPDialog(phone);
+                } else {
+                    etPhone.setError("Please provide correct phone number");
+                }
+            }
+        });
+
+
+    }
+
+    private void showMessage(String titile, String Message) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("UI thread", "I am the UI thread");
+                progressDialog.setTitle(titile);
+                progressDialog.setMessage(Message);
+                progressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+                progressDialog.show();
+            }
+        });
+
+    }
+
+    private void hideMessage() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("UI thread", "I am the UI thread from Barcode Fragment");
+                progressDialog.hide();
+
+            }
+        });
+        return;
+    }
+
+    private void sendOTP(String phone) {
+        SMSInterface apiService =
+                SMSClient.getClient().create(SMSInterface.class);
+
+        Call<SMSverifcation> call = apiService.sentOTP(API_KEY, phone);
+        call.enqueue(new Callback<SMSverifcation>() {
+            @Override
+            public void onResponse(Call<SMSverifcation> call, Response<SMSverifcation> response) {
+                sessionId = response.body().getDetails();
+                Log.d("SenderID", sessionId);
+                hideMessage();
+                //you may add code to automatically fetch OTP from messages.
+            }
+
+            @Override
+            public void onFailure(Call<SMSverifcation> call, Throwable t) {
+                Log.e("ERROR", t.toString());
+                hideMessage();
+            }
+
+        });
+    }
+
+    private void createOTPDialog(String phone) {
+        final LayoutInflater inflater = getLayoutInflater();
+
+        final View alertLayout = inflater.inflate(R.layout.dialog_phone_otp, null);
+
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setView(alertLayout);
+
+        TextInputEditText etOTP = alertLayout.findViewById(R.id.otp);
+
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(final DialogInterface dialog, int id) {
+                String pass = etOTP.getText().toString().trim();
+                if (pass.length() != 0) {
+                    showMessage("Verification", "Wait while we verify");
+                    SMSInterface apiService =
+                            SMSClient.getClient().create(SMSInterface.class);
+
+                    Call<SMSverifcation> call = apiService.verifyOTP(API_KEY, sessionId, pass);
+
+                    call.enqueue(new Callback<SMSverifcation>() {
+
+                        @Override
+                        public void onResponse(Call<SMSverifcation> call, Response<SMSverifcation> response) {
+
+                            try {
+                                if (response.body().getStatus().equals("Success")) {
+                                    Toast.makeText(RegisterActivity.this, "Verified", Toast.LENGTH_SHORT).show();
+                                    btnRegister.setEnabled(true);
+                                    verifyPhone.setEnabled(false);
+                                    etPhone.setEnabled(false);
+                                    sharedPrefManager.put(SharedPrefManager.Key.USER_PHONE, phone);
+                                } else {
+                                    Log.d("Failure", response.body().getDetails() + "|||" + response.body().getStatus());
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            } finally {
+                                hideMessage();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<SMSverifcation> call, Throwable t) {
+                            Log.e("ERROR", t.toString());
+                            hideMessage();
+                        }
+
+                    });
+                } else {
+                    etOTP.setError("OTP cannot be empty");
+                }
+            }
+        });
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+
+        d = alert.create();
+        d.show();
     }
 
     private void setSpinnerData() {
-        for(AddressModel model:address){
+        for (AddressModel model : address) {
             List<String> district = mStateDist.get(model.state);
-            if(district == null){
+            if (district == null) {
                 district = new ArrayList<>();
             }
             district.add(model.district);
-            mStateDist.put(model.state,district);
+            mStateDist.put(model.state, district);
         }
     }
 
     private void setSpinner() {
-        Object states[] = Utils.mStateDist.keySet().toArray();
+        Object[] states = Utils.mStateDist.keySet().toArray();
         Arrays.sort(states);
         ArrayAdapter aa1 = new ArrayAdapter(this, android.R.layout.simple_spinner_item, states);
         aa1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -138,9 +287,23 @@ public class RegisterActivity extends AppCompatActivity {
                 Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                 startActivity(intent);
                 finishAffinity();
+
             }
         }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+    }
+
 
     private void register() {
         String name = etName.getText().toString().trim();
@@ -211,6 +374,7 @@ public class RegisterActivity extends AppCompatActivity {
         verifyPhone = findViewById(R.id.register_verify_btn);
         spinner_state = findViewById(R.id.register_state);
         spinner_district = findViewById(R.id.register_district);
+        progressDialog = new ProgressDialog(this);
     }
 
     private void intialiseRetrofit() {
