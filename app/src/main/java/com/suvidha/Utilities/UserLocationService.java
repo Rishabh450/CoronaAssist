@@ -81,10 +81,14 @@ public class UserLocationService extends Service {
             public void onResponse(Call<QuarantineNearbyModel> call, Response<QuarantineNearbyModel> response) {
                 if (response.body().status == 200) {
                     Log.d("response12","success");
-                    String x= String.valueOf(response.body().id);
-                    NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    if(response.body().id>0){
+                        String x= String.valueOf(response.body().id);
+                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-                    notificationManager.notify(10,getNotificationWarn(x));
+                        notificationManager.notify(10,getNotificationWarn(x));
+
+                    }
+
                    // Toast.makeText(UserLocationService.this,x , Toast.LENGTH_SHORT).show();
 
                 } else {

@@ -2,14 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.suvidha">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
-    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
-
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="true"
@@ -19,19 +11,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.NearbyAlerts"></activity>
+        <activity android:name=".Activities.NgoActivity"></activity>
+        <activity android:name=".Activities.LoginActivity" />
+        <activity android:name=".Activities.NearbyAlerts" />
         <activity
             android:name=".Activities.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activities.LoginActivity"
+            android:name=".Activities.MapsActivity"
             android:screenOrientation="portrait">
             <intent-filter>
-
-                <action android:name="android.intent.action.MAIN"
-                    />
+                <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -58,8 +50,12 @@
         <activity android:name=".Activities.ScanPassActivity" />
         <activity android:name=".Activities.AddPassActivity" />
         <activity android:name=".Activities.MyPassActivity" />
-        <activity android:name=".Activities.QuarantineActivity"></activity>
+        <activity android:name=".Activities.QuarantineActivity" />
         <activity android:name=".Activities.FAQActivity" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
         <receiver
             android:name=".Utilities.Restarter"
             android:enabled="true"
@@ -69,6 +65,7 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".Receiver.AlarmReceiver" />
         <service
             android:name=".Utilities.LiveLocationService"
             android:enabled="true"
@@ -78,6 +75,7 @@
                 <action android:name="com.suvidha.LONGRUNSERVICE" />
             </intent-filter>
         </service>
+
         <service
             android:name=".Utilities.UserLocationService"
             android:enabled="true"
@@ -87,23 +85,31 @@
                 <action android:name="com.suvidha.LONGRUNSERVICE" />
             </intent-filter>
         </service>
-        <receiver android:name=".Receiver.AlarmReceiver"/>
     </application>
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.camera.front"
         android:required="false" />
     <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
+
+    <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-permission android:name="android.permission.CALL_PHONE" />

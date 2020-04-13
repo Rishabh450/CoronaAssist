@@ -3,15 +3,17 @@
     <string name="action_settings" translatable="false">Settings</string>
     <string name="warning_cart_not_empty" translatable="false">You\'ll lose the cart items if you go back. Do you want to continue?</string>
     <string name="view_order_summary" translatable="false">VIEW ORDER SUMMARY</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDCFrm1JWEHas4IE65x1GBcUzWgmXjHW8g</string>
+
     <string name="place_order_msg" translatable="false">Do you want to continue placing the order?</string>
     <string name="backPress">Press back again to close the application</string>
-    <string name="terms_and_condition">1. Please register for home quarantine on the App only at location where you would be undergoing Isolation. Your current location at the time which you would be registering yourself for home quarantine on the App would be monitored, so please register yourself only where you are supposed to Quarantine. (Eg: If you\'re told to quarantine at home, open the app and register on the app only when you are at your house rather than any other location)<br/><br/><br/>\n
+    <string name="terms_and_condition">1. Please register for home quarantine on the App only at location where you would be undergoing Isolation. Your current location at the time which you would be registering yourself for home quarantine on the App would be monitored, so please register yourself only where you are supposed to Quarantine. (Eg: If you\'re told to quarantine at home, open the app and register on the app only when you are at your house rather than any other location)<br /><br /><br />\n
 
-2. You\'ll be monitored my the govt. through the app for home quarantine, and if you violate the quarantine, you\'ll be punished by the local governing body.\n<br/><br/><br/>
+2. You\'ll be monitored my the govt. through the app for home quarantine, and if you violate the quarantine, you\'ll be punished by the local governing body.\n<br /><br /><br />
 
-3. You are supposed to click a picture and send it every 2 Hour from 9AM to 9PM on the report quarantine feature below.  Failure to do so will require the officials to call you and monitor you.\n<br/><br/><br/>
+3. You are supposed to click a picture and send it every 2 Hour from 9AM to 9PM on the report quarantine feature below.  Failure to do so will require the officials to call you and monitor you.\n<br /><br /><br />
 
-4. Always keep your location on at all times, failing to do so will be considered as an act of violation and the local governing authorities can come to inspect you if they find out any default change from your location.\n<br/><br/><br/>
+4. Always keep your location on at all times, failing to do so will be considered as an act of violation and the local governing authorities can come to inspect you if they find out any default change from your location.\n<br /><br /><br />
 
 5. Any False registrations of home quarantine will be considered a Criminal act.</string>
     <string name="request_passes">Request Passes</string>
@@ -65,8 +67,8 @@
     <string name="log_out">Log Out</string>
     <string name="change_to_hindi">हिन्दी</string>
     <string name="change_to_english">English</string>
-    <string name="faq"><p>Suraksha- An Application developed by the Final year students of NIT Jamshedpur along with the co-operation of East Singhbhum District Administration to help and protect the Citizens against Covid-19.<br/><br/>
-Features:<br/><br/>
+    <string name="faq"><p>Suraksha- An Application developed by the Final year students of NIT Jamshedpur along with the co-operation of East Singhbhum District Administration to help and protect the Citizens against Covid-19.<br /><br />
+Features:<br /><br />
 \n
 -Home Quarantine Tracking Facility for citizens who are assigned by the government to be Quarantined, so that the govt. can monitor their movements and keep track of them. <br />
 \n-Issuing local passes for Essential workers to move around your city for Essential work via the application and approved by the issuing local authority. (Coming Soon)<br />
