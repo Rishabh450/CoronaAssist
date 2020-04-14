@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -25,13 +26,18 @@ import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static com.suvidha.Utilities.Utils.getAccessToken;
 
 public class NgoActivity extends AppCompatActivity {
     String ngoname;
-    List<com.suvidha.Models.NgoActivity> list;
+    List<com.suvidha.Models.NgoActivity> list=new ArrayList<>();
     ApiInterface apiInterface;
     RecyclerView recyclerView;
     NgoAdapter ngoAdapter;
@@ -80,10 +86,66 @@ public class NgoActivity extends AppCompatActivity {
                         Log.d("ngolis",response.body().getId().get(l).getName());
                         if(response.body().getId().get(l).getActivities()!=null)
                         {
+                            List <com.suvidha.Models.NgoActivity> lister=response.body().getId().get(l).getActivities();
+                            com.suvidha.Models.NgoActivity ngo=lister.get(0);
+                            int i=0;
+                           if(ngo!=null) {
+                            for(;i<lister.size();i++) {
+                                ngo=lister.get(i);
 
-                            list=response.body().getId().get(l).getActivities();
-                            Log.d("ngolis","mil gya"+list.size());
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy' 'HH:mm");
+                                Date strDate = null;
+                                try {
+                                    strDate = sdf.parse(ngo.getDatetime());
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    if (System.currentTimeMillis() > (sdf.parse(ngo.getDatetime())).getTime()) {
+                                     //   list.add(ngo);
+
+                                    }
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(NgoActivity.this, "added" + e, Toast.LENGTH_LONG).show();
+
+                                }
+                                try{
+
+                                    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+
+
+                                    String str1 = ngo.getDatetime().substring(0,ngo.getDatetime().indexOf(' '));
+                                    Date date1 = formatter.parse(str1);
+
+                                    Date c = Calendar.getInstance().getTime();
+                                    System.out.println("Current time => " + c);
+
+                                    SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                                    String currentdate = df.format(c);
+                                    Date date2 = formatter.parse(currentdate);
+
+                                    if (date1.compareTo(date2)>0)
+                                    {
+                                        System.out.println("date2 is Greater than my date1");
+                                        list.add(ngo);
+
+                                    }
+
+                                }catch (ParseException e1){
+                                    e1.printStackTrace();
+                                }
+
+                                //if(i+1<lister.size())
+
+                            }
+
+                            }
+                           // list=response.body().getId().get(l).getActivities();
+
+                            //Log.d("ngolis","mil gya"+list.size());
                             setRecyclerView();
+
                             break;
                         }
 

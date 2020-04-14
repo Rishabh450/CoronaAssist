@@ -45,15 +45,16 @@ public class NgoAdapter extends RecyclerView.Adapter<NgoAdapter.MyHolder> {
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
 
         NgoActivity data = list.get(position);
-       holder.ngo_address.setText(data.getAddress());
-       holder.ngo_city.setText(data.getCity());
-       String date="At "+data.getDatetime().substring(data.getDatetime().indexOf('T')+1)+"\n"+data.getDatetime().substring(0,data.getDatetime().indexOf('T'));
-
-        DateFormat formatter= new SimpleDateFormat("yyyy-MM-dd hh:mm");
-        formatter.setTimeZone(TimeZone.getTimeZone("Europe/London"));
+       holder.ngo_address.setText("Address:"+data.getAddress());
+       holder.ngo_city.setText("City:"+data.getCity());
+       String date="At "+data.getDatetime().substring(data.getDatetime().indexOf(' ')+1)+"\n"+data.getDatetime().substring(0,data.getDatetime().indexOf(' '));
+       //String date=data.getDatetime();
+        //DateFormat formatter= new SimpleDateFormat("yyyy-MM-dd hh:mm");
+       // formatter.setTimeZone(TimeZone.getTimeZone("Europe/London"));
        // Log.d("timewa",formatter.format(date));
         //System.out.println(formatter.format(date));
         holder.ngo_time.setText(date);
+        holder.ngo_dec.setText("Description:"+data.getDescription());
     }
 
     @Override
@@ -63,12 +64,13 @@ public class NgoAdapter extends RecyclerView.Adapter<NgoAdapter.MyHolder> {
     }
 
     public class MyHolder extends RecyclerView.ViewHolder {
-        TextView ngo_city,ngo_address,ngo_time;
+        TextView ngo_city,ngo_address,ngo_time,ngo_dec;
         public MyHolder(@NonNull View itemView) {
             super(itemView);
            ngo_address=itemView.findViewById(R.id.ngo_address);
            ngo_city=itemView.findViewById(R.id.ngo_city);
            ngo_time=itemView.findViewById(R.id.ngo_time);
+           ngo_dec=itemView.findViewById(R.id.ngo_desc);
         }
     }
 }
