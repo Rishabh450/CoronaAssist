@@ -1,18 +1,28 @@
 package com.suvidha.Models;
 
 public class NgoActivity {
-   public String datetime;
-   public String address;
-   public String city;
-   public float lat;
-   public float lon;
+    public String datetime;
+    public String address;
+    public String city;
+    public float lat;
+    public float lon;
+    public String description;
 
-    public NgoActivity(String datetime, String address, String city, float lat, float lon) {
+    public NgoActivity(String datetime, String address, String city, float lat, float lon,String description) {
         this.datetime = datetime;
         this.address = address;
         this.city = city;
         this.lat = lat;
         this.lon = lon;
+        this.description=description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String  getDatetime() {

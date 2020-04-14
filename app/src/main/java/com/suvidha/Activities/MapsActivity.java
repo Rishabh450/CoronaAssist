@@ -52,7 +52,12 @@ import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static android.Manifest.*;
 import static android.content.pm.PackageManager.*;
@@ -98,7 +103,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
+        mMap.setBuildingsEnabled(true);
+
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         Log.d("readyyy", "yes");
+
        // getLats();
         Call<FetchNgomodel> getReportsModelCall = apiInterface.get_ngo(getAccessToken(this));
         getReportsModelCall.enqueue(new Callback<FetchNgomodel>() {
@@ -109,20 +118,64 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
               Log.d("ngomodel",getAccessToken(MapsActivity.this));
 
                 Log.d("responsengo0",data.get(0).getName()+" ") ;
+                Marker marker = null;
+                mMap.clear();
 
                 for(int i=0;i<data.size();i++)
                 {
                     for(int j=0;j<data.get(i).activities.size();j++)
                     {
-                        float lat=data.get(i).activities.get(j).lat;
-                        float lon=data.get(i).activities.get(j).lon;
-                        LatLng sydney = new LatLng(lat, lon);
-                        mMap.setBuildingsEnabled(true);
-                        mMap.clear();
-                        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                        // LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
-                        MarkerOptions marker = new MarkerOptions().position(sydney).title(data.get(i).name);
-                        mMap.addMarker(marker);
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                        Date strDate = null;
+                        try {
+                            strDate = sdf.parse(data.get(i).activities.get(j).getDatetime().substring(0,data.get(i).activities.get(j).getDatetime().indexOf(' ')));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        try{
+
+                            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+
+
+                            String str1 = data.get(i).activities.get(j).getDatetime().substring(0,data.get(i).activities.get(j).getDatetime().indexOf(' '));
+                            Date date1 = formatter.parse(str1);
+
+                            Date c = Calendar.getInstance().getTime();
+                            System.out.println("Current time => " + c);
+
+                            SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                            String currentdate = df.format(c);
+                            Date date2 = formatter.parse(currentdate);
+
+                            if (date1.compareTo(date2)>0)
+                            {
+                                System.out.println("date2 is Greater than my date1");
+                                float lat=data.get(i).activities.get(j).lat;
+                                float lon=data.get(i).activities.get(j).lon;
+
+                                LatLng sydney = new LatLng(lat, lon);
+
+                                // LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
+                                //marker = new MarkerOptions().position(sydney).title(data.get(i).name);
+                                marker = mMap.addMarker(new MarkerOptions().position(sydney).title(data.get(i).name));
+
+
+                            }
+
+                        }catch (ParseException e1){
+                            e1.printStackTrace();
+                        }
+                        if (System.currentTimeMillis() > strDate.getTime()) {
+
+
+                        }
+
+
+                               // marker.showInfoWindow();
+
+
+
+
                     }
                 }
 
@@ -268,6 +321,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onMarkerClick(Marker marker) {
         String ngo= marker.getTitle();
+        Log.d("ngonamer",ngo);
         Intent intent=new Intent(MapsActivity.this,NgoActivity.class);
         intent.putExtra("name",ngo);
         startActivity(intent);
