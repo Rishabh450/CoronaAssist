@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 try {
                     if (response.body().status == 200) {
-
+                        Log.e("LOL","LOL"+response.body().id.support.state);
                         dialog.dismiss();
                         is_quarantined = response.body().id.is_quarantined;
                         SharedPrefManager.getInstance(MainActivity.this).put(SharedPrefManager.Key.IS_QUARANTINE,is_quarantined);
@@ -191,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         is_shopper = response.body().id.support.is_shopper;
                         is_quarantine = response.body().id.support.is_quarantine;
                         district = response.body().id.support.district;
+//
                         state = response.body().id.support.state;
                         emergencyList.clear();
                         emergencyList.addAll(response.body().id.emergency_contact);

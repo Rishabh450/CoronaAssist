@@ -71,6 +71,8 @@ import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.currentLocation;
 import static com.suvidha.Utilities.Utils.district;
 import static com.suvidha.Utilities.Utils.getAccessToken;
+import static com.suvidha.Utilities.Utils.is_ngo;
+import static com.suvidha.Utilities.Utils.is_quarantine;
 import static com.suvidha.Utilities.Utils.is_quarantined;
 import static com.suvidha.Utilities.Utils.shopTypesMap;
 import static com.suvidha.Utilities.Utils.state;
@@ -128,6 +130,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         iconFoodSupply = v.findViewById(R.id.icon_ngo);
         services_txt = v.findViewById(R.id.services_txt);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+
     }
 
     private void intialiseRetrofit() {
@@ -157,6 +160,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
             case R.id.icon_ngo:{
                 intent = new Intent(getContext(), MapsActivity.class);
                 startActivity(intent);
+                break;
             }
             case R.id.icon_quarentine: {
                 //open register quarentine dialog
@@ -393,9 +397,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                 }
 
                 boolean terms = tnc.isChecked();
-                if (etname.length() != 0 && etphone.length() != 0 && etphone.length() == 10 && etaddress.length() != 0 && stDate.length() != 0 && endDate.length() != 0 && etAuthority.length() != 0 && terms && mSelectedDistrict.length() != 0 && mSelectedState.length() != 0 && et_type != 0) {
+                if (etname.length() != 0 && etphone.length() != 0 && etphone.length() == 10 && etaddress.length() != 0 && stDate.length() != 0 && endDate.length() != 0 && etAuthority.length() != 0 && terms && et_type != 0) {
 //                    register quarantine
-                    QuarantineModel model = new QuarantineModel(etname, etaddress, etphone, (float) quarantineLocation.getLatitude(), (float) quarantineLocation.getLongitude(), etAuthority, stDate, endDate, mSelectedState, mSelectedDistrict, et_type);
+                    QuarantineModel model = new QuarantineModel(etname, etaddress, etphone, (float) quarantineLocation.getLatitude(), (float) quarantineLocation.getLongitude(), etAuthority, stDate, endDate, spinner_state.getText().toString(), spinner_district.getText().toString(), et_type);
 
                     Call<GeneralModel> registerResult = apiInterface.register_quarantine(getAccessToken(getContext()), model);
                     registerResult.enqueue(new Callback<GeneralModel>() {
@@ -436,7 +440,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                                 }
 
                             } else {
-                                Log.e("heey", call.toString() + " -- " + response.errorBody().toString());
                                 Toast.makeText(getContext(), getResources().getString(R.string.failed_to_register_quarantine), Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -633,6 +636,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
             text_quarantine.setText(getResources().getString(R.string.Quarantine));
         } else {
             text_quarantine.setText(getResources().getString(R.string.register_quarantine));
+        }
+        if(is_quarantine==1){
+            iconQuarentine.setVisibility(View.VISIBLE);
+        }else {
+            iconQuarentine.setVisibility(View.GONE);
+        }
+        if(is_ngo == 1){
+            iconFoodSupply.setVisibility(View.VISIBLE);
+        }else{
+            iconFoodSupply.setVisibility(View.GONE);
         }
         services_txt.setText(getResources().getString(R.string.services) + " " + district);
     }
