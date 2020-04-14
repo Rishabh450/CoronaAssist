@@ -47,6 +47,7 @@ import static com.suvidha.Utilities.Utils.createAlertDialog;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.rs;
 import static com.suvidha.Utilities.Utils.shopItems;
+import static com.suvidha.Utilities.Utils.shop_id;
 
 public class CategoriesActivity extends AppCompatActivity implements View.OnClickListener, CartAdapter.CartCallback {
     private static final int ITEM_COUNT = 3;
@@ -69,7 +70,6 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
     private TextView grandTotal;
     private Button placeOrder;
     private ApiInterface apiInterface;
-    private String shop_id;
     private String shop_name;
     public CategoryAdapter mAdapter;
     public List<Integer> categoryData = new ArrayList<>();
@@ -222,7 +222,7 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
 
     void setuprec() {
         shopItems.clear();
-        mAdapter = new CategoryAdapter(this, categoryData,shop_id);
+        mAdapter = new CategoryAdapter(this, categoryData);
         rView.setLayoutManager(new GridLayoutManager(this, ITEM_COUNT));
         rView.setAdapter(mAdapter);
     }

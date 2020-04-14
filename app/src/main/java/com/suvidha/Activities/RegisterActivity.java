@@ -43,6 +43,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.address;
+import static com.suvidha.Utilities.Utils.createAlertDialog;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.mStateDist;
 import static com.suvidha.Utilities.Utils.setLoginSession;
@@ -109,7 +110,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String phone = etPhone.getText().toString().trim();
-                if (phone.length() != 0) {
+                if (phone.length() != 0 && phone.length() == 10) {
                     showMessage("Sending", "Wait while we send you the otp");
                     sendOTP(phone);
                     createOTPDialog(phone);
@@ -161,13 +162,11 @@ public class RegisterActivity extends AppCompatActivity {
                 hideMessage();
                 //you may add code to automatically fetch OTP from messages.
             }
-
             @Override
             public void onFailure(Call<SMSverifcation> call, Throwable t) {
                 Log.e("ERROR", t.toString());
                 hideMessage();
             }
-
         });
     }
 
@@ -179,31 +178,38 @@ public class RegisterActivity extends AppCompatActivity {
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setView(alertLayout);
 
-        TextInputEditText etOTP = alertLayout.findViewById(R.id.otp);
+        Dialog dialog = new Dialog(this);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_otp);
+        TextInputEditText etOTP = dialog.findViewById(R.id.register_otp);
 
-        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(final DialogInterface dialog, int id) {
+        dialog.show();
+        dialog.findViewById(R.id.dialog_verify).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 String pass = etOTP.getText().toString().trim();
                 if (pass.length() != 0) {
-                    showMessage("Verification", "Wait while we verify");
                     SMSInterface apiService =
                             SMSClient.getClient().create(SMSInterface.class);
 
                     Call<SMSverifcation> call = apiService.verifyOTP(API_KEY, sessionId, pass);
 
                     call.enqueue(new Callback<SMSverifcation>() {
-
                         @Override
                         public void onResponse(Call<SMSverifcation> call, Response<SMSverifcation> response) {
 
                             try {
                                 if (response.body().getStatus().equals("Success")) {
+                                    dialog.dismiss();
                                     Toast.makeText(RegisterActivity.this, "Verified", Toast.LENGTH_SHORT).show();
                                     btnRegister.setEnabled(true);
                                     verifyPhone.setEnabled(false);
                                     etPhone.setEnabled(false);
                                     sharedPrefManager.put(SharedPrefManager.Key.USER_PHONE, phone);
                                 } else {
+                                    etOTP.setText("");
+                                    etOTP.setError("Please enter correct OTP");
+                                    Toast.makeText(RegisterActivity.this, "Please Enter correct OTP", Toast.LENGTH_SHORT).show();
                                     Log.d("Failure", response.body().getDetails() + "|||" + response.body().getStatus());
                                 }
                             } catch (Exception e) {
@@ -216,6 +222,7 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Call<SMSverifcation> call, Throwable t) {
                             Log.e("ERROR", t.toString());
+                            Toast.makeText(RegisterActivity.this, "Check your internet connection", Toast.LENGTH_SHORT).show();
                             hideMessage();
                         }
 
@@ -225,14 +232,16 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+        dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 dialog.dismiss();
             }
         });
 
-        d = alert.create();
-        d.show();
+
+
+
     }
 
     private void setSpinnerData() {
@@ -356,9 +365,7 @@ public class RegisterActivity extends AppCompatActivity {
             if (phone.length() != 10) {
                 etPhone.setError("Invalid phone number");
             }
-
         }
-
     }
 
     private void intialiseAllViews() {

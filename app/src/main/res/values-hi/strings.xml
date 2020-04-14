@@ -98,4 +98,5 @@ Phone: 7061039636 </string>
     <string name="corona_awareness">कोरोना जागरूकता</string>
     <string name="fields_cannot_be_empty">कृपया अनिवार्य विवरण भरें</string>
     <string name="food_supply_center">खाद्य आपूर्ति केंद्र</string>
+    <string name="sec_error">कृपया सुरक्षा कोड दर्ज करें</string>
 </resources>

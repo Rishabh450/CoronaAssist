@@ -13,8 +13,9 @@ public class QuarantineModel {
     public String state;
     public String district;
     public int type;
+    public String sec_code;
 
-    public QuarantineModel(String name, String address, String phone, float location_lat, float location_lon, String authority, String start_date, String end_date, String state, String district, int type) {
+    public QuarantineModel(String name, String address, String phone, float location_lat, float location_lon, String authority, String start_date, String end_date, String state, String district, int type,String sec_code) {
         this.name = name;
         this.address = address;
         this.phone = phone;
@@ -26,6 +27,7 @@ public class QuarantineModel {
         this.state = state;
         this.district = district;
         this.type = type;
+        this.sec_code = sec_code;
     }
 
     public QuarantineModel(String name, String address, String phone, float location_lat, float location_lon, String authority, String start_date, String end_date, String state, String district) {

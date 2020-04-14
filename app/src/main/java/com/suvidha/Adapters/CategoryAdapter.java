@@ -18,15 +18,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static com.suvidha.Utilities.Utils.catHashMap;
+import static com.suvidha.Utilities.Utils.shop_id;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyHolder> {
     List<Integer> list;
     Context context;
-    String shopid;
-    public CategoryAdapter(Context context, List<Integer> list,String shopid) {
+
+    public CategoryAdapter(Context context, List<Integer> list) {
         this.list = list;
         this.context = context;
-        this.shopid = shopid;
+
     }
 
     @NonNull
@@ -49,7 +50,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyHold
                 Intent intent = new Intent(context, ItemActivity.class);
                 Log.e("CATID", String.valueOf(catId+1));
                 intent.putExtra("CategoryId",catId);
-                intent.putExtra("shopid",shopid);
+                intent.putExtra("shopid",shop_id);
                 context.startActivity(intent);
             }
         });

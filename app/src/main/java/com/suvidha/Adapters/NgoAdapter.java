@@ -47,8 +47,8 @@ public class NgoAdapter extends RecyclerView.Adapter<NgoAdapter.MyHolder> {
         NgoActivity data = list.get(position);
        holder.ngo_address.setText(data.getAddress());
        holder.ngo_city.setText(data.getCity());
-       String date="At "+data.getDatetime().substring(data.getDatetime().indexOf('T')+1)+"\n"+data.getDatetime().substring(0,data.getDatetime().indexOf('T'));
-
+//       String date="At "+data.getDatetime().substring(data.getDatetime().indexOf('T')+1)+"\n"+data.getDatetime().substring(0,data.getDatetime().indexOf('T'));
+        String date = data.getDatetime();
         DateFormat formatter= new SimpleDateFormat("yyyy-MM-dd hh:mm");
         formatter.setTimeZone(TimeZone.getTimeZone("Europe/London"));
        // Log.d("timewa",formatter.format(date));

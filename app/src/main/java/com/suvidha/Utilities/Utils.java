@@ -48,6 +48,8 @@ public class Utils {
     public static int is_ngo = 0;
     public static int is_shopper = 0;
     public static int is_quarantine = 0;
+    public static List<String> special_q_list = new ArrayList<>();
+    public static String shop_id;
     public static List<ZonesModel> zonesList=new ArrayList<>();
     public static List<ZonesModel> statesList=new ArrayList<>();
     public static List<ZonesModel> districtsList=new ArrayList<>();

@@ -88,6 +88,7 @@ import static com.suvidha.Utilities.Utils.is_quarantine;
 import static com.suvidha.Utilities.Utils.is_quarantined;
 import static com.suvidha.Utilities.Utils.is_shopper;
 import static com.suvidha.Utilities.Utils.local_zone_name;
+import static com.suvidha.Utilities.Utils.special_q_list;
 import static com.suvidha.Utilities.Utils.state;
 import static com.suvidha.Utilities.Utils.zonesList;
 import static com.suvidha.Utilities.Utils.is_quarantined;
@@ -184,6 +185,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (response.body().status == 200) {
                         Log.e("LOL","LOL"+response.body().id.support.state);
                         dialog.dismiss();
+                        try {
+                            special_q_list.clear();
+                            if(response.body().id.state_q_address!=null)
+                                special_q_list.addAll(response.body().id.state_q_address);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
                         is_quarantined = response.body().id.is_quarantined;
                         SharedPrefManager.getInstance(MainActivity.this).put(SharedPrefManager.Key.IS_QUARANTINE,is_quarantined);
                         is_ngo = response.body().id.support.is_ngo;

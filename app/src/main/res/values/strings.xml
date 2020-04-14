@@ -104,5 +104,6 @@ Features:<br /><br />
     <string name="food_supply_center">Food supply center</string>
     <string name="corona_awareness">Corona Awareness</string>
     <string name="fields_cannot_be_empty">Please fill the compulsory details</string>
+    <string name="sec_error">Please enter security code</string>
 
 </resources>

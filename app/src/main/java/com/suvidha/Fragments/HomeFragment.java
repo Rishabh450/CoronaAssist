@@ -24,9 +24,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +34,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -45,6 +47,7 @@ import com.suvidha.Activities.MapsActivity;
 import com.suvidha.Activities.MyPassActivity;
 import com.suvidha.Activities.QuarantineActivity;
 import com.suvidha.Activities.ShopsActivity;
+import com.suvidha.Adapters.CategoryAdapter;
 import com.suvidha.Models.GeneralModel;
 import com.suvidha.Models.QuarantineModel;
 import com.suvidha.R;
@@ -75,6 +78,7 @@ import static com.suvidha.Utilities.Utils.is_ngo;
 import static com.suvidha.Utilities.Utils.is_quarantine;
 import static com.suvidha.Utilities.Utils.is_quarantined;
 import static com.suvidha.Utilities.Utils.shopTypesMap;
+import static com.suvidha.Utilities.Utils.special_q_list;
 import static com.suvidha.Utilities.Utils.state;
 
 public class HomeFragment extends Fragment implements View.OnClickListener, MainActivity.NotifyFragment {
@@ -90,7 +94,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     private TextView services_txt;
     private TextView text_quarantine;
     private FusedLocationProviderClient mFusedLocationClient;
-    private TextInputEditText name, phone, address, st, end, authority, type;
+    private TextInputEditText name, phone, address, st, end, authority, type, et_sec_code;
     private CheckBox tnc;
     private Button cancel, register;
     ApiInterface apiInterface;
@@ -101,7 +105,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     private String mSelectedState, mSelectedDistrict;
     private List<String> mDistricts;
     private int counter;
-
+    private RecyclerView gridHome;
+    private CategoryAdapter mAdapter;
     public HomeFragment() {
 
     }
@@ -111,11 +116,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         init(v);
+        setHomeGrid();
         intialiseRetrofit();
         setListeners();
         notifyDataLoaded();
         return v;
     }
+
+
 
     private void init(View v) {
         iconGroceries = v.findViewById(R.id.icon_groceries);
@@ -123,14 +131,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         iconMilk = v.findViewById(R.id.icon_milk_and_dairy);
         iconBread = v.findViewById(R.id.icon_bread);
         iconGas = v.findViewById(R.id.icon_gas);
-        Log.d("accesstokengetting",getAccessToken(getContext()));
+        Log.d("accesstokengetting", getAccessToken(getContext()));
         iconWater = v.findViewById(R.id.icon_water);
         iconQuarentine = v.findViewById(R.id.icon_quarentine);
         text_quarantine = v.findViewById(R.id.txt_quarantine);
         iconFoodSupply = v.findViewById(R.id.icon_ngo);
         services_txt = v.findViewById(R.id.services_txt);
+        gridHome = v.findViewById(R.id.home_grid);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
 
+    }
+
+    private void setHomeGrid() {
+        gridHome.setLayoutManager(new GridLayoutManager(getContext(),3));
+//        mAdapter = new CategoryAdapter(this, categoryData);
     }
 
     private void intialiseRetrofit() {
@@ -157,7 +171,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                 intent = new Intent(getContext(), MyPassActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.icon_ngo:{
+            case R.id.icon_ngo: {
                 intent = new Intent(getContext(), MapsActivity.class);
                 startActivity(intent);
                 break;
@@ -242,9 +256,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                             Log.e("LOL", "OMG");
 //                            LOCATION_LAT = quarantineLocation.getLatitude();
 //                            LOCATION_LON = quarantineLocation.getLongitude();
-                            if(is_quarantined == 0) {
+                            if (is_quarantined == 0) {
                                 createQuarentineDialog();
-                            }else{
+                            } else {
                                 Intent intent;
                                 intent = new Intent(getContext(), QuarantineActivity.class);
                                 intent.putExtra("lat", (float) currentLocation.getLatitude());
@@ -281,7 +295,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         dialog.show();
 
     }
+
     Dialog d;
+
     private void setDialog(Dialog dialog) {
         name = dialog.findViewById(R.id.quarantine_register_name);
         name.setText(SharedPrefManager.getInstance(getContext()).getString(SharedPrefManager.Key.USER_NAME));
@@ -299,8 +315,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         register.setEnabled(false);
         spinner_state = dialog.findViewById(R.id.quarantine_state);
         spinner_district = dialog.findViewById(R.id.quarantine_district);
+        et_sec_code = dialog.findViewById(R.id.quarantine_security_code);
+
         mDistricts = new ArrayList<>();
         counter = 0;
+
+        address.setEnabled(false);
 
         Utils.parseJson(getContext());
 
@@ -323,23 +343,67 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         home_q.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                address.setText("");
                 type.setText(home_q.getText().toString());
+                address.setEnabled(true);
+                address.setFocusableInTouchMode(true);
+                address.setFocusable(true);
                 d.dismiss();
             }
         });
         special_q.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                address.setText("");
                 type.setText(special_q.getText().toString());
+                address.setEnabled(true);
+                address.setFocusable(false);
+                if(special_q_list.size() == 0){
+//                    address.setText(getResources().getString(R.string.special_quarantine_center));
+                    address.setFocusableInTouchMode(true);
+                    address.setFocusable(true);
+                }
                 d.dismiss();
             }
         });
+
         type.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //open dialog
                 d.show();
 
+            }
+        });
+        address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (address.isEnabled()) {
+                    if (address.isFocusable()) {
+
+                    } else {
+                        if(special_q_list.size()!=0) {
+                            Dialog dialog = new Dialog(getContext());
+                            dialog.setContentView(R.layout.dialog_state_quarantine);
+                            dialog.show();
+                            ListView lView = dialog.findViewById(R.id.state_q_lview);
+                            final List<String> values = new ArrayList<>();
+                            for (int i = 0; i < special_q_list.size(); i++) {
+                                values.add(special_q_list.get(i));
+                            }
+                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                                    android.R.layout.simple_list_item_1, android.R.id.text1, values);
+                            lView.setAdapter(adapter);
+                            lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                    address.setText(values.get(i));
+                                    dialog.dismiss();
+                                }
+                            });
+                        }
+                    }
+                }
             }
         });
 
@@ -386,7 +450,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
             public void onClick(View v) {
                 String etname = name.getText().toString().trim();
                 String etphone = phone.getText().toString().trim();
-                
+                String sec_code = et_sec_code.getText().toString().trim();
                 String etaddress = address.getText().toString().trim();
                 String stDate = st.getText().toString().trim();
                 String endDate = end.getText().toString().trim();
@@ -397,9 +461,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                 }
 
                 boolean terms = tnc.isChecked();
-                if (etname.length() != 0 && etphone.length() != 0 && etphone.length() == 10 && etaddress.length() != 0 && stDate.length() != 0 && endDate.length() != 0 && etAuthority.length() != 0 && terms && et_type != 0) {
+                if (etname.length() != 0 && etphone.length() != 0 && etphone.length() == 10 && etaddress.length() != 0 && stDate.length() != 0 && endDate.length() != 0 && etAuthority.length() != 0 && terms && et_type != 0 && sec_code!=null) {
 //                    register quarantine
-                    QuarantineModel model = new QuarantineModel(etname, etaddress, etphone, (float) quarantineLocation.getLatitude(), (float) quarantineLocation.getLongitude(), etAuthority, stDate, endDate, spinner_state.getText().toString(), spinner_district.getText().toString(), et_type);
+                    QuarantineModel model = new QuarantineModel(etname, etaddress, etphone, (float) quarantineLocation.getLatitude(), (float) quarantineLocation.getLongitude(), etAuthority, stDate, endDate, spinner_state.getText().toString(), spinner_district.getText().toString(), et_type,sec_code);
 
                     Call<GeneralModel> registerResult = apiInterface.register_quarantine(getAccessToken(getContext()), model);
                     registerResult.enqueue(new Callback<GeneralModel>() {
@@ -475,6 +539,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                     }
                     if (!tnc.isChecked()) {
                         Toast.makeText(getContext(), getResources().getString(R.string.accept_tnc), Toast.LENGTH_SHORT).show();
+                    }
+                    if(sec_code.length() == 0){
+                        et_sec_code.setError(getResources().getString(R.string.sec_error));
                     }
                     Toast.makeText(getContext(), getResources().getString(R.string.fields_cannot_be_empty), Toast.LENGTH_SHORT).show();
                 }
@@ -637,14 +704,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         } else {
             text_quarantine.setText(getResources().getString(R.string.register_quarantine));
         }
-        if(is_quarantine==1){
+        if (is_quarantine == 1) {
             iconQuarentine.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             iconQuarentine.setVisibility(View.GONE);
         }
-        if(is_ngo == 1){
+        if (is_ngo == 1) {
             iconFoodSupply.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             iconFoodSupply.setVisibility(View.GONE);
         }
         services_txt.setText(getResources().getString(R.string.services) + " " + district);
