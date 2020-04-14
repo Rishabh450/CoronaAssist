@@ -70,6 +70,33 @@
                         android:textColor="@color/secondary_text_color"
                         android:textStyle="bold" />
                 </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/icon_ngo"
+                    android:layout_width="0dp"
+                    android:layout_marginLeft="@dimen/border_margin"
+                    android:layout_height="160dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="150dp"
+
+                        android:src="@mipmap/ic_ngo" />
+
+                    <TextView
+                        android:id="@+id/txt_ngo"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:gravity="center"
+                        android:text="@string/food_supply_center"
+                        android:textAllCaps="false"
+                        android:textColor="@color/secondary_text_color"
+                        android:textStyle="bold" />
+                </RelativeLayout>
             </LinearLayout>
             <TextView
                 android:id="@+id/corona_awareness"

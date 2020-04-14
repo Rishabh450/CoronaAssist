@@ -101,6 +101,8 @@ Features:<br /><br />
     <string name="turn_on_gps">Please Turn On GPS</string>
     <string name="back">Go Back</string>
     <string name="services">Services at </string>
+    <string name="food_supply_center">Food supply center</string>
     <string name="corona_awareness">Corona Awareness</string>
+    <string name="fields_cannot_be_empty">Please fill the compulsory details</string>
 
 </resources>

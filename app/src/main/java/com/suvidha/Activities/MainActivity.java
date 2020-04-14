@@ -88,6 +88,7 @@ import static com.suvidha.Utilities.Utils.is_quarantine;
 import static com.suvidha.Utilities.Utils.is_quarantined;
 import static com.suvidha.Utilities.Utils.is_shopper;
 import static com.suvidha.Utilities.Utils.local_zone_name;
+import static com.suvidha.Utilities.Utils.state;
 import static com.suvidha.Utilities.Utils.zonesList;
 import static com.suvidha.Utilities.Utils.is_quarantined;
 
@@ -117,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
-
         setBottomNavigation();
         intialiseRetrofit();
         getEssentials();
@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         is_shopper = response.body().id.support.is_shopper;
                         is_quarantine = response.body().id.support.is_quarantine;
                         district = response.body().id.support.district;
-
+                        state = response.body().id.support.state;
                         emergencyList.clear();
                         emergencyList.addAll(response.body().id.emergency_contact);
                         if(emergencyAdapter!=null)

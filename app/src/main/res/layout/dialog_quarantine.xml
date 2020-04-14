@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fillViewport="true"
     android:overScrollMode="never">
 
@@ -158,15 +159,30 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:text="@string/state"
+                android:layout_gravity="center_vertical"
                 android:textSize="16sp" />
 
-            <Spinner
-                android:id="@+id/register_state"
-                android:layout_width="180dp"
+            <com.google.android.material.textfield.TextInputLayout
+
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginBottom="@dimen/border_margin"
-                android:spinnerMode="dialog" />
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="@dimen/border_margin"
+                android:layout_marginRight="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/quarantine_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="10dp"
+                    android:focusable="false"
+                    android:hint="@string/state"
+                    android:enabled="false"
+                    android:inputType="textShortMessage"
+                    android:singleLine="true" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -181,15 +197,31 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:text="@string/district"
+                android:layout_gravity="center_vertical"
                 android:textSize="16sp" />
 
-            <Spinner
-                android:id="@+id/register_district"
-                android:layout_width="180dp"
+            <com.google.android.material.textfield.TextInputLayout
+
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginBottom="@dimen/border_margin"
-                android:spinnerMode="dialog" />
+                android:layout_marginLeft="10dp"
+
+                android:layout_marginTop="@dimen/border_margin"
+
+                android:layout_marginRight="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/quarantine_district"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="10dp"
+                    android:focusable="false"
+                    android:enabled="false"
+                    android:hint="@string/district"
+                    android:inputType="textShortMessage"
+                    android:singleLine="true" />
+
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout

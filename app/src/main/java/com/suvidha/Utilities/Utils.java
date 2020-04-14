@@ -44,6 +44,7 @@ public class Utils {
     public static int is_quarantined=0;
     public static int is_pass = 0;
     public static String district;
+    public static String state;
     public static int is_ngo = 0;
     public static int is_shopper = 0;
     public static int is_quarantine = 0;

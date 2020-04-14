@@ -41,6 +41,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.suvidha.Activities.MainActivity;
+import com.suvidha.Activities.MapsActivity;
 import com.suvidha.Activities.MyPassActivity;
 import com.suvidha.Activities.QuarantineActivity;
 import com.suvidha.Activities.ShopsActivity;
@@ -72,6 +73,7 @@ import static com.suvidha.Utilities.Utils.district;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.is_quarantined;
 import static com.suvidha.Utilities.Utils.shopTypesMap;
+import static com.suvidha.Utilities.Utils.state;
 
 public class HomeFragment extends Fragment implements View.OnClickListener, MainActivity.NotifyFragment {
     private static final int PERMISSION_ID = 001;
@@ -82,6 +84,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     private Button iconGas;
     private Button iconWater;
     private RelativeLayout iconQuarentine;
+    private RelativeLayout iconFoodSupply;
     private TextView services_txt;
     private TextView text_quarantine;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -92,7 +95,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     private Location quarantineLocation;
     public Dialog dialog;
     public ProgressBar progressBar;
-    private Spinner spinner_zone, spinner_state, spinner_district;
+    private TextInputEditText spinner_zone, spinner_state, spinner_district;
     private String mSelectedState, mSelectedDistrict;
     private List<String> mDistricts;
     private int counter;
@@ -122,6 +125,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         iconWater = v.findViewById(R.id.icon_water);
         iconQuarentine = v.findViewById(R.id.icon_quarentine);
         text_quarantine = v.findViewById(R.id.txt_quarantine);
+        iconFoodSupply = v.findViewById(R.id.icon_ngo);
         services_txt = v.findViewById(R.id.services_txt);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
     }
@@ -138,6 +142,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         iconGas.setOnClickListener(this);
         iconWater.setOnClickListener(this);
         iconQuarentine.setOnClickListener(this);
+        iconFoodSupply.setOnClickListener(this);
     }
 
     @Override
@@ -149,6 +154,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                 intent = new Intent(getContext(), MyPassActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.icon_ngo:{
+                intent = new Intent(getContext(), MapsActivity.class);
+                startActivity(intent);
+            }
             case R.id.icon_quarentine: {
                 //open register quarentine dialog
                 if (checkLocationPermission()) {
@@ -238,7 +247,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                                 intent.putExtra("lon", (float) currentLocation.getLongitude());
                                 startActivity(intent);
                             }
-
                         }
                     }
                 }
@@ -285,8 +293,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         TextView termsandCondition = dialog.findViewById(R.id.terms_n_condition);
         termsandCondition.setText(getContext().getResources().getString(R.string.terms_and_condition));
         register.setEnabled(false);
-        spinner_state = dialog.findViewById(R.id.register_state);
-        spinner_district = dialog.findViewById(R.id.register_district);
+        spinner_state = dialog.findViewById(R.id.quarantine_state);
+        spinner_district = dialog.findViewById(R.id.quarantine_district);
         mDistricts = new ArrayList<>();
         counter = 0;
 
@@ -301,10 +309,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         int stInd = Arrays.binarySearch(states, initialState);
         ArrayAdapter aa1 = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, states);
         aa1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner_state.setAdapter(aa1);
-        spinner_state.setSelection(stInd);
-        mSelectedState = spinner_state.getSelectedItem().toString();
-        mDistricts = Utils.mStateDist.get(mSelectedState);
+        spinner_district.setText(district);
+        spinner_state.setText(state);
         int dInd = Collections.binarySearch(mDistricts, initialDist);
         d = new Dialog(getContext());
         d.setContentView(R.layout.dialog_quarantine_type);
@@ -332,24 +338,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
 
             }
         });
-        spinner_state.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mSelectedState = states[position].toString();
-                mDistricts = Utils.mStateDist.get(mSelectedState);
-                ArrayAdapter aa2 = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, mDistricts);
-                aa2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinner_district.setAdapter(aa2);
-                if (counter == 0)
-                    spinner_district.setSelection(dInd);
-                counter++;
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
         end.setEnabled(false);
         st.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -402,8 +391,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                 if (type.getText().toString().length() == 0) {
                     et_type = 0;
                 }
-                mSelectedState = spinner_state.getSelectedItem().toString();
-                mSelectedDistrict = spinner_district.getSelectedItem().toString();
+
                 boolean terms = tnc.isChecked();
                 if (etname.length() != 0 && etphone.length() != 0 && etphone.length() == 10 && etaddress.length() != 0 && stDate.length() != 0 && endDate.length() != 0 && etAuthority.length() != 0 && terms && mSelectedDistrict.length() != 0 && mSelectedState.length() != 0 && et_type != 0) {
 //                    register quarantine
@@ -485,6 +473,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                     if (!tnc.isChecked()) {
                         Toast.makeText(getContext(), getResources().getString(R.string.accept_tnc), Toast.LENGTH_SHORT).show();
                     }
+                    Toast.makeText(getContext(), getResources().getString(R.string.fields_cannot_be_empty), Toast.LENGTH_SHORT).show();
                 }
             }
         });
