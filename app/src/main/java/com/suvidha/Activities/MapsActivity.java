@@ -117,7 +117,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
               List<NgoModel> data=  response.body().getId();
               Log.d("ngomodel",getAccessToken(MapsActivity.this));
 
-                Log.d("responsengo0",data.get(0).getName()+" ") ;
+                //Log.d("responsengo0",data.get(0).getName()+" ") ;
                 Marker marker = null;
                 mMap.clear();
 
