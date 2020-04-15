@@ -37,13 +37,16 @@ import com.suvidha.Models.GetReportsModel;
 import com.suvidha.Models.LocationModel;
 import com.suvidha.Models.ReportModel;
 import com.suvidha.R;
+import com.suvidha.Receiver.AlarmReceiver;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +58,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.currentLocation;
 import static com.suvidha.Utilities.Utils.getAccessToken;
@@ -212,12 +216,87 @@ public class LiveLocationService extends Service {
             this.sendBroadcast(broadcastIntent);
         }
     }
+    public void setRemainder(){
+        AlarmManager alarmManager=(AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
+        intent.setAction("start");
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime(),
+                1*60*1000,
+                pendingIntent);
+       // NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        //notificationManager.notify(2,getNotificationAlarm());
+
+/*
+        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
+        intent.putExtra("SET","RUN");
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                getBaseContext(), 1, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+MINUTES*60*1000,
+                pendingIntent);
+        Log.d("ak47", "setRemainder: ");*/
+//        // Set notificationId & text.
+//        Intent intent = new Intent(QuarantineActivity.this, AlarmReceiver.class);
+//        intent.putExtra("notificationId", 1);
+//
+//        // getBroadcast(context, requestCode, intent, flags)
+//        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
+//                intent, PendingIntent.FLAG_CANCEL_CURRENT);
+//
+//        AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
+//        long alarmStartTime=System.currentTimeMillis()+1000*10;
+//        Toast.makeText(this,alarmStartTime+" ",Toast.LENGTH_LONG).show();
+//        Log.d("ak47", alarmStartTime+"setRemainder: "+System.currentTimeMillis());
+//        alarm.set(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmIntent);
+    }
 
     @Override
     public void onCreate() {
         // This will be called when your Service is created for the first time
         // Just do any operations you need in this method.
+        try {
+            String string1 = "21:00:00";
+            Date time1 = new SimpleDateFormat("HH:mm:ss").parse(string1);
+            Calendar calendar1 = Calendar.getInstance();
+            calendar1.setTime(time1);
+            calendar1.add(Calendar.DATE, 1);
+
+
+            String string2 = "08:00:00";
+            Date time2 = new SimpleDateFormat("HH:mm:ss").parse(string2);
+            Calendar calendar2 = Calendar.getInstance();
+            calendar2.setTime(time2);
+            calendar2.add(Calendar.DATE, 1);
+            String currentDateAndTime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+            Log.d("current date",currentDateAndTime);
+
+            String someRandomTime =currentDateAndTime.substring(currentDateAndTime.indexOf(' ')+1);
+            Date d = new SimpleDateFormat("HH:mm:ss").parse(someRandomTime);
+            Calendar calendar3 = Calendar.getInstance();
+            calendar3.setTime(d);
+            calendar3.add(Calendar.DATE, 1);
+
+            Date x = calendar3.getTime();
+            if (x.after(calendar1.getTime()) && x.before(calendar2.getTime())) {
+                //checkes whether the current time is between 14:49:00 and 20:11:13.
+
+
+            }
+            else
+            {
+                setRemainder();
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         Log.d("serviceStared", "gun");
+       // setRemainder();
         qlat=SharedPrefManager.getInstance(LiveLocationService.this).getFloat(SharedPrefManager.Key.QUARENTINE_LAT_KEY,0.0f);
         qlon=SharedPrefManager.getInstance(LiveLocationService.this).getFloat(SharedPrefManager.Key.QUARENTINE_LON_KEY,0.0f);
         Log.d("sharedloc", String.valueOf(qlat));
@@ -299,6 +378,37 @@ public class LiveLocationService extends Service {
 
         startForeground(1337,getNotification());
 
+    }
+    public Notification getNotificationAlarm()
+    {
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("app_channel", "Demo Notification", NotificationManager.IMPORTANCE_LOW);
+            channel.setSound(null, null);
+            NotificationManager mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mManager.createNotificationChannel(channel);
+        }
+        Intent snoozeIntent = new Intent(this, AlarmReceiver.class);
+        snoozeIntent.setAction("silent");
+        snoozeIntent.putExtra(EXTRA_NOTIFICATION_ID, 0);
+        PendingIntent snoozePendingIntent =
+                PendingIntent.getBroadcast(this, 0, snoozeIntent, 0);
+
+        Intent intent = new Intent(LiveLocationService.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent contentIntent = PendingIntent.getActivity(LiveLocationService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification.Builder notificationBuilder = new Notification.Builder(LiveLocationService.this)
+                .setContentTitle("Quarantine Alarm")
+                .addAction(R.drawable.ic_clock, "Cancel",
+                        snoozePendingIntent)
+                .setContentText("Your need to send your selfie to Police administration!")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentIntent(contentIntent);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            notificationBuilder.setChannelId("app_channel");
+        return notificationBuilder.build();
     }
     public Notification getNotification()
     {
