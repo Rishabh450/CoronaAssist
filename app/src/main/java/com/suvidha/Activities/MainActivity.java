@@ -137,8 +137,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.i("Service status", "Not running");
         return false;
     }
-
-
     @SuppressLint("WrongConstant")
     @Override
     public void onBackPressed() {
@@ -306,7 +304,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onResponse(Call<GetOrdersModel> call, Response<GetOrdersModel> response) {
                 if (response.body().status == 200) {
-
                     allOrders.clear();
                     allOrders.addAll(response.body().id);
                     if (getSupportFragmentManager().findFragmentById(R.id.frame_container) instanceof HistoryFragment) {

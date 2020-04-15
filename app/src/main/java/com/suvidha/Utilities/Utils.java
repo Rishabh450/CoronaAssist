@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.suvidha.Models.AddressModel;
 import com.suvidha.Models.CartModel;
+import com.suvidha.Models.HomeIconModel;
 import com.suvidha.Models.ItemModel;
 import com.suvidha.Models.LocationModel;
 import com.suvidha.Models.UserModel;
@@ -24,6 +25,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -57,6 +59,12 @@ public class Utils {
     public static List<CartModel> allOrders = new ArrayList<>();
     public static List<AddressModel> address = new ArrayList<>();
     public static HashMap<String, List<String>> mStateDist = new HashMap<>();
+    public static final List<HomeIconModel> home_icons = new ArrayList<HomeIconModel>(Arrays.asList(
+            new HomeIconModel(0,R.mipmap.ic_quarantine,R.string.Quarantine),
+            new HomeIconModel(1,R.drawable.ic_pass,R.string.request_passes),
+            new HomeIconModel(2,R.drawable.ic_shop,R.string.shop),
+            new HomeIconModel(3,R.mipmap.ic_food_supply,R.string.food_supply_center)
+    ));
 
     public static Integer currentType;
     public static int local_zone_name = 0;
@@ -86,14 +94,6 @@ public class Utils {
         put(8,new Pair<>("Hygiene & Personal Care",R.mipmap.ic_personalcare));
         put(9,new Pair<>("Dairy Products",R.mipmap.ic_milk));
         put(10,new Pair<>("Others",R.mipmap.ic_snacks));
-    }};
-    public static HashMap<Integer,Integer> shopTypesMap = new HashMap<Integer, Integer>(){{
-        put(R.id.icon_request_passes,0);
-        put(R.id.icon_groceries,1);https://play.google.com/store/apps/details?id=
-        put(R.id.icon_milk_and_dairy,2);
-        put(R.id.icon_bread,3);
-        put(R.id.icon_gas,4);
-        put(R.id.icon_water,5);
     }};
 
     public static HashMap<Integer,String> orderStatus= new HashMap<Integer,String>(){{

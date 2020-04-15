@@ -21,6 +21,7 @@
             android:orientation="vertical"
             android:padding="@dimen/border_margin"
             android:paddingBottom="50dp">
+
             <TextView
                 android:id="@+id/services_txt"
                 android:layout_width="wrap_content"
@@ -41,66 +42,8 @@
                 android:layout_height="match_parent"
                 android:id="@+id/home_grid"
                 android:layout_marginTop="@dimen/border_margin"
-                android:paddingBottom="@dimen/toolbar_height"
+
                 />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:layout_marginLeft="@dimen/border_margin"
-                android:orientation="horizontal"
-                android:weightSum="3">
-
-                <RelativeLayout
-                    android:id="@+id/icon_quarentine"
-                    android:layout_width="0dp"
-                    android:layout_height="160dp"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="150dp"
-                        android:src="@mipmap/ic_quarantine" />
-
-                    <TextView
-                        android:id="@+id/txt_quarantine"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:gravity="center"
-                        android:text="@string/Quarantine"
-                        android:textAllCaps="false"
-                        android:textColor="@color/secondary_text_color"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-                <RelativeLayout
-                    android:id="@+id/icon_ngo"
-                    android:layout_width="0dp"
-                    android:layout_marginLeft="@dimen/border_margin"
-                    android:layout_height="160dp"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="150dp"
-                        android:src="@mipmap/ic_ngo" />
-
-                    <TextView
-                        android:id="@+id/txt_ngo"
-                        android:layout_width="match_parent"
-
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:gravity="center"
-                        android:text="@string/food_supply_center"
-                        android:textAllCaps="false"
-                        android:textColor="@color/secondary_text_color"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-            </LinearLayout>
             <TextView
                 android:id="@+id/corona_awareness"
                 android:layout_width="wrap_content"
@@ -132,86 +75,6 @@
 
                     />
                 </androidx.cardview.widget.CardView>
-
-
-
-            <Button
-                android:id="@+id/icon_request_passes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/border_margin"
-                android:background="@drawable/home_btn_shape"
-                android:enabled="false"
-                android:gravity="center"
-                android:text="@string/request_passes"
-                android:textAllCaps="false"
-                android:textColor="@color/secondary_text_color"
-                android:visibility="gone" />
-
-            <Button
-                android:id="@+id/icon_groceries"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/border_margin"
-                android:background="@drawable/home_btn_shape"
-                android:enabled="false"
-                android:gravity="center"
-                android:text="@string/groceries_and_essentials"
-                android:textAllCaps="false"
-                android:textColor="@color/secondary_text_color"
-                android:visibility="gone" />
-
-            <Button
-                android:id="@+id/icon_milk_and_dairy"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/border_margin"
-                android:background="@drawable/home_btn_shape"
-                android:enabled="false"
-                android:gravity="center"
-                android:text="@string/milk_and_dairy"
-                android:textAllCaps="false"
-                android:textColor="@color/secondary_text_color"
-                android:visibility="gone" />
-
-            <Button
-                android:id="@+id/icon_bread"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/border_margin"
-                android:background="@drawable/home_btn_shape"
-                android:enabled="false"
-                android:gravity="center"
-                android:text="@string/bread"
-                android:textAllCaps="false"
-                android:textColor="@color/secondary_text_color"
-                android:visibility="gone" />
-
-            <Button
-                android:id="@+id/icon_gas"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/border_margin"
-                android:background="@drawable/home_btn_shape"
-                android:enabled="false"
-                android:gravity="center"
-                android:text="@string/gas"
-                android:textAllCaps="false"
-                android:textColor="@color/secondary_text_color"
-                android:visibility="gone" />
-
-            <Button
-                android:id="@+id/icon_water"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/border_margin"
-                android:background="@drawable/home_btn_shape"
-                android:enabled="false"
-                android:gravity="center"
-                android:text="@string/water"
-                android:textAllCaps="false"
-                android:textColor="@color/secondary_text_color"
-                android:visibility="gone" />
 
         </LinearLayout>
     </ScrollView>

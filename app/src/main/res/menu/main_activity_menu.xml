@@ -5,6 +5,7 @@
         android:id="@+id/emergency"
         android:title="@string/emergency_no"
         app:showAsAction="ifRoom"
+        android:iconTint="@color/white"
         android:icon="@mipmap/ic_plus"
         />
     <item

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="@dimen/toolbar_height"
+    android:background="@color/colorPrimary"
+    android:gravity="center_vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:textColor="@color/secondary_text_color"
+        android:text="@string/CANCEL"
+        android:id="@+id/quarantine_cancel"
+        android:layout_marginLeft="@dimen/border_margin"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/quarantine_register"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:textColor="@color/secondary_text_color"
+        android:text="@string/register"
+        android:layout_marginRight="@dimen/border_margin"
+        android:layout_alignParentRight="true"
+        />
+
+</RelativeLayout>

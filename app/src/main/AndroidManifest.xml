@@ -20,6 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activities.NearbyAlerts" />
+        <activity android:name=".Activities.RegisterQuarantineActivity" />
         <activity
             android:name=".Activities.MainActivity"
             android:label="@string/app_name"

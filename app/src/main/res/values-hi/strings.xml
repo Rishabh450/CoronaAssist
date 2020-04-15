@@ -10,7 +10,8 @@
     <string name="groceries_and_essentials">किराने का सामान और अनिवार्य है</string>
     <string name="milk_and_dairy">दूध और डेयरी</string>
     <string name="water">पानी</string>
-    <string name="register_quarantine">संगरोध रजिस्टर करें</string>
+    <string name="register">रजिस्टर</string>
+    <string name="register_quarantine">क्वारंटाइन में रजिस्टर करें</string>
     <string name="loc_perm_denied">स्थान अनुमति अस्वीकृत</string>
     <string name="failed_to_submit_report">रिपोर्ट प्रस्तुत करने में विफल। अपना इंटरनेट संपर्क जांचे</string>
     <string name="submitter_successfully">रिपोर्ट सफलतापूर्वक सबमिट कर दी गई है</string>
@@ -99,4 +100,7 @@ Phone: 7061039636 </string>
     <string name="fields_cannot_be_empty">कृपया अनिवार्य विवरण भरें</string>
     <string name="food_supply_center">खाद्य आपूर्ति केंद्र</string>
     <string name="sec_error">कृपया सुरक्षा कोड दर्ज करें</string>
+    <string name="security_code_incorrect">सुरक्षा कोड गलत है</string>
+    <string name="shop">दुकान</string>
+    <string name="hi">Hi</string>
 </resources>

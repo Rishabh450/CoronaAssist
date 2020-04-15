@@ -24,6 +24,7 @@
     <string name="bread">Bread</string>
     <string name="gas">Gas</string>
     <string name="water">Water</string>
+    <string name="register">Register</string>
     <string name="register_quarantine">Register Quarantine</string>
     <string name="loc_perm_denied">Location Permission Denied</string>
     <string name="failed_to_submit_report">Failed to submit report. Check your internet connection</string>
@@ -105,5 +106,8 @@ Features:<br /><br />
     <string name="corona_awareness">Corona Awareness</string>
     <string name="fields_cannot_be_empty">Please fill the compulsory details</string>
     <string name="sec_error">Please enter security code</string>
+    <string name="security_code_incorrect">Security code incorrect</string>
+    <string name="shop">Shop</string>
+    <string name="hi">Hi</string>
 
 </resources>

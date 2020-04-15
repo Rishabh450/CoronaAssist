@@ -173,9 +173,7 @@ public class QuarantineActivity extends AppCompatActivity  {
                                     getCurrentLocation();
                                 }
                             }, 1000);
-                            String uri = String.format(Locale.ENGLISH, "geo:%f,%f", 22.8046, 86.2029);
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                            startActivity(intent);
+
                         } else {
                             currentLocation = new Location(location);
 //                            Log.e("LOL", "OMG");
