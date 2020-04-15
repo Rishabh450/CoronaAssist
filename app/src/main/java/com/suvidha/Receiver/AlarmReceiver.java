@@ -74,6 +74,7 @@ public class AlarmReceiver extends BroadcastReceiver { ;// Here
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Notification.Builder notificationBuilder = new Notification.Builder(context)
                 .setContentTitle("Quarantine Alarm")
+                .setAutoCancel(true)
 
                 .addAction(R.drawable.ic_launcher_suvidha_foreground, "STOP",
                         snoozePendingIntent)
