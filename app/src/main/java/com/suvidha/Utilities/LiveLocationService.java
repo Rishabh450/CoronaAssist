@@ -285,11 +285,12 @@ public class LiveLocationService extends Service {
             if (x.after(calendar1.getTime()) && x.before(calendar2.getTime())) {
                 //checkes whether the current time is between 14:49:00 and 20:11:13.
                 Log.d("cheker","true");
-                setRemainder();
+
 
             }
             else
             {
+                setRemainder();
                 Log.d("cheker","false");
             }
         } catch (ParseException e) {

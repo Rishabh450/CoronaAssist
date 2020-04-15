@@ -84,6 +84,7 @@ public class AlarmReceiver extends BroadcastReceiver { ;// Here
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             notificationBuilder.setChannelId("app_channel");
+        notificationBuilder.build().flags |= Notification.FLAG_AUTO_CANCEL;
         return notificationBuilder.build();
     }
 }
