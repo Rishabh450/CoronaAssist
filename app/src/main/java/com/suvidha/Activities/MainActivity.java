@@ -344,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime(),
-                1*60*1000,
+                10*60*1000,
                 pendingIntent);
 /*
         Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
