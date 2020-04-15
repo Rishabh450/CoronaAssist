@@ -224,7 +224,7 @@ public class LiveLocationService extends Service {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime(),
-                1*60*1000,
+                120*60*1000,
                 pendingIntent);
        // NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -285,12 +285,12 @@ public class LiveLocationService extends Service {
             if (x.after(calendar1.getTime()) && x.before(calendar2.getTime())) {
                 //checkes whether the current time is between 14:49:00 and 20:11:13.
                 Log.d("cheker","true");
-
+                setRemainder();
 
             }
             else
             {
-                setRemainder();
+
                 Log.d("cheker","false");
             }
         } catch (ParseException e) {
