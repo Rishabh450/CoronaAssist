@@ -196,12 +196,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-
     @Override
     protected void onDestroy() {
         //  stopService(mServiceIntent);
         super.onDestroy();
     }
+
     private void intialiseRetrofit() {
         apiInterface = APIClient.getApiClient().create(ApiInterface.class);
     }
