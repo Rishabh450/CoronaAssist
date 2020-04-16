@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.suvidha.Activities.LoginActivity;
 import com.suvidha.Models.AddressModel;
 import com.suvidha.Models.CartModel;
 import com.suvidha.Models.CityModel;
@@ -80,26 +81,6 @@ public class Utils {
         put(1,"Accepted and waiting for approval");
         put(2,"Approved");
         put(3,"Delivered");
-    }};
-    public static HashMap<Integer,Integer> typeImg = new HashMap<Integer,Integer>(){{
-        put(1,R.mipmap.ic_requestpass);
-        put(2,R.mipmap.ic_groc);
-        put(3,R.mipmap.ic_milk);
-        put(4,R.mipmap.ic_bread);
-        put(5,R.mipmap.ic_gas);
-        put(6,R.mipmap.ic_water);
-    }};
-    public static HashMap<Integer, Pair<String,Integer>> catHashMap = new HashMap<Integer, Pair<String, Integer>>(){{
-        put(1,new Pair<>("Vegetables",R.mipmap.ic_vegetables));
-        put(2,new Pair<>("Fruits",R.mipmap.ic_fruits));
-        put(3,new Pair<>("Food Grains",R.mipmap.ic_foodgrains));
-        put(4,new Pair<>("Oils",R.mipmap.ic_oils));
-        put(5,new Pair<>("Readymade Masalas",R.mipmap.ic_masala));
-        put(6,new Pair<>("Spices",R.mipmap.ic_masala));
-        put(7,new Pair<>("Cleaning & Houshold Items",R.mipmap.ic_cleaninghousehold));
-        put(8,new Pair<>("Hygiene & Personal Care",R.mipmap.ic_personalcare));
-        put(9,new Pair<>("Dairy Products",R.mipmap.ic_milk));
-        put(10,new Pair<>("Others",R.mipmap.ic_snacks));
     }};
 
     public static HashMap<Integer,String> orderStatus= new HashMap<Integer,String>(){{

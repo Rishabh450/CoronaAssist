@@ -59,6 +59,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyHolder> {
         holder.itemName.setText(item.item_name);
 //        holder.itemQty.setText(item.itemQty);
         holder.price.setText("Rs. "+item.itemPrice);
+        holder.price.setVisibility(View.GONE);
         holder.addLayout.setVisibility(View.GONE);
         if(item.equals(existingItem)){
             updateCartItems(existingItem, holder);

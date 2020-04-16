@@ -16,8 +16,6 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import static com.suvidha.Utilities.Utils.catHashMap;
 import static com.suvidha.Utilities.Utils.shop_id;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyHolder> {

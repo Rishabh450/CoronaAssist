@@ -3,6 +3,7 @@ package com.suvidha.Adapters;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,8 +53,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
         if(orderPlaced==1){
             holder.plus.setVisibility(View.GONE);
             holder.minus.setVisibility(View.GONE);
-            holder.addLayout.setVisibility(View.GONE);
+            holder.addLayout.setVisibility(View.INVISIBLE);
+            holder.item_price.setVisibility(View.INVISIBLE);
             holder.item_qty.setTextColor(Color.parseColor("#808080"));
+            holder.item_qty.setText(String.valueOf(data.item_add_qty));
+            Log.e("ITEM_QTY", "ITEM"+String.valueOf(data.item_add_qty));
         }else{
             holder.plus.setVisibility(View.VISIBLE);
             holder.minus.setVisibility(View.VISIBLE);

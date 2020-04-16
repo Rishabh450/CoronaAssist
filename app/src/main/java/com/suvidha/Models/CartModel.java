@@ -6,19 +6,20 @@ import android.os.Parcelable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-public class CartModel implements Parcelable,Comparable<CartModel> {
+public class CartModel implements Parcelable {
     public String _id;
     public ArrayList<ItemModel> items;
     public String sid;
     public double amount;
     public int status;
     public String uid;
-    public Timestamp time;
+    public String time;
+    public String delivery_time;
     public ShopModel shop_details;
     public String address;
 
 
-    public CartModel(String _id, ArrayList<ItemModel> items, String sid, double amount, int status, String uid, Timestamp time, ShopModel shop_details, String address) {
+    public CartModel(String _id, ArrayList<ItemModel> items, String sid, double amount, int status, String uid, ShopModel shop_details, String address) {
         this._id = _id;
         this.items = items;
         this.sid = sid;
@@ -32,7 +33,7 @@ public class CartModel implements Parcelable,Comparable<CartModel> {
 
     public CartModel(){}
 
-    public CartModel(ArrayList<ItemModel> items, String sid, double amount, int status, Timestamp time, String address) {
+    public CartModel(ArrayList<ItemModel> items, String sid, double amount, int status, String address) {
         this._id = _id;
         this.items = items;
         this.sid = sid;
@@ -44,7 +45,7 @@ public class CartModel implements Parcelable,Comparable<CartModel> {
         this.address = address;
     }
 
-    public CartModel(String _id, ArrayList<ItemModel> items, String sid, double amount, int status, String uid, Timestamp time, ShopModel shop_details) {
+    public CartModel(String _id, ArrayList<ItemModel> items, String sid, double amount, int status, String uid, String time, ShopModel shop_details) {
         this._id = _id;
         this.items = items;
         this.sid = sid;
@@ -55,7 +56,7 @@ public class CartModel implements Parcelable,Comparable<CartModel> {
         this.shop_details = shop_details;
     }
 
-    public CartModel(ArrayList<ItemModel> items, String sid, double amount, int status, String uid, Timestamp time, ShopModel shopDetails) {
+    public CartModel(ArrayList<ItemModel> items, String sid, double amount, int status, String uid, String time, ShopModel shopDetails) {
         this.items = items;
         this.sid = sid;
         this.amount = amount;
@@ -65,14 +66,6 @@ public class CartModel implements Parcelable,Comparable<CartModel> {
         this.shop_details = shopDetails;
     }
 
-    public CartModel(ArrayList<ItemModel> items, String sid, double amount, int status, Timestamp timestamp) {
-        this.items = items;
-        this.sid = sid;
-        this.amount = amount;
-        this.status = status;
-        this.uid = uid;
-        this.time = timestamp;
-    }
 
     protected CartModel(Parcel in) {
         items = in.createTypedArrayList(ItemModel.CREATOR);
@@ -106,8 +99,5 @@ public class CartModel implements Parcelable,Comparable<CartModel> {
         dest.writeInt(status);
     }
 
-    @Override
-    public int compareTo(CartModel o) {
-        return (int) (o.time.getTime()-time.getTime());
-    }
+
 }

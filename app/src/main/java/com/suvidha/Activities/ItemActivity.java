@@ -47,7 +47,7 @@ import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.APP_CHARGE;
 import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
-import static com.suvidha.Utilities.Utils.catHashMap;
+
 import static com.suvidha.Utilities.Utils.createAlertDialog;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.order_address;
@@ -370,8 +370,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
                     public void onClick(View v) {
                         //store order in cartModel
                         double grandTotal = cartHandler.getTotalWithoutTax() + DELIVERY_CHARGE + (APP_CHARGE * cartHandler.getTotalWithoutTax()) / 100;
-                        CartModel cartModel = new CartModel(cartHandler.getListInCart(), shop_id, grandTotal, 0,
-                                new Timestamp(System.currentTimeMillis()), order_address);
+                        CartModel cartModel = new CartModel(cartHandler.getListInCart(), shop_id, grandTotal, 0, order_address);
                         Call<GeneralModel> orderResultCall = apiInterface.pushOrder(getAccessToken(ItemActivity.this), cartModel);
                         orderResultCall.enqueue(new Callback<GeneralModel>() {
                             @Override

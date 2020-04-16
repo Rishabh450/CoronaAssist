@@ -12,10 +12,14 @@ import com.suvidha.Activities.MainActivity;
 import com.suvidha.Adapters.HistoryAdapter;
 import com.suvidha.Models.CartModel;
 import com.suvidha.Models.GetOrdersModel;
+import com.suvidha.Models.ReportModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -78,9 +82,18 @@ public class HistoryFragment extends Fragment implements MainActivity.NotifyFrag
     }
     public class TimestampSorter implements Comparator<CartModel>
     {
+        DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
         @Override
         public int compare(CartModel o1, CartModel o2) {
-            return (int) (o2.time.getTime()-o1.time.getTime());
+            try {
+                if(f.parse(o2.time).before(f.parse(o1.time))){
+                    return -10;
+                }else{
+                    return 10;
+                }
+            } catch (ParseException e) {
+                throw new IllegalArgumentException(e);
+            }
         }
     }
 }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@mipmap/ic_background"
-    android:padding="@dimen/border_margin">
+    >
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
@@ -22,6 +22,7 @@
         android:layout_below="@id/main_app_bar"
         android:layout_marginBottom="@dimen/border_margin"
         android:id="@+id/categories_layout"
+        android:padding="@dimen/border_margin"
         >
         <TextView
             android:layout_width="wrap_content"
@@ -37,6 +38,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/categories_layout"
         android:id="@+id/nested_scroll_view"
+        android:padding="@dimen/border_margin"
         >
         <RelativeLayout
             android:layout_width="match_parent"

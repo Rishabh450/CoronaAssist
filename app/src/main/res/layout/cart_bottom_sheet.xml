@@ -31,13 +31,15 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
+                    android:textColor="@color/secondary_text_color"
                     android:text="ORDER SUMMARY" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/grey"
+                android:background="@color/colorPrimary"
                 android:orientation="horizontal"
                 android:weightSum="3">
 
@@ -47,6 +49,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="Items"
+                    android:textColor="@color/secondary_text_color"
                     android:textSize="20sp" />
 
                 <TextView
@@ -55,6 +58,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="Price"
+                    android:textColor="@color/secondary_text_color"
                     android:id="@+id/cart_price_tag"
                     android:textSize="20sp" />
 
@@ -63,6 +67,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:id="@+id/cart_qty_tag"
+                    android:textColor="@color/secondary_text_color"
                     android:text="Quantity"
                     android:textSize="20sp" />
             </LinearLayout>
@@ -91,6 +97,7 @@
                         android:layout_weight="1"
                         android:text="Cart Total"
                         android:textSize="18sp"
+                        android:textColor="@color/secondary_text_color"
                         android:textStyle="bold" />
 
                     <TextView
@@ -99,6 +106,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
+                        android:textColor="@color/secondary_text_color"
                         android:text="\u20B9319.00"
                         android:textSize="18sp" />
                 </LinearLayout>
@@ -112,6 +120,7 @@
                     android:weightSum="3">
 
                     <TextView
+                        android:textColor="@color/secondary_text_color"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -125,6 +134,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="\u20B9319.00"
+                        android:textColor="@color/secondary_text_color"
                         android:textSize="@dimen/cart_text_size" />
                 </LinearLayout>
 
@@ -141,6 +151,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="App charges"
+                        android:textColor="@color/secondary_text_color"
                         android:textSize="@dimen/cart_text_size" />
 
                     <TextView
@@ -150,6 +161,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="\u20B9319.00"
+                        android:textColor="@color/secondary_text_color"
                         android:textSize="@dimen/cart_text_size" />
                 </LinearLayout>
 
@@ -170,7 +182,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Grand Total"
-                        android:textColor="@color/primary_text_color"
+                        android:textColor="@color/secondary_text_color"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -181,7 +193,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="\u20B9205.20"
-                        android:textColor="@color/primary_text_color"
+                        android:textColor="@color/secondary_text_color"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -210,6 +222,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
                         android:gravity="left"
+                        android:textColor="@color/secondary_text_color"
                         android:text="Delivery Address"
                         android:textSize="20sp" />
 
@@ -217,12 +230,12 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="right"
+                        android:gravity="center"
                         android:text="Change"
-                        android:textColor="@color/primary_text_color"
+                        android:textColor="@color/secondary_text_color"
                         android:textSize="16sp"
                         style="@style/Widget.AppCompat.Button.Borderless"
-                        android:backgroundTint="@color/white"
+                        android:backgroundTint="@color/colorPrimary"
                         android:id="@+id/change_address"
                         android:visibility="visible" />
                 </LinearLayout>
@@ -238,6 +251,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Address"
+                        android:textColor="@color/secondary_text_color"
                         android:textSize="16sp" />
                 </LinearLayout>
             </LinearLayout>

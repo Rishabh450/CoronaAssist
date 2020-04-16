@@ -13,12 +13,14 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="left"
+        android:textColor="@color/secondary_text_color"
         android:text="Item 1"
         android:textSize="@dimen/cart_text_size" />
 
     <TextView
         android:id="@+id/cart_item_price"
         android:layout_width="0dp"
+        android:textColor="@color/secondary_text_color"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
@@ -52,11 +54,12 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="-"
+
                 android:background="?android:attr/selectableItemBackground"
                 android:textSize="18sp"
                 android:gravity="center"
                 android:id="@+id/cart_minus_btn"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/primary_text_color"
                 />
 
             <TextView

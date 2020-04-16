@@ -89,6 +89,9 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
     private AppBarLayout mAppBar;
     private ImageView phone,mail;
     private TextView del_time;
+    private LinearLayout cart_total_layout;
+    private TextView cart_qty_tag;
+    private TextView time;
 
 
     @Override
@@ -133,6 +136,10 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         phone = findViewById(R.id.order_shop_contact);
         mail = findViewById(R.id.dev_mail);
         del_time = findViewById(R.id.order_deliv_time);
+        cart_total_layout = findViewById(R.id.cart_total_layout);
+        cart_qty_tag = findViewById(R.id.cart_qty_tag);
+        time = findViewById(R.id.order_time);
+        cart_qty_tag.setVisibility(View.VISIBLE);
         findViewById(R.id.accept).setOnClickListener(this);
         findViewById(R.id.reject).setOnClickListener(this);
     }
@@ -152,7 +159,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
                 try {
                     if(response.body().status == 200) {
                         dialog.dismiss();
-                        Toast.makeText(getApplicationContext(), "Data is loaded", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), "Data is loaded", Toast.LENGTH_SHORT).show();
                         Log.e("LOL", String.valueOf(response.body().id.items.size()));
                         orderData.clear();
                         orderData.addAll(response.body().id.items);
@@ -184,9 +191,9 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         shop_name.setText(data.shop_details.name);
         shop_address.setText(data.shop_details.address);
         delivery_address.setText(data.address);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
-        del_time.setText(dateFormat.format(new Date()));
+        
+        time.setText(data.time);
+        del_time.setText(data.delivery_time);
         orderid.setText(oid);
         if(data.status == -1){
             orderStatus.setTextColor(Color.RED);
@@ -194,16 +201,18 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
             orderStatus.setTextColor(getResources().getColor(R.color.default_button_color));
         }
         else{
-            orderStatus.setTextColor(getResources().getColor(R.color.colorPrimary));
+            orderStatus.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         }
         if(data.status == 1){
             // open cart
             //hide main app bar
             mAppBar.setVisibility(View.INVISIBLE);
             mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }else{
+            mAppBar.setVisibility(View.VISIBLE);
         }
         orderStatus.setText(statusHashMap.get(data.status));
-
+        updatePrice();
     }
 
 
@@ -292,6 +301,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
                         Toast.makeText(OrderDetailsActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                     }
                 });
+                break;
             }
             case R.id.reject:{
                 AcceptModel model = new AcceptModel(oid,data.sid,-1);
@@ -299,13 +309,13 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
                 call.enqueue(new Callback<GeneralModel>() {
                     @Override
                     public void onResponse(Call<GeneralModel> call, Response<GeneralModel> response) {
-                        if(response.body().status == 201){
+                        if(response.body().status == 202){
                             Toast.makeText(OrderDetailsActivity.this, "Success", Toast.LENGTH_SHORT).show();
                             mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
                             mAppBar.setVisibility(View.VISIBLE);
                             getOrderDetails();
                         }else{
-
+                            Toast.makeText(OrderDetailsActivity.this, "Failed to reject", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -314,6 +324,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
                         Toast.makeText(OrderDetailsActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                     }
                 });
+                break;
             }
         }
 
@@ -326,11 +337,20 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void updatePrice() {
-        double totalPrice = getTotalWithoutTax();
-        cartTotal.setText("\u20B9" + String.valueOf(totalPrice));
-        delivery.setText(rs + String.valueOf(DELIVERY_CHARGE));
-        app.setText(rs + String.valueOf((APP_CHARGE*totalPrice)/100));
-        grandTotal.setText(String.valueOf(totalPrice + DELIVERY_CHARGE + (APP_CHARGE*totalPrice)/100));
+        double totalPrice = 0;
+        if(data ==  null){
+            getOrderDetails();
+            cart_total_layout.setVisibility(View.GONE);
+        }else {
+            cart_total_layout.setVisibility(View.VISIBLE);
+             totalPrice = data.amount;
+            cartTotal.setText("\u20B9" + String.valueOf(totalPrice));
+            delivery.setText(rs + String.valueOf(DELIVERY_CHARGE));
+            app.setText(rs + String.valueOf((APP_CHARGE*totalPrice)/100));
+            grandTotal.setText(String.valueOf(totalPrice + DELIVERY_CHARGE + (APP_CHARGE*totalPrice)/100));
+        }
+
+
     }
 
     @Override

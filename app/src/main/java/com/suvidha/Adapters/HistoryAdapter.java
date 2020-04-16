@@ -44,12 +44,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyHolder
         CartModel data = list.get(position);
         holder.shop_name.setText(data.shop_details.name);
         holder.shop_addr.setText(data.shop_details.address);
-        Date timestamp = data.time;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM, yyyy");
-        String date = formatter.format(timestamp);
-        formatter = new SimpleDateFormat("hh:mm:ss a");
-        String time =formatter.format(timestamp);
-        holder.time.setText(String.valueOf(date + " at " + time));
+
+        holder.time.setText(data.time);
         holder.orderid.setText(data._id);
         Log.e("status", String.valueOf(data.status));
         if(data.status == -1){
@@ -58,9 +54,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyHolder
             holder.order_status.setTextColor(ctx.getResources().getColor(R.color.default_button_color));
         }
         else{
-            holder.order_status.setTextColor(ctx.getResources().getColor(R.color.colorPrimary));
+            holder.order_status.setTextColor(ctx.getResources().getColor(R.color.colorPrimaryDark));
         }
-        holder.order_status.setText(orderStatus.get(statusHashMap.get(data.status)));
+        holder.order_status.setText(statusHashMap.get(data.status));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

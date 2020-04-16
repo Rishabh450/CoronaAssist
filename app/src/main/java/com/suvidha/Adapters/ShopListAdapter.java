@@ -14,10 +14,6 @@ import com.suvidha.Activities.ItemActivity;
 import com.suvidha.Models.ShopModel;
 import com.suvidha.R;
 
-import static com.suvidha.Utilities.Utils.currentType;
-import static com.suvidha.Utilities.Utils.shopItems;
-import static com.suvidha.Utilities.Utils.typeImg;
-
 import java.util.List;
 
 import androidx.annotation.NonNull;
