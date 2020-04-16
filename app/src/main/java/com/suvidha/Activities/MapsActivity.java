@@ -108,16 +108,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         Log.d("readyyy", "yes");
 
-       // getLats();
+        // getLats();
         Call<FetchNgomodel> getReportsModelCall = apiInterface.get_ngo(getAccessToken(this));
         getReportsModelCall.enqueue(new Callback<FetchNgomodel>() {
 
             @Override
             public void onResponse(Call<FetchNgomodel > call, Response<FetchNgomodel> response) {
-              List<NgoModel> data=  response.body().getId();
-              Log.d("ngomodel",getAccessToken(MapsActivity.this));
+                List<NgoModel> data=  response.body().getId();
+                Log.d("ngomodel",getAccessToken(MapsActivity.this));
 
-                //Log.d("responsengo0",data.get(0).getName()+" ") ;
+                Log.d("responsengo0",data.get(0).getName()+" ") ;
                 Marker marker = null;
                 mMap.clear();
 
@@ -171,7 +171,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
 
 
-                               // marker.showInfoWindow();
+                        // marker.showInfoWindow();
 
 
 
