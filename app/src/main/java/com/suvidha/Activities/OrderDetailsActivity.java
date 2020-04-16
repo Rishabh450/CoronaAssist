@@ -160,9 +160,10 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
                     if(response.body().status == 200) {
                         dialog.dismiss();
 //                        Toast.makeText(getApplicationContext(), "Data is loaded", Toast.LENGTH_SHORT).show();
-                        Log.e("LOL", String.valueOf(response.body().id.items.size()));
+//                        Log.e("LOL", String.valueOf(response.body().id.items.get(0).item_add_qty));
                         orderData.clear();
                         orderData.addAll(response.body().id.items);
+//                        Log.e("ITEM_QTY", "ITEM"+String.valueOf(response.body().id.items.get(0).item_add_qty));
                         setValues(response.body().id);
                         data = response.body().id;
                         cartAdapter.notifyDataSetChanged();
@@ -191,7 +192,6 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         shop_name.setText(data.shop_details.name);
         shop_address.setText(data.shop_details.address);
         delivery_address.setText(data.address);
-        
         time.setText(data.time);
         del_time.setText(data.delivery_time);
         orderid.setText(oid);

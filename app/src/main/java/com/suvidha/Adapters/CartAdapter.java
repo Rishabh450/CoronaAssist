@@ -48,16 +48,18 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
         ItemModel data = list.get(position);
         holder.item_name.setText(data.item_name);
         holder.item_price.setText("\u20B9"+data.itemPrice*data.item_add_qty);
+        Log.e("ITEM_QTY", "ITEM"+String.valueOf(data.item_add_qty));
         holder.item_qty.setText(String.valueOf(data.item_add_qty));
 
         if(orderPlaced==1){
-            holder.plus.setVisibility(View.GONE);
-            holder.minus.setVisibility(View.GONE);
-            holder.addLayout.setVisibility(View.INVISIBLE);
+            holder.plus.setVisibility(View.INVISIBLE);
+            holder.minus.setVisibility(View.INVISIBLE);
+//            holder.addLayout.setVisibility(View.INVISIBLE);
+            holder.addLayout.setBackground(null);
             holder.item_price.setVisibility(View.INVISIBLE);
-            holder.item_qty.setTextColor(Color.parseColor("#808080"));
+            holder.item_qty.setBackground(null);
+            holder.item_qty.setTextColor(Color.parseColor("#ffffff"));
             holder.item_qty.setText(String.valueOf(data.item_add_qty));
-            Log.e("ITEM_QTY", "ITEM"+String.valueOf(data.item_add_qty));
         }else{
             holder.plus.setVisibility(View.VISIBLE);
             holder.minus.setVisibility(View.VISIBLE);

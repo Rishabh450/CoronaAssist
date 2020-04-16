@@ -2,8 +2,13 @@ package com.suvidha.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.os.Bundle;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.suvidha.Models.FetchNgomodel;
 import com.suvidha.Models.GetReportsModel;
 import com.suvidha.Models.NgoModel;
@@ -33,6 +38,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -61,11 +67,15 @@ import java.util.Locale;
 
 import static android.Manifest.*;
 import static android.content.pm.PackageManager.*;
+import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
+import static com.suvidha.Utilities.Utils.createAlertDialog;
+import static com.suvidha.Utilities.Utils.currentLocation;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener
 {
     SupportMapFragment mapFragment;
+    private FusedLocationProviderClient mFusedLocationClient;
     GoogleMap mMap;
     Switch patrol;
     Intent mServiceIntent;
@@ -74,20 +84,118 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     ApiInterface apiInterface;
     List<NgoModel> data;
     String vehicle = "rishabhKaGaadi";
+    int flag = 0;
+    private static final int GPS_REQUEST_CODE = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         intialiseRetrofit();
-
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(this);
+        if (checkLocationPermission()) {
+            //first get current location as quarantine location
+            //then open dialog
+            if (canGetLocation()) {
+                Log.e("TAG","LOLOLO");
+                getCurrentLocation();
+            } else {
+                showSettingsAlert();
+            }
 
+        } else {
+            requestLocationPermissions();
+//                    Toast.makeText(getContexgetLocationUpdatest(), "You don't have location permission", Toast.LENGTH_SHORT).show();
+        }
 
     }
+    private boolean checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        return false;
+    }
+    public boolean canGetLocation() {
+        boolean result = true;
+        LocationManager lm = null;
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+        if (lm == null)
+
+            lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+
+        // exceptions will be thrown if provider is not permitted.
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {
+
+        }
+        try {
+            network_enabled = lm
+                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {
+        }
+        if (gps_enabled == false || network_enabled == false) {
+            result = false;
+        } else {
+            result = true;
+        }
+
+        return result;
+    }
+    public void showSettingsAlert() {
+        Dialog dialog = createAlertDialog(this,getResources().getString(R.string.error),getResources().getString(R.string.turn_on_gps),getResources().getString(R.string.back),getResources().getString(R.string.ok));
+        dialog.setCancelable(false);
+        // Setting Dialog Title
+        dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(
+                        Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivityForResult(intent,GPS_REQUEST_CODE);
+                dialog.dismiss();
+            }
+        });
+        dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+    private void requestLocationPermissions() {
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                LOCATION_PERMISSION_CODE
+        );
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.e("LOL", "WTH");
+        if (requestCode == LOCATION_PERMISSION_CODE) {
+            Toast.makeText(this, "WTH " + requestCode, Toast.LENGTH_SHORT).show();
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Granted. Start getting the location information
+                if (canGetLocation()) {
+//                    onIconClick(0);
+                    Toast.makeText(this, getResources().getString(R.string.loc_perm_denied), Toast.LENGTH_SHORT).show();
+                } else {
+                    showSettingsAlert();
+                }
+
+            }
+        } else {
+            Toast.makeText(this, "CODE " + requestCode, Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -328,5 +436,42 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         return true;
+    }
+    private void getCurrentLocation() {
+
+        mFusedLocationClient.getLastLocation().addOnCompleteListener(
+                new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        Location location = task.getResult();
+                        if (location == null) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    getCurrentLocation();
+                                }
+                            }, 1000);
+
+                        } else {
+                            currentLocation = new Location(location);
+                            if(flag == 0){
+                                flag = 1;
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13.0f));
+                            }
+//                            Log.e("LOL", "OMG");
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    getCurrentLocation();
+                                }
+                            }, 1000);
+
+//                            LOCATION_LAT = quarantineLocation.getLatitude();
+//                            LOCATION_LON = quarantineLocation.getLongitude();
+
+                        }
+                    }
+                }
+        );
     }
 }
