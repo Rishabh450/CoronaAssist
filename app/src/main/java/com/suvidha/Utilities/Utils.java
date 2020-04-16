@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.suvidha.Models.AddressModel;
 import com.suvidha.Models.CartModel;
+import com.suvidha.Models.CityModel;
 import com.suvidha.Models.HomeIconModel;
 import com.suvidha.Models.ItemModel;
 import com.suvidha.Models.LocationModel;
@@ -43,6 +44,7 @@ public class Utils {
     public static Location currentLocation;
     public static double DELIVERY_CHARGE = 5;
     public static double APP_CHARGE = 2;
+    public static int is_delivery=0;
     public static int is_quarantined=0;
     public static int is_pass = 0;
     public static String district;
@@ -59,6 +61,8 @@ public class Utils {
     public static List<CartModel> allOrders = new ArrayList<>();
     public static List<AddressModel> address = new ArrayList<>();
     public static HashMap<String, List<String>> mStateDist = new HashMap<>();
+    public static String order_address;
+
     public static final List<HomeIconModel> home_icons = new ArrayList<HomeIconModel>(Arrays.asList(
             new HomeIconModel(0,R.mipmap.ic_quarantine,R.string.Quarantine),
             new HomeIconModel(1,R.drawable.ic_pass,R.string.request_passes),
@@ -68,12 +72,14 @@ public class Utils {
 
     public static Integer currentType;
     public static int local_zone_name = 0;
+    public static List<CityModel> city = new ArrayList<>();
 
     public static HashMap<Integer,String> statusHashMap = new HashMap<Integer, String>(){{
         put(-1,"Rejected");
         put(0,"Pending");
-        put(1,"Accepted");
-        put(2,"Delivered");
+        put(1,"Accepted and waiting for approval");
+        put(2,"Approved");
+        put(3,"Delivered");
     }};
     public static HashMap<Integer,Integer> typeImg = new HashMap<Integer,Integer>(){{
         put(1,R.mipmap.ic_requestpass);

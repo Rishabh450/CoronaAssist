@@ -25,8 +25,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
     private List<ItemModel> list;
     private CartHandler cartHandler;
     private CartCallback mCallback;
-    private boolean orderPlaced;
-    public CartAdapter(Context ctx, List<ItemModel> list, boolean orderPlaced) {
+    private int orderPlaced;
+    public CartAdapter(Context ctx, List<ItemModel> list, int orderPlaced) {
         this.ctx = ctx;
         this.list = list;
         this.orderPlaced = orderPlaced;
@@ -45,11 +45,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
         ItemModel data = list.get(position);
-        holder.item_name.setText(data.itemName);
+        holder.item_name.setText(data.item_name);
         holder.item_price.setText("\u20B9"+data.itemPrice*data.item_add_qty);
         holder.item_qty.setText(String.valueOf(data.item_add_qty));
 
-        if(orderPlaced){
+        if(orderPlaced==1){
             holder.plus.setVisibility(View.GONE);
             holder.minus.setVisibility(View.GONE);
             holder.addLayout.setVisibility(View.GONE);
@@ -58,6 +58,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
             holder.plus.setVisibility(View.VISIBLE);
             holder.minus.setVisibility(View.VISIBLE);
             holder.addLayout.setVisibility(View.VISIBLE);
+            holder.item_price.setVisibility(View.INVISIBLE);
         }
         holder.plus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,11 +84,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
                         notifyItemRangeChanged(position, list.size());
                         if (cartHandler.getItemsCount() == 0) {
                             //close btm sheet
-                            mCallback.notifyItemAdapter(newItem.itemId);
+                            mCallback.notifyItemAdapter(newItem.item_id);
                             mCallback.closeBtmSheet();
                             mCallback.hideGoto();
                         }else{
-                            mCallback.notifyItemAdapter(newItem.itemId);
+                            mCallback.notifyItemAdapter(newItem.item_id);
                         }
                     } else {
                         cartHandler.updateItem(newItem);

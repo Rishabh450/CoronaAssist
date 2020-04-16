@@ -1,23 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@mipmap/ic_background">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/main_app_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
-        android:background="@color/white"
+        android:visibility="visible"
+        android:background="@color/colorPrimary"
         android:elevation="5dp">
 
         <include layout="@layout/include_toolbar" />
     </com.google.android.material.appbar.AppBarLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:gravity="center_vertical"
+        android:background="@color/colorPrimary"
+        >
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/regect"
+            android:id="@+id/reject"
+            android:layout_marginLeft="@dimen/border_margin"
+            android:backgroundTint="@android:color/holo_red_dark"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textColor="@color/secondary_text_color"
+            android:layout_alignParentLeft="true"
+            />
+
+        <Button
+            android:id="@+id/accept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Accept"
+            android:backgroundTint="@color/green"
+            android:layout_marginRight="@dimen/border_margin"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textColor="@color/secondary_text_color"
+            android:layout_alignParentRight="true"
+            />
+    </RelativeLayout>
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_ref"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/main_app_bar">
+        android:layout_marginTop="@dimen/toolbar_height"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,11 +72,11 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/order_shop_addr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/border_margin"
                 android:text="Address"
-                android:id="@+id/order_shop_addr"
                 android:textSize="16sp" />
 
             <TextView
@@ -83,12 +118,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/border_margin"
                     android:layout_marginTop="@dimen/border_margin"
                     android:text="Order Id : " />
+
                 <TextView
                     android:id="@+id/order_id"
                     android:layout_width="wrap_content"
@@ -98,17 +135,40 @@
                     android:layout_marginTop="@dimen/border_margin"
                     android:text="safasags" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/border_margin"
                     android:layout_marginTop="@dimen/border_margin"
                     android:text="Delivery Address : " />
+
                 <TextView
                     android:id="@+id/order_deliv_addr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/order_status_layout"
+                    android:layout_marginLeft="@dimen/border_margin"
+                    android:layout_marginTop="@dimen/border_margin"
+                    android:text="safasags" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/border_margin"
+                    android:layout_marginTop="@dimen/border_margin"
+                    android:text="Delivery Time : " />
+
+                <TextView
+                    android:id="@+id/order_deliv_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/order_status_layout"
@@ -194,23 +254,25 @@
                         android:gravity="center">
 
                         <ImageView
+                            android:id="@+id/dev_mail"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:id="@+id/dev_mail"
                             android:src="@mipmap/ic_email" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+
         </LinearLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/main_app_bar"
+        android:layout_marginTop="@dimen/toolbar_height"
         android:elevation="10dp">
 
         <include layout="@layout/cart_bottom_sheet" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </RelativeLayout>

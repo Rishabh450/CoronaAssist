@@ -1,6 +1,8 @@
 package com.suvidha.Utilities;
 
+import com.suvidha.Models.AcceptModel;
 import com.suvidha.Models.CartModel;
+import com.suvidha.Models.DeliveryAddressModel;
 import com.suvidha.Models.EssentialsRequestModel;
 import com.suvidha.Models.FetchNgomodel;
 import com.suvidha.Models.GeneralModel;
@@ -61,10 +63,10 @@ public interface ApiInterface {
     Call<GeneralModel> pushOrder(@Header("x-access-tokens") String token, @Body CartModel model);
 
     @Headers("Content-Type: application/json")
-    @POST("/api/get_shops")
-    Call<ShopRequestModel> getAllShops(@Header("x-access-tokens") String token, @Body GetShopsModel model);
-    @Headers("Content-Type: application/json")
+    @GET("/api/get_shops")
+    Call<ShopRequestModel> getAllShops(@Header("x-access-tokens") String token);
 
+    @Headers("Content-Type: application/json")
     @GET("/api/get_ngo_list")
     Call<FetchNgomodel>  get_ngo(@Header("x-access-tokens") String token);
 
@@ -113,6 +115,13 @@ public interface ApiInterface {
     @Headers("Content-Type: application/json")
     @GET("/api/get_user_report")
     Call<GetReportsModel> get_report(@Header("x-access-tokens") String token);
+
+    @Headers("Content-Type: application/json")
+    @POST("/api/set_delivery_address")
+    Call<GeneralModel> set_delivery_address(@Header("x-access-tokens") String token, @Body DeliveryAddressModel model);
+    @Headers("Content-Type: application/json")
+    @POST("/api/update_order")
+    Call<GeneralModel> update_order(@Header("x-access-tokens") String token,@Body AcceptModel model);
 
 
 //    @POST("/api/login")

@@ -56,8 +56,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyHolder> {
             holder.addLayout.setVisibility(View.GONE);
             holder.itemBtnAdd.setVisibility(View.VISIBLE);
         }
-        holder.itemName.setText(item.itemName);
-        holder.itemQty.setText(item.itemQty);
+        holder.itemName.setText(item.item_name);
+//        holder.itemQty.setText(item.itemQty);
         holder.price.setText("Rs. "+item.itemPrice);
         holder.addLayout.setVisibility(View.GONE);
         if(item.equals(existingItem)){

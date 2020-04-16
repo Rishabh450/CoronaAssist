@@ -20,21 +20,21 @@ public class CartHandler {
     }
     public void updateItem(ItemModel item){
         for(int i=0;i<inCart.size();i++){
-            if(item.itemId.compareTo(inCart.get(i).itemId)==0){
+            if(item.item_id.compareTo(inCart.get(i).item_id)==0){
                 inCart.set(i,item);
             }
         }
     }
     public void removeItem(ItemModel item){
         for(int i=0;i<inCart.size();i++){
-            if(item.itemId.compareTo(inCart.get(i).itemId)==0){
+            if(item.item_id.compareTo(inCart.get(i).item_id)==0){
                 inCart.remove(i);
             }
         }
     }
     public ItemModel findItem(ItemModel item){
         for(int i=0;i<inCart.size();i++){
-            if(item.itemId.compareTo(inCart.get(i).itemId)==0){
+            if(item.item_id.compareTo(inCart.get(i).item_id)==0){
                 return inCart.get(i);
             }
         }

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_alignParentBottom="true"
-    android:background="@color/white"
+    android:background="@mipmap/ic_background"
     android:clipToPadding="true"
     app:behavior_hideable="true"
     app:behavior_peekHeight="0dp"
@@ -55,6 +55,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="Price"
+                    android:id="@+id/cart_price_tag"
                     android:textSize="20sp" />
 
                 <TextView
@@ -74,146 +75,156 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/border_margin"
-                android:orientation="horizontal"
-                android:weightSum="3">
+                android:id="@+id/cart_total_layout"
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Cart Total"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:layout_margin="@dimen/border_margin"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
 
-                <TextView
-                    android:id="@+id/cart_cart_total"
-                    android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Cart Total"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/cart_cart_total"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="\u20B9319.00"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="\u20B9319.00"
-                    android:textSize="18sp" />
+                    android:layout_marginLeft="@dimen/border_margin"
+                    android:layout_marginRight="@dimen/border_margin"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Delivery Charges"
+                        android:textSize="@dimen/cart_text_size" />
+
+                    <TextView
+                        android:id="@+id/cart_delivery"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="\u20B9319.00"
+                        android:textSize="@dimen/cart_text_size" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/border_margin"
+                    android:layout_marginRight="@dimen/border_margin"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="App charges"
+                        android:textSize="@dimen/cart_text_size" />
+
+                    <TextView
+                        android:id="@+id/cart_app"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="\u20B9319.00"
+                        android:textSize="@dimen/cart_text_size" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="@dimen/border_margin"
+                    android:background="@color/grey" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/border_margin"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Grand Total"
+                        android:textColor="@color/primary_text_color"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/cart_grand_total"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="\u20B9205.20"
+                        android:textColor="@color/primary_text_color"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/grey" />
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/border_margin"
-                android:layout_marginRight="@dimen/border_margin"
-                android:orientation="horizontal"
-                android:weightSum="3">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Delivery Charges"
-                    android:textSize="@dimen/cart_text_size" />
-
-                <TextView
-                    android:id="@+id/cart_delivery"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="\u20B9319.00"
-                    android:textSize="@dimen/cart_text_size" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/border_margin"
-                android:layout_marginRight="@dimen/border_margin"
-                android:orientation="horizontal"
-                android:weightSum="3">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="App charges"
-                    android:textSize="@dimen/cart_text_size" />
-
-                <TextView
-                    android:id="@+id/cart_app"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="\u20B9319.00"
-                    android:textSize="@dimen/cart_text_size" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="@dimen/border_margin"
-                android:background="@color/grey" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/border_margin"
-                android:weightSum="3">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Grand Total"
-                    android:textColor="@color/primary_text_color"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/cart_grand_total"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="\u20B9205.20"
-                    android:textColor="@color/primary_text_color"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="@color/grey" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/border_margin"
-                android:orientation="vertical"
                 android:id="@+id/cart_delivery_layout"
-                >
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/border_margin"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
-                    android:weightSum="2">
+                    android:weightSum="3">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:gravity="left"
                         android:text="Delivery Address"
                         android:textSize="20sp" />
 
-                    <TextView
+                    <Button
                         android:layout_width="0dp"
-                        android:visibility="invisible"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="right"
-                        android:text="Change Address"
-                        android:textSize="16sp" />
+                        android:text="Change"
+                        android:textColor="@color/primary_text_color"
+                        android:textSize="16sp"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:backgroundTint="@color/white"
+                        android:id="@+id/change_address"
+                        android:visibility="visible" />
                 </LinearLayout>
 
                 <LinearLayout

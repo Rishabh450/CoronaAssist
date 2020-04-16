@@ -8,6 +8,7 @@ public class SupportModel {
     public String district;
     public String state;
 
+
     public SupportModel(int is_quarantine, int is_pass, int is_ngo, int is_shopper) {
         this.is_quarantine = is_quarantine;
         this.is_pass = is_pass;

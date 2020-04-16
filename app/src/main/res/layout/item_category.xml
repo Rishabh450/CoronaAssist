@@ -1,37 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="5dp"
-    android:layout_margin="@dimen/border_margin"
+    android:layout_marginLeft="@dimen/border_margin"
+    android:layout_marginRight="@dimen/border_margin"
+    android:layout_margin="2dp"
+    android:background="@color/colorPrimary"
     app:cardCornerRadius="5dp">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="100dp"
-        android:layout_height="120dp"
-
-        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:weightSum="6">
+        android:gravity="center_vertical"
+        android:background="@color/colorPrimary"
+        android:padding="@dimen/border_margin"
+        >
 
-        <ImageView
-            android:id="@+id/cat_img"
-            android:layout_width="100dp"
-            android:layout_height="0dp"
-            android:layout_weight="5"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_launcher_background" />
 
         <TextView
+            android:layout_marginLeft="@dimen/border_margin"
             android:id="@+id/cat_name"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
             android:text="Vegetables"
-            android:textColor="@color/primary_text_color" />
+            android:textColor="@color/secondary_text_color" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

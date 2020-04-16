@@ -107,7 +107,14 @@ Features:<br /><br />
     <string name="fields_cannot_be_empty">Please fill the compulsory details</string>
     <string name="sec_error">Please enter security code</string>
     <string name="security_code_incorrect">Security code incorrect</string>
-    <string name="shop">Shop</string>
+    <string name="shop">Shops</string>
     <string name="hi">Hi</string>
+    <string name="city">City</string>
+    <string name="subzone">Subzone</string>
+    <string name="sector">Sector</string>
+    <string name="area">Area</string>
+    <string name="check_internet">Check your internet connection</string>
+    <string name="no_shops_available">No Shops Available</string>
+    <string name="regect">Reject</string>
 
 </resources>

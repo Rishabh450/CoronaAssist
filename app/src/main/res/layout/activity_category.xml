@@ -4,14 +4,15 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@mipmap/ic_background"
     android:padding="@dimen/border_margin">
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
         android:id="@+id/main_app_bar"
-        android:background="@color/white"
+        android:background="@color/colorPrimary"
         >
-    <include layout="@layout/include_toolbar" />
+        <include layout="@layout/include_toolbar" />
     </com.google.android.material.appbar.AppBarLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Categories"
-            android:textColor="@color/primary_text_color"
+            android:textColor="@color/secondary_text_color"
             android:textSize="20sp"
             android:textStyle="bold"
             />
@@ -37,18 +38,18 @@
         android:layout_below="@+id/categories_layout"
         android:id="@+id/nested_scroll_view"
         >
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <androidx.recyclerview.widget.RecyclerView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/shop_cat_rview"
-            android:layout_marginTop="@dimen/border_margin"
-            android:paddingBottom="@dimen/toolbar_height"
-            />
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/shop_cat_rview"
+                android:layout_marginTop="@dimen/border_margin"
+                android:paddingBottom="@dimen/toolbar_height"
+                />
 
-    </RelativeLayout>
+        </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
     <include layout="@layout/include_goto_cart"
         />

@@ -9,6 +9,8 @@ public class EssentialsModel {
     public SupportModel support;
     public List<String> emergency_contact;
     public List<String> state_q_address;
+    public List<CityModel> city;
+    public int is_delivery;
     public EssentialsModel(double delivery_cost, double cess_rate, int is_quarantined, SupportModel support) {
         this.delivery_cost = delivery_cost;
         this.cess_rate = cess_rate;

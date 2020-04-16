@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,11 +39,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.suvidha.Activities.LoginActivity;
 import com.suvidha.Activities.MainActivity;
 import com.suvidha.Activities.MapsActivity;
 import com.suvidha.Activities.MyPassActivity;
@@ -51,9 +56,14 @@ import com.suvidha.Activities.RegisterQuarantineActivity;
 import com.suvidha.Activities.ShopsActivity;
 import com.suvidha.Adapters.CategoryAdapter;
 import com.suvidha.Adapters.SupportAdapter;
+import com.suvidha.Models.CityModel;
+import com.suvidha.Models.DeliveryAddressModel;
 import com.suvidha.Models.GeneralModel;
 import com.suvidha.Models.HomeIconModel;
 import com.suvidha.Models.QuarantineModel;
+import com.suvidha.Models.SectorModel;
+import com.suvidha.Models.SubZoneModel;
+import com.suvidha.Models.ZonesModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
@@ -67,6 +77,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -75,12 +86,15 @@ import retrofit2.Response;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
 import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
+import static com.suvidha.Utilities.Utils.city;
+import static com.suvidha.Utilities.Utils.clearLoginSession;
 import static com.suvidha.Utilities.Utils.createAlertDialog;
 import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.currentLocation;
 import static com.suvidha.Utilities.Utils.district;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.home_icons;
+import static com.suvidha.Utilities.Utils.is_delivery;
 import static com.suvidha.Utilities.Utils.is_ngo;
 import static com.suvidha.Utilities.Utils.is_pass;
 import static com.suvidha.Utilities.Utils.is_quarantine;
@@ -102,6 +116,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     private SupportAdapter mAdapter;
     List<HomeIconModel> iconList = new ArrayList<>();
 
+    Map<String,List<ZonesModel>> mCity = new HashMap<>();
+    Map<String,List<SubZoneModel>> mZone = new HashMap<>();
+    Map<String,List<SectorModel>> mSubzone = new HashMap<>();
+    Map<String,List<String>> mSector = new HashMap<>();
+    List<ZonesModel> zones;
+    List<SubZoneModel> subzones;
+    List<SectorModel> sectors;
+    List<String> areas;
+    String mSelectedCity,mSelectedZone,mSelectedSubzone,mSelectedSector,mSelectedArea;
+    Spinner city_spinner,zone_spinner,subzone_spinner,sector_spinner,area_spinner;
+
     public HomeFragment() {
 
     }
@@ -111,8 +136,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         init(v);
-        setHomeGrid();
         intialiseRetrofit();
+        setHomeGrid();
         setListeners();
         notifyDataLoaded();
         return v;
@@ -422,8 +447,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                 break;
             }
             case 2:
-                intent = new Intent(getContext(), ShopsActivity.class);
-                startActivity(intent);
+                //open dialog to select city
+                if(is_delivery == 0)
+                    createAddressDialog();
+                else{
+                    intent = new Intent(getContext(), ShopsActivity.class);
+                    startActivity(intent);
+                }
+
                 break;
             case 3: {
                 intent = new Intent(getContext(), MapsActivity.class);
@@ -431,5 +462,218 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                 break;
             }
         }
+    }
+
+    private void createAddressDialog() {
+        Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_address);
+        setAddressDialog(dialog);
+        dialog.show();
+    }
+
+    void setAddressDialog(Dialog dialog){
+        city_spinner = dialog.findViewById(R.id.address_city);
+        zone_spinner = dialog.findViewById(R.id.address_zone);
+        subzone_spinner = dialog.findViewById(R.id.address_subzone);
+        sector_spinner = dialog.findViewById(R.id.address_sector);
+        area_spinner = dialog.findViewById(R.id.address_area);
+
+
+
+        //set data
+        for(CityModel c: city){
+            mCity.put(c.name,c.zone);
+            for(ZonesModel z: c.zone){
+                mZone.put(z.name,z.subzone);
+                for(SubZoneModel sub:z.subzone){
+                    mSubzone.put(sub.name,sub.sector);
+                    for (SectorModel s: sub.sector)
+                        mSector.put(s.name,s.area);
+                }
+            }
+        }
+        //set spinner
+        setCitySpinner();
+        dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //set delivery address
+                setDeliveryAddress(dialog);
+            }
+        });
+
+    }
+
+    private void setDeliveryAddress(Dialog dialog) {
+        DeliveryAddressModel model = new DeliveryAddressModel(mSelectedCity,mSelectedZone,mSelectedSubzone,mSelectedSector,mSelectedArea);
+        Call<GeneralModel> call = apiInterface.set_delivery_address(getAccessToken(getContext()),model);
+        call.enqueue(new Callback<GeneralModel>() {
+            @Override
+            public void onResponse(Call<GeneralModel> call, Response<GeneralModel> response) {
+                if(response.body().status != 302){
+                    if(response.body().status == 201){
+                        Log.e("Home Fragment",response.body().id);
+                        dialog.dismiss();
+                        Intent intent = new Intent(getContext(), ShopsActivity.class);
+                        startActivity(intent);
+                    }else{
+                        Toast.makeText(getContext(), getResources().getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                }else {
+                    signOut();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeneralModel> call, Throwable t) {
+                Toast.makeText(getContext(), getResources().getString(R.string.check_internet), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void signOut() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        MainActivity mainActivity = (MainActivity) getActivity();
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(getContext(), gso);
+        googleSignInClient.signOut().addOnCompleteListener(mainActivity, new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                //clear data
+                clearLoginSession(mainActivity);
+
+            }
+        });
+    }
+    private void setCitySpinner() {
+        final Object cities[] = mCity.keySet().toArray();
+        Arrays.sort(cities);
+        ArrayAdapter aa1 = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, cities);
+        aa1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        city_spinner.setAdapter(aa1);
+        mSelectedCity =city_spinner.getSelectedItem().toString();
+        zones = mCity.get(mSelectedCity);
+        city_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSelectedCity = cities[i].toString();
+                updateZoneSpinner();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void updateZoneSpinner() {
+        zones = mCity.get(mSelectedCity);
+        List<String> d = new ArrayList<>();
+        for(ZonesModel model:zones)
+        {
+            d.add(model.name);
+        }
+        ArrayAdapter aa2 = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, d);
+        aa2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        zone_spinner.setAdapter(aa2);
+        mSelectedZone = zone_spinner.getSelectedItem().toString();
+        zone_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSelectedZone = zones.get(i).name;
+                Log.e("Register",mSelectedZone);
+                updateSubZoneSpinner();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void updateSubZoneSpinner() {
+        subzones = mZone.get(mSelectedZone);
+        List<String> d = new ArrayList<>();
+        for(SubZoneModel model:subzones)
+        {
+            d.add(model.name);
+        }
+        ArrayAdapter aa2 = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, d);
+        aa2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        subzone_spinner.setAdapter(aa2);
+        mSelectedSubzone = subzone_spinner.getSelectedItem().toString();
+        subzone_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSelectedSubzone = subzones.get(i).name;
+                Log.e("Register",mSelectedSubzone);
+                updateSectorSpinner();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void updateSectorSpinner() {
+        sectors = mSubzone.get(mSelectedSubzone);
+        List<String> d = new ArrayList<>();
+        for(SectorModel model:sectors)
+        {
+            d.add(model.name);
+        }
+        ArrayAdapter aa2 = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, d);
+        aa2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sector_spinner.setAdapter(aa2);
+        mSelectedSector = sector_spinner.getSelectedItem().toString();
+        sector_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSelectedSector = sectors.get(i).name;
+                Log.e("Register",mSelectedSector);
+                updateAreaSpinner();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void updateAreaSpinner() {
+        areas = mSector.get(mSelectedSector);
+        List<String> d = new ArrayList<>();
+        for(String model:areas)
+        {
+            d.add(model);
+        }
+        ArrayAdapter aa2 = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, d);
+        aa2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        area_spinner.setAdapter(aa2);
+        mSelectedArea = area_spinner.getSelectedItem().toString();
+        area_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSelectedArea = areas.get(i);
+                Log.e("Register",mSelectedArea);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 }

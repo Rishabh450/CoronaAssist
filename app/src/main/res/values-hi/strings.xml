@@ -103,4 +103,11 @@ Phone: 7061039636 </string>
     <string name="security_code_incorrect">सुरक्षा कोड गलत है</string>
     <string name="shop">दुकान</string>
     <string name="hi">Hi</string>
+    <string name="city">City</string>
+    <string name="subzone">Subzone</string>
+    <string name="sector">Sector</string>
+    <string name="area">Area</string>
+    <string name="check_internet">Check your internet connection</string>
+    <string name="no_shops_available">No Shops Available</string>
+    <string name="regect">Reject</string>
 </resources>

@@ -21,10 +21,10 @@ import static com.suvidha.Utilities.Utils.catHashMap;
 import static com.suvidha.Utilities.Utils.shop_id;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyHolder> {
-    List<Integer> list;
+    List<String> list;
     Context context;
 
-    public CategoryAdapter(Context context, List<Integer> list) {
+    public CategoryAdapter(Context context, List<String> list) {
         this.list = list;
         this.context = context;
 
@@ -39,16 +39,14 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyHold
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
-        Integer catId = list.get(position);
+        String catId = list.get(position);
         Log.e("LOL", String.valueOf(catId));
-        holder.name.setText(catHashMap.get(catId+1).first);
-        holder.img.setImageResource(catHashMap.get(catId+1).second);
+        holder.name.setText(catId);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ItemActivity.class);
-                Log.e("CATID", String.valueOf(catId+1));
                 intent.putExtra("CategoryId",catId);
                 intent.putExtra("shopid",shop_id);
                 context.startActivity(intent);
@@ -66,12 +64,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyHold
 
     public class MyHolder extends RecyclerView.ViewHolder{
         TextView name;
-        ImageView img;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.cat_name);
-            img = itemView.findViewById(R.id.cat_img);
         }
     }
 }

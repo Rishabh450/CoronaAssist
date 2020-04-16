@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +47,7 @@ import static com.suvidha.Utilities.Utils.APP_CHARGE;
 import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
 import static com.suvidha.Utilities.Utils.createAlertDialog;
 import static com.suvidha.Utilities.Utils.getAccessToken;
+import static com.suvidha.Utilities.Utils.order_address;
 import static com.suvidha.Utilities.Utils.rs;
 import static com.suvidha.Utilities.Utils.shopItems;
 import static com.suvidha.Utilities.Utils.shop_id;
@@ -72,7 +75,8 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
     private ApiInterface apiInterface;
     private String shop_name;
     public CategoryAdapter mAdapter;
-    public List<Integer> categoryData = new ArrayList<>();
+    public List<String> categoryData = new ArrayList<>();
+    TextView change_address,address;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,7 +84,7 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_category);
         init();
         shop_id = getIntent().getStringExtra("shopid");
-        shop_name = getIntent().getStringExtra("shopname");
+        shop_name = getIntent().getStringExtra("shop_name");
         intialiseRetrofit();
         getItems();
         manageToolbar();
@@ -120,14 +124,51 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
         mBottomSheetBehaviour.setPeekHeight(0);
         goto_cart = findViewById(R.id.goto_cart_layout);
         cartHandler = CartHandler.getInstance();
-
+        address = nestedScrollView.findViewById(R.id.cart_address);
         cartTotal = nestedScrollView.findViewById(R.id.cart_cart_total);
         delivery = nestedScrollView.findViewById(R.id.cart_delivery);
         app = nestedScrollView.findViewById(R.id.cart_app);
         grandTotal = nestedScrollView.findViewById(R.id.cart_grand_total);
         placeOrder = nestedScrollView.findViewById(R.id.cart_place_order);
+        nestedScrollView.findViewById(R.id.cart_total_layout).setVisibility(View.GONE);
+        nestedScrollView.findViewById(R.id.cart_price_tag).setVisibility(View.INVISIBLE);
+        order_address = SharedPrefManager.getInstance(this).getString(SharedPrefManager.Key.USER_ADDRESS);
         placeOrder.setOnClickListener(this);
+        change_address = findViewById(R.id.change_address);
+        address.setText(order_address);
+        change_address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createChangeAddressDialog();
+            }
+        });
     }
+    private void createChangeAddressDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.change_address);
+        dialog.show();
+
+        EditText et = dialog.findViewById(R.id.change_et);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        dialog.getWindow().setAttributes(lp);
+        dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                address.setText(et.getText().toString().trim());
+                order_address = et.getText().toString().trim();
+                dialog.dismiss();
+            }
+        });
+    }
+
     private void intialiseRetrofit() {
         apiInterface = APIClient.getApiClient().create(ApiInterface.class);
     }
@@ -210,7 +251,7 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
         cartData = cartHandler.getListInCart();
         RecyclerView rView = nestedScrollView.findViewById(R.id.cart_rview);
         rView.setLayoutManager(new LinearLayoutManager(this));
-        cartAdapter = new CartAdapter(this, cartData, false);
+        cartAdapter = new CartAdapter(this, cartData, 0);
         rView.setAdapter(cartAdapter);
     }
 
@@ -223,11 +264,11 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
     void setuprec() {
         shopItems.clear();
         mAdapter = new CategoryAdapter(this, categoryData);
-        rView.setLayoutManager(new GridLayoutManager(this, ITEM_COUNT));
+        rView.setLayoutManager(new LinearLayoutManager(this));
         rView.setAdapter(mAdapter);
     }
-    private List<Integer> getAllDifferentCategories() {
-        List<Integer> l =new ArrayList<>();
+    private List<String> getAllDifferentCategories() {
+        List<String> l =new ArrayList<>();
         for(int i=0;i<shopItems.size();i++){
             if(!l.contains(shopItems.get(i).category)){
                 l.add(shopItems.get(i).category);
@@ -250,27 +291,27 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
         if (mBottomSheetBehaviour.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_HIDDEN);
         } else {
-                if (cartHandler.getListInCart().isEmpty()) {
-                    finish();
-                } else {
-                    //open alert dialog
-                    Dialog dialog = createAlertDialog(this, "Warning", getResources().getString(R.string.warning_cart_not_empty),
-                            "Cancel", "Continue");
-                    dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
-                        }
-                    });
-                    dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            cartHandler.clearCart();
-                            dialog.dismiss();
-                            finish();
-                        }
-                    });
-                }
+            if (cartHandler.getListInCart().isEmpty()) {
+                finish();
+            } else {
+                //open alert dialog
+                Dialog dialog = createAlertDialog(this, "Warning", getResources().getString(R.string.warning_cart_not_empty),
+                        "Cancel", "Continue");
+                dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        cartHandler.clearCart();
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
+            }
         }
     }
 
@@ -299,9 +340,8 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
                     public void onClick(View v) {
                         //store order in cartModel
                         double grandTotal = cartHandler.getTotalWithoutTax()+DELIVERY_CHARGE+(APP_CHARGE*cartHandler.getTotalWithoutTax())/100;
-                        String userAddress = SharedPrefManager.getInstance(getApplicationContext()).getString(SharedPrefManager.Key.USER_ADDRESS);
                         CartModel cartModel = new CartModel(cartHandler.getListInCart(),shop_id,grandTotal,0,
-                                new Timestamp(System.currentTimeMillis()),userAddress);
+                                new Timestamp(System.currentTimeMillis()),order_address);
                         Call<GeneralModel> orderResultCall = apiInterface.pushOrder(getAccessToken(CategoriesActivity.this),cartModel);
                         orderResultCall.enqueue(new Callback<GeneralModel>() {
                             @Override

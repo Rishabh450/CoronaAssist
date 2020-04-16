@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Change Address"
+        android:layout_marginLeft="@dimen/border_margin"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter new Address"
+        android:id="@+id/change_et"
+        android:layout_margin="@dimen/border_margin"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="10dp"
+        >
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="cancel"
+            android:backgroundTint="@color/white"
+            android:id="@+id/dialog_cancel"
+            android:textColor="@color/primary_text_color"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change"
+            android:background="@drawable/btn_shape"
+            android:id="@+id/dialog_continue"
+            android:textColor="@color/secondary_text_color"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            />
+    </LinearLayout>
+</LinearLayout>

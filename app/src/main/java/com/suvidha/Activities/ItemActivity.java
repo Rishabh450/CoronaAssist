@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +40,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,6 +50,7 @@ import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
 import static com.suvidha.Utilities.Utils.catHashMap;
 import static com.suvidha.Utilities.Utils.createAlertDialog;
 import static com.suvidha.Utilities.Utils.getAccessToken;
+import static com.suvidha.Utilities.Utils.order_address;
 import static com.suvidha.Utilities.Utils.rs;
 import static com.suvidha.Utilities.Utils.shopItems;
 
@@ -73,23 +78,22 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
     private TextView address;
     private Button placeOrder;
     private ApiInterface apiInterface;
-    private int catId;
+    private String catId;
     private String shop_id;
     private String shop_name;
-    private int flag;
+    private Button change_address;
+    private LinearLayout cart_total_layout;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item);
         init();
-        catId = getIntent().getIntExtra("CategoryId",-1);
+        catId = getIntent().getStringExtra("CategoryId");
         shop_id = getIntent().getStringExtra("shopid");
         shop_name = getIntent().getStringExtra("shopname");
-        flag= getIntent().getIntExtra("flag",0);
+
         intialiseRetrofit();
-        if(flag==1){
-            getItems();
-        }
 
         manageToolbar();
         setRView();
@@ -114,8 +118,47 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         address = nestedScrollView.findViewById(R.id.cart_address);
         grandTotal = nestedScrollView.findViewById(R.id.cart_grand_total);
         placeOrder = nestedScrollView.findViewById(R.id.cart_place_order);
+        cart_total_layout = nestedScrollView.findViewById(R.id.cart_total_layout);
+        nestedScrollView.findViewById(R.id.cart_price_tag).setVisibility(View.INVISIBLE);
+        cart_total_layout.setVisibility(View.GONE);
+        grandTotal.setVisibility(View.GONE);
+        change_address = findViewById(R.id.change_address);
+        address.setText(order_address);
+        change_address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createChangeAddressDialog();
+            }
+        });
+
         placeOrder.setOnClickListener(this);
     }
+
+    private void createChangeAddressDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.change_address);
+        dialog.show();
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        dialog.getWindow().setAttributes(lp);
+        EditText et = dialog.findViewById(R.id.change_et);
+        dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                address.setText(et.getText().toString().trim());
+                order_address = et.getText().toString().trim();
+                dialog.dismiss();
+            }
+        });
+    }
+
     private void intialiseRetrofit() {
         apiInterface = APIClient.getApiClient().create(ApiInterface.class);
     }
@@ -205,7 +248,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
                         List<ItemModel> newList = cartHandler.getListInCart();
                         for (int i = 0; i < items.size(); i++) {
                             for (int j = 0; j < newList.size(); j++)
-                                if (items.get(i).itemId.compareTo(newList.get(j).itemId) == 0) {
+                                if (items.get(i).item_id.compareTo(newList.get(j).item_id) == 0) {
                                     items.set(i, newList.get(j));
                                     itemAdapter.notifyItemChanged(i);
                                     break;
@@ -228,7 +271,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         cartData = cartHandler.getListInCart();
         RecyclerView rView = nestedScrollView.findViewById(R.id.cart_rview);
         rView.setLayoutManager(new LinearLayoutManager(this));
-        cartAdapter = new CartAdapter(this, cartData,false);
+        cartAdapter = new CartAdapter(this, cartData, 0);
         rView.setAdapter(cartAdapter);
     }
 
@@ -239,8 +282,9 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         rView.setAdapter(itemAdapter);
 
     }
+
     private void getItems() {
-        Call<ItemsRequestModel> itemModelCall = apiInterface.getItems(getAccessToken(this),new SidModel(shop_id));
+        Call<ItemsRequestModel> itemModelCall = apiInterface.getItems(getAccessToken(this), new SidModel(shop_id));
         itemModelCall.enqueue(new Callback<ItemsRequestModel>() {
             @Override
             public void onResponse(Call<ItemsRequestModel> call, Response<ItemsRequestModel> response) {
@@ -255,14 +299,15 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onFailure(Call<ItemsRequestModel> call, Throwable t) {
-                Log.e("ItemActivity",t.getMessage());
+                Log.e("ItemActivity", t.getMessage());
             }
         });
     }
+
     private List<ItemModel> getData() {
-        List<ItemModel> l=new ArrayList<>();
-        for(int i=0;i<shopItems.size();i++){
-            if(shopItems.get(i).category==catId){
+        List<ItemModel> l = new ArrayList<>();
+        for (int i = 0; i < shopItems.size(); i++) {
+            if(shopItems.get(i).category.compareTo(catId)==0){
                 l.add(shopItems.get(i));
             }
         }
@@ -272,10 +317,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
     void manageToolbar() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        if(catId == -1){
-            getSupportActionBar().setTitle(shop_name);
-        }else
-            getSupportActionBar().setTitle(catHashMap.get(catId+1).first);
+        getSupportActionBar().setTitle(catId);
     }
 
     @Override
@@ -293,45 +335,21 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
     public void onBackPressed() {
         handleBackPressed();
     }
+
     private void handleBackPressed() {
         if (mBottomSheetBehaviour.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_HIDDEN);
         } else {
-            Log.e("TAG", String.valueOf(flag));
-            if(flag == 1){
-                if (cartHandler.getListInCart().isEmpty()) {
-                    finish();
-                } else {
-                    //open alert dialog
-                    Dialog dialog = createAlertDialog(this, "Warning", getResources().getString(R.string.warning_cart_not_empty),
-                            "Cancel", "Continue");
-                    dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
-                        }
-                    });
-                    dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            cartHandler.clearCart();
-                            dialog.dismiss();
-                            finish();
-                        }
-                    });
-                }
-            }else{
-                finish();
-            }
-
+            finish();
         }
     }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.goto_cart_layout:
                 mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
-                address.setText(SharedPrefManager.getInstance(this).getString(SharedPrefManager.Key.USER_ADDRESS));
+                address.setText(order_address);
                 updatePrice();
                 cartData = cartHandler.getListInCart();
                 cartAdapter.notifyDataSetChanged();
@@ -339,7 +357,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.cart_place_order: {
                 //submit order to server
                 //show dialog
-                Dialog dialog = createAlertDialog(this,"Place Order",getResources().getString(R.string.place_order_msg),"cancel","Continue");
+                Dialog dialog = createAlertDialog(this, "Place Order", getResources().getString(R.string.place_order_msg), "cancel", "Continue");
 
                 dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -351,32 +369,31 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onClick(View v) {
                         //store order in cartModel
-                        double grandTotal = cartHandler.getTotalWithoutTax()+DELIVERY_CHARGE+(APP_CHARGE*cartHandler.getTotalWithoutTax())/100;
-                        String userAddress = SharedPrefManager.getInstance(getApplicationContext()).getString(SharedPrefManager.Key.USER_ADDRESS);
-                        CartModel cartModel = new CartModel(cartHandler.getListInCart(),shop_id,grandTotal,0,
-                                new Timestamp(System.currentTimeMillis()),userAddress);
-                        Call<GeneralModel> orderResultCall = apiInterface.pushOrder(getAccessToken(ItemActivity.this),cartModel);
+                        double grandTotal = cartHandler.getTotalWithoutTax() + DELIVERY_CHARGE + (APP_CHARGE * cartHandler.getTotalWithoutTax()) / 100;
+                        CartModel cartModel = new CartModel(cartHandler.getListInCart(), shop_id, grandTotal, 0,
+                                new Timestamp(System.currentTimeMillis()), order_address);
+                        Call<GeneralModel> orderResultCall = apiInterface.pushOrder(getAccessToken(ItemActivity.this), cartModel);
                         orderResultCall.enqueue(new Callback<GeneralModel>() {
                             @Override
                             public void onResponse(Call<GeneralModel> call, Response<GeneralModel> response) {
-                                if(response.body().status == 201){
+                                if (response.body().status == 201) {
                                     Toast.makeText(ItemActivity.this, "Your Order successfully placed", Toast.LENGTH_SHORT).show();
                                     //open order description
                                     //clear activity stack
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |  Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     startActivity(intent);
-                                    intent = new Intent(ItemActivity.this,OrderDetailsActivity.class);
+                                    intent = new Intent(ItemActivity.this, OrderDetailsActivity.class);
                                     intent.putExtra("data", cartModel);
-                                    intent.putExtra("oid",response.body().id);
+                                    intent.putExtra("oid", response.body().id);
                                     startActivity(intent);
                                     //remove items from cart
                                     cartHandler.clearCart();
-                                }else if(response.body().status == 404){
+                                } else if (response.body().status == 404) {
                                     Toast.makeText(ItemActivity.this, "Sorry, shop do not exist anymore", Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
-                                }else {
+                                } else {
                                     Toast.makeText(ItemActivity.this, "Sorry, your request was unsuccessful", Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
                                 }
@@ -384,7 +401,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
 
                             @Override
                             public void onFailure(Call<GeneralModel> call, Throwable t) {
-                                Log.e("TAG","responseError "+t.getMessage());
+                                Log.e("TAG", "responseError " + t.getMessage());
                             }
                         });
 
@@ -403,7 +420,7 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         List<ItemModel> newList = cartHandler.getListInCart();
         for (int i = 0; i < items.size(); i++) {
             for (int j = 0; j < newList.size(); j++)
-                if (items.get(i).itemId.compareTo(newList.get(j).itemId) == 0) {
+                if (items.get(i).item_id.compareTo(newList.get(j).item_id) == 0) {
                     items.set(i, newList.get(j));
                     itemAdapter.notifyItemChanged(i);
                     Toast.makeText(this, "LOL", Toast.LENGTH_SHORT).show();
@@ -417,14 +434,14 @@ public class ItemActivity extends AppCompatActivity implements View.OnClickListe
         double totalPrice = cartHandler.getTotalWithoutTax();
         cartTotal.setText("\u20B9" + String.valueOf(totalPrice));
         delivery.setText(rs + String.valueOf(DELIVERY_CHARGE));
-        app.setText(rs + String.valueOf((APP_CHARGE*totalPrice)/100));
-        grandTotal.setText(String.valueOf(totalPrice + DELIVERY_CHARGE + (APP_CHARGE*totalPrice)/100));
+        app.setText(rs + String.valueOf((APP_CHARGE * totalPrice) / 100));
+        grandTotal.setText(String.valueOf(totalPrice + DELIVERY_CHARGE + (APP_CHARGE * totalPrice) / 100));
     }
 
     @Override
     public void notifyItemAdapter(String id) {
         for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).itemId.compareTo(id) == 0) {
+            if (items.get(i).item_id.compareTo(id) == 0) {
                 items.get(i).item_add_qty = 0;
                 itemAdapter.notifyItemChanged(i);
                 return;

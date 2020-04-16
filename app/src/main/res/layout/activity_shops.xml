@@ -4,23 +4,32 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@mipmap/ic_background"
     >
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
         android:id="@+id/main_app_bar"
-        android:background="@color/white"
+        android:background="@color/colorPrimary"
         >
         <include layout="@layout/include_toolbar" />
 
     </com.google.android.material.appbar.AppBarLayout>
-    <ExpandableListView
-        android:id="@+id/expandableListView"
-        android:layout_height="match_parent"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="0.5dp" />
+        android:layout_height="match_parent"
+        android:id="@+id/no_shops"
+        android:visibility="gone"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/no_shops_available"
+            android:textSize="18sp"
+
+            />
+    </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

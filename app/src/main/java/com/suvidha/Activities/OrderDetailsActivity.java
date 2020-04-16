@@ -18,8 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.suvidha.Adapters.CartAdapter;
+import com.suvidha.Models.AcceptModel;
 import com.suvidha.Models.CartModel;
+import com.suvidha.Models.GeneralModel;
 import com.suvidha.Models.ItemModel;
 import com.suvidha.Models.OrderIdModel;
 import com.suvidha.Models.OrderRequestModel;
@@ -34,9 +37,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -71,7 +77,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
     CartModel data;
     ArrayList<ItemModel> orderData=new ArrayList<>();
     private Toolbar toolbar;
-    private boolean orderPlaced = true;
+    private int orderPlaced = 1;
     private LinearLayout deliveryLayout;
     private ApiInterface apiInterface;
     private String oid;
@@ -80,7 +86,9 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
     private TextView shop_address;
     private TextView delivery_address;
     private TextView orderid;
+    private AppBarLayout mAppBar;
     private ImageView phone,mail;
+    private TextView del_time;
 
 
     @Override
@@ -90,7 +98,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         init();
         manageToolbar();
         intialiseRetrofit();
-        data = getIntent().getParcelableExtra("data");
+//        data = getIntent().getParcelableExtra("data");
         oid = getIntent().getStringExtra("oid");
         phone.setOnClickListener(this);
         mail.setOnClickListener(this);
@@ -102,6 +110,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
     }
     private void init() {
         toolbar = findViewById(R.id.default_toolbar);
+        mAppBar = findViewById(R.id.main_app_bar);
         nestedScrollView = findViewById(R.id.bottom_sheet_layout);
         mBottomSheetBehaviour = BottomSheetBehavior.from(nestedScrollView);
         mBottomSheetBehaviour.setPeekHeight(0);
@@ -123,8 +132,9 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         swipeRefreshLayout = findViewById(R.id.swipe_ref);
         phone = findViewById(R.id.order_shop_contact);
         mail = findViewById(R.id.dev_mail);
-
-
+        del_time = findViewById(R.id.order_deliv_time);
+        findViewById(R.id.accept).setOnClickListener(this);
+        findViewById(R.id.reject).setOnClickListener(this);
     }
 
 
@@ -132,7 +142,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         apiInterface = APIClient.getApiClient().create(ApiInterface.class);
     }
     private void getOrderDetails() {
-        Dialog dialog = createProgressDialog(this,"Please wait");
+        Dialog dialog = createProgressDialog(this,getResources().getString(R.string.please_wait));
         dialog.show();
         OrderIdModel orderIdModel = new OrderIdModel(oid);
         Call<OrderRequestModel> orderRequestModelCall = apiInterface.getOrder(getAccessToken(this),orderIdModel);
@@ -174,6 +184,9 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         shop_name.setText(data.shop_details.name);
         shop_address.setText(data.shop_details.address);
         delivery_address.setText(data.address);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+        del_time.setText(dateFormat.format(new Date()));
         orderid.setText(oid);
         if(data.status == -1){
             orderStatus.setTextColor(Color.RED);
@@ -182,6 +195,12 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         }
         else{
             orderStatus.setTextColor(getResources().getColor(R.color.colorPrimary));
+        }
+        if(data.status == 1){
+            // open cart
+            //hide main app bar
+            mAppBar.setVisibility(View.INVISIBLE);
+            mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
         orderStatus.setText(statusHashMap.get(data.status));
 
@@ -250,6 +269,51 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
                 intent.putExtra(Intent.EXTRA_TEXT, "OrderId : "+orderid);
                 startActivity(intent);
                 break;
+            }
+            case R.id.accept:{
+                AcceptModel model = new AcceptModel(oid,data.sid,2);
+                Call<GeneralModel> call = apiInterface.update_order(getAccessToken(this),model);
+                call.enqueue(new Callback<GeneralModel>() {
+                    @Override
+                    public void onResponse(Call<GeneralModel> call, Response<GeneralModel> response) {
+                        Log.e("LOL",response.body().id);
+                        if(response.body().status == 201){
+                            mAppBar.setVisibility(View.VISIBLE);
+                            getOrderDetails();
+                            mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                            Toast.makeText(OrderDetailsActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                        }else{
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<GeneralModel> call, Throwable t) {
+                        Toast.makeText(OrderDetailsActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            case R.id.reject:{
+                AcceptModel model = new AcceptModel(oid,data.sid,-1);
+                Call<GeneralModel> call = apiInterface.update_order(getAccessToken(this),model);
+                call.enqueue(new Callback<GeneralModel>() {
+                    @Override
+                    public void onResponse(Call<GeneralModel> call, Response<GeneralModel> response) {
+                        if(response.body().status == 201){
+                            Toast.makeText(OrderDetailsActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                            mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                            mAppBar.setVisibility(View.VISIBLE);
+                            getOrderDetails();
+                        }else{
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<GeneralModel> call, Throwable t) {
+                        Toast.makeText(OrderDetailsActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }
 

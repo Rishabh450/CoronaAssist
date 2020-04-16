@@ -77,11 +77,13 @@ import static com.suvidha.Utilities.Utils.APP_CHARGE;
 import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
 import static com.suvidha.Utilities.Utils.PLAYSTORE_LINK;
 import static com.suvidha.Utilities.Utils.allOrders;
+import static com.suvidha.Utilities.Utils.city;
 import static com.suvidha.Utilities.Utils.clearLoginSession;
 import static com.suvidha.Utilities.Utils.createAlertDialog;
 import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.district;
 import static com.suvidha.Utilities.Utils.getAccessToken;
+import static com.suvidha.Utilities.Utils.is_delivery;
 import static com.suvidha.Utilities.Utils.is_ngo;
 import static com.suvidha.Utilities.Utils.is_pass;
 import static com.suvidha.Utilities.Utils.is_quarantine;
@@ -168,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (dialog == null) {
             dialog = createProgressDialog(this, getResources().getString(R.string.please_wait));
         }
+        dialog.setCancelable(false);
         progressBar = dialog.findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.VISIBLE);
         ImageView staticProgress = dialog.findViewById(R.id.static_progress);
@@ -181,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 try {
                     if (response.body().status == 200) {
-                        Log.e("LOL","LOL"+response.body().id.support.state);
+//                        Log.e("LOL","LOL"+response.body().id.support.state);
                         dialog.dismiss();
                         try {
                             special_q_list.clear();
@@ -190,13 +193,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }catch (Exception e){
                             e.printStackTrace();
                         }
+                        try {
+                           city.clear();
+                           city.addAll(response.body().id.city);
 
+                        }catch (Exception e){
+
+                        }
                         is_quarantined = response.body().id.is_quarantined;
                         SharedPrefManager.getInstance(MainActivity.this).put(SharedPrefManager.Key.IS_QUARANTINE,is_quarantined);
                         is_ngo = response.body().id.support.is_ngo;
                         is_pass = response.body().id.support.is_pass;
                         is_shopper = response.body().id.support.is_shopper;
                         is_quarantine = response.body().id.support.is_quarantine;
+                        is_delivery = response.body().id.is_delivery;
                         district = response.body().id.support.district;
 //
                         state = response.body().id.support.state;

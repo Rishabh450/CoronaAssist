@@ -5,15 +5,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:elevation="5dp"
     android:layout_margin="@dimen/border_margin"
+    android:background="@color/colorPrimary"
     app:cardCornerRadius="5dp">
     <LinearLayout
         android:orientation="horizontal"
+        android:background="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/ic_launcher_background"
+            android:src="@mipmap/ic_groc"
             android:id="@+id/shop_img"
             />
         <LinearLayout
@@ -27,7 +29,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/primary_text_color"
+                android:textColor="@color/secondary_text_color"
                 android:textSize="18sp"
                 android:id="@+id/shop_name"
                 android:text="Jain Kirana"
@@ -36,7 +38,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/primary_text_color"
+                android:textColor="@color/secondary_text_color"
                 android:textSize="16sp"
                 android:text="Address"
                 android:id="@+id/shop_addr"
