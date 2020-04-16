@@ -68,7 +68,10 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".Receiver.AlarmReceiver" />
+        <receiver android:name=".Receiver.AlarmReceiver"
+            android:exported="true"/>
+        <receiver android:name=".Receiver.MediaReceiver"
+            android:exported="true"/>
         <service
             android:name=".Utilities.LiveLocationService"
             android:enabled="true"

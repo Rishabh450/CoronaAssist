@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Base64;
@@ -419,7 +420,7 @@ public class QuarantineActivity extends AppCompatActivity  {
                     pFrame.setVisibility(View.GONE);
                     getReports();
                     Dialog alertDialog = createAlertDialog(QuarantineActivity.this,getResources().getString(R.string.successful),getResources().getString(R.string.submitter_successfully),"",getResources().getString(R.string.ok));
-                    setRemainder();
+                   // setRemainder();
                     alertDialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -601,7 +602,7 @@ public class QuarantineActivity extends AppCompatActivity  {
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
         long check= prefs.getLong("time", -1); //0 is the default value.
         if(check == -1) {
-            setRemainder();
+           // setRemainder();
         }
     }
 
@@ -616,15 +617,23 @@ public class QuarantineActivity extends AppCompatActivity  {
         sendBroadcast(intent);
     }
     public void setRemainder(){
-
+        AlarmManager alarmManager=(AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent intent = new Intent(QuarantineActivity.this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(QuarantineActivity.this, 0, intent, 0);
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime(),
+                1*60*1000,
+                pendingIntent);
+/*
         Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
         intent.putExtra("SET","RUN");
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 getBaseContext(), 1, intent, 0);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+MINUTES*60*1000,
                 pendingIntent);
-        Log.d("ak47", "setRemainder: ");
+        Log.d("ak47", "setRemainder: ");*/
 //        // Set notificationId & text.
 //        Intent intent = new Intent(QuarantineActivity.this, AlarmReceiver.class);
 //        intent.putExtra("notificationId", 1);

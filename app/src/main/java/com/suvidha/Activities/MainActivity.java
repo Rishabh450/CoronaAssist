@@ -3,7 +3,9 @@ package com.suvidha.Activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -15,6 +17,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -53,6 +56,7 @@ import com.suvidha.Fragments.HomeFragment;
 import com.suvidha.Models.EssentialsRequestModel;
 import com.suvidha.Models.GetOrdersModel;
 import com.suvidha.R;
+import com.suvidha.Receiver.AlarmReceiver;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.LiveLocationService;
@@ -344,7 +348,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return true;
     }
+    public void setRemainder(){
+        AlarmManager alarmManager=(AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime(),
+                10*60*1000,
+                pendingIntent);
+/*
+        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
+        intent.putExtra("SET","RUN");
 
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                getBaseContext(), 1, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+MINUTES*60*1000,
+                pendingIntent);
+        Log.d("ak47", "setRemainder: ");*/
+//        // Set notificationId & text.
+//        Intent intent = new Intent(QuarantineActivity.this, AlarmReceiver.class);
+//        intent.putExtra("notificationId", 1);
+//
+//        // getBroadcast(context, requestCode, intent, flags)
+//        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
+//                intent, PendingIntent.FLAG_CANCEL_CURRENT);
+//
+//        AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
+//        long alarmStartTime=System.currentTimeMillis()+1000*10;
+//        Toast.makeText(this,alarmStartTime+" ",Toast.LENGTH_LONG).show();
+//        Log.d("ak47", alarmStartTime+"setRemainder: "+System.currentTimeMillis());
+//        alarm.set(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmIntent);
+    }
     private void requestCallPermission() {
         ActivityCompat.requestPermissions(
                 this,
@@ -473,6 +508,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity_menu, menu);
+
         return true;
     }
 
