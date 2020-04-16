@@ -131,6 +131,47 @@ public class NgoActivity extends AppCompatActivity {
                                         list.add(ngo);
 
                                     }
+                                    else if(date1.compareTo(date2)==0)
+                                    {
+                                        Log.d("timeequal","hua");
+                                        try {
+                                            String string1 = ngo.getDatetime().substring(ngo.getDatetime().indexOf(' ')+1);
+                                            Date time1 = new SimpleDateFormat("HH:mm").parse(string1);
+                                            Calendar calendar1 = Calendar.getInstance();
+                                            calendar1.setTime(time1);
+                                            calendar1.add(Calendar.DATE, 1);
+
+
+
+                                            String currentDateAndTime = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date());
+                                            Log.d("current date",currentDateAndTime);
+
+                                            String someRandomTime =currentDateAndTime.substring(currentDateAndTime.indexOf(' ')+1);
+                                            Date d = new SimpleDateFormat("HH:mm").parse(someRandomTime);
+                                            Calendar calendar3 = Calendar.getInstance();
+                                            calendar3.setTime(d);
+                                            calendar3.add(Calendar.DATE, 1);
+
+                                            Date x = calendar3.getTime();
+                                            if (x.before(calendar1.getTime()) ) {
+                                                //checkes whether the current time is between 14:49:00 and 20:11:13.
+                                                list.add(ngo);
+
+
+
+                                            }
+                                            else
+                                            {
+
+                                                Log.d("timeequal","false");
+                                            }
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                            Log.d("timeequal", String.valueOf(e));
+                                        }
+
+                                    }
+
 
                                 }catch (ParseException e1){
                                     e1.printStackTrace();
