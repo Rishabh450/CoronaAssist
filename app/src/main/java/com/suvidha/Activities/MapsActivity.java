@@ -106,6 +106,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setBuildingsEnabled(true);
 
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        lastKnown = getLastKnownLocation();
+
+        mMap.clear();
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        LatLng sydney = new LatLng(lastKnown.getLatitude(), lastKnown.getLongitude());
+
+        // Zoom in the Google Map
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 5));
         Log.d("readyyy", "yes");
 
         // getLats();
