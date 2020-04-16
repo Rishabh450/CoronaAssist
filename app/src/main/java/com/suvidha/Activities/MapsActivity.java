@@ -110,10 +110,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.clear();
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        LatLng sydney = new LatLng(lastKnown.getLatitude(), lastKnown.getLongitude());
+        LatLng syd = new LatLng(lastKnown.getLatitude(), lastKnown.getLongitude());
 
         // Zoom in the Google Map
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 5));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(syd, 5));
         Log.d("readyyy", "yes");
 
         // getLats();
