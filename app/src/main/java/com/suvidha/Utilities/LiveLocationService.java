@@ -260,14 +260,14 @@ public class LiveLocationService extends Service {
         // This will be called when your Service is created for the first time
         // Just do any operations you need in this method.
         try {
-            String string1 = "21:00:00";
+            String string1 = "08:00:00";
             Date time1 = new SimpleDateFormat("HH:mm:ss").parse(string1);
             Calendar calendar1 = Calendar.getInstance();
             calendar1.setTime(time1);
             calendar1.add(Calendar.DATE, 1);
 
 
-            String string2 = "08:00:00";
+            String string2 = "21:00:00";
             Date time2 = new SimpleDateFormat("HH:mm:ss").parse(string2);
             Calendar calendar2 = Calendar.getInstance();
             calendar2.setTime(time2);
@@ -282,14 +282,18 @@ public class LiveLocationService extends Service {
             calendar3.add(Calendar.DATE, 1);
 
             Date x = calendar3.getTime();
+            Log.d("limits",x.after(calendar1.getTime())+" "+someRandomTime+" "+string1);
+            Log.d("limits",x.after(calendar2.getTime())+" "+someRandomTime+" "+string2);
             if (x.after(calendar1.getTime()) && x.before(calendar2.getTime())) {
                 //checkes whether the current time is between 14:49:00 and 20:11:13.
                 Log.d("cheker","true");
                 setRemainder();
 
+
             }
             else
             {
+
 
                 Log.d("cheker","false");
             }
