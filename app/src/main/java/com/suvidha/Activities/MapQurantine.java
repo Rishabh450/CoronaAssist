@@ -3,6 +3,7 @@ package com.suvidha.Activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -85,6 +86,7 @@ public class MapQurantine extends AppCompatActivity implements OnMapReadyCallbac
     Location lastKnown;
     ImageView emergency;
     ApiInterface apiInterface;
+    private static final int CALL_PHONE_CODE = 7;
     List<SQDetail> data=new ArrayList<>();
     String vehicle = "rishabhKaGaadi";
     int flag = 0;
@@ -361,6 +363,15 @@ public class MapQurantine extends AppCompatActivity implements OnMapReadyCallbac
         }
         return bestLocation;
     }
+    public boolean checkCallPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CALL_PHONE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
     public Bitmap drawableToBitmap (Drawable drawable) {
         Bitmap bitmap = null;
 
@@ -401,19 +412,33 @@ public class MapQurantine extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
 
-
                 dialog.dismiss();
             }
         });
         dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                if(checkCallPermission()) {
+
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + ngo.substring(6, 16)));
+                    startActivity(intent);
+
+                    dialog.dismiss();
+                }
+                else
+                    requestCallPermission();
             }
         });
 
 
         return true;
+    }
+    private void requestCallPermission() {
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.CALL_PHONE},
+                CALL_PHONE_CODE
+        );
     }
 
     private void getCurrentLocation() {
