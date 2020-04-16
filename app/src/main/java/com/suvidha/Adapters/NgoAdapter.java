@@ -37,7 +37,7 @@ public class NgoAdapter extends RecyclerView.Adapter<NgoAdapter.MyHolder> {
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(ctx).inflate(R.layout.item_ngo,parent,false);
+        View v = LayoutInflater.from(ctx).inflate(R.layout.single_ngo_event,parent,false);
         return new MyHolder(v);
     }
 
@@ -45,9 +45,9 @@ public class NgoAdapter extends RecyclerView.Adapter<NgoAdapter.MyHolder> {
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
 
         NgoActivity data = list.get(position);
-       holder.ngo_address.setText("Address:"+data.getAddress());
-       holder.ngo_city.setText("City:"+data.getCity());
-       String date="At "+data.getDatetime().substring(data.getDatetime().indexOf(' ')+1)+"\n"+data.getDatetime().substring(0,data.getDatetime().indexOf(' '));
+       holder.ngo_address.setText(data.getAddress());
+       holder.ngo_city.setText(data.getCity());
+       String date=data.getDatetime().substring(data.getDatetime().indexOf(' ')+1)+" "+data.getDatetime().substring(0,data.getDatetime().indexOf(' '));
        //String date=data.getDatetime();
         //DateFormat formatter= new SimpleDateFormat("yyyy-MM-dd hh:mm");
        // formatter.setTimeZone(TimeZone.getTimeZone("Europe/London"));
@@ -58,7 +58,7 @@ public class NgoAdapter extends RecyclerView.Adapter<NgoAdapter.MyHolder> {
        // Log.d("timewa",formatter.format(date));
         //System.out.println(formatter.format(date));
         holder.ngo_time.setText(date);
-        holder.ngo_dec.setText("Description:"+data.getDescription());
+        holder.ngo_dec.setText(data.getDescription());
     }
 
     @Override
