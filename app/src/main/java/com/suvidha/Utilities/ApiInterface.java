@@ -22,6 +22,7 @@ import com.suvidha.Models.QuarantineModel;
 import com.suvidha.Models.QuarantineNearbyModel;
 import com.suvidha.Models.RegistrationResult;
 import com.suvidha.Models.ReportModel;
+import com.suvidha.Models.SQList;
 import com.suvidha.Models.ShopRequestModel;
 import com.suvidha.Models.SidModel;
 import com.suvidha.Models.SinglePassResult;
@@ -65,6 +66,10 @@ public interface ApiInterface {
     @Headers("Content-Type: application/json")
     @GET("/api/get_shops")
     Call<ShopRequestModel> getAllShops(@Header("x-access-tokens") String token);
+
+    @Headers("Content-Type: application/json")
+    @GET("/api/get_sq_list")
+    Call<SQList> getsqlist(@Header("x-access-tokens") String token);
 
     @Headers("Content-Type: application/json")
     @GET("/api/get_ngo_list")

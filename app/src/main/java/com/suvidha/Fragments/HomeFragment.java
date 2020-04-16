@@ -49,6 +49,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.suvidha.Activities.LoginActivity;
 import com.suvidha.Activities.MainActivity;
+import com.suvidha.Activities.MapQurantine;
 import com.suvidha.Activities.MapsActivity;
 import com.suvidha.Activities.MyPassActivity;
 import com.suvidha.Activities.QuarantineActivity;
@@ -458,6 +459,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
                 break;
             case 3: {
                 intent = new Intent(getContext(), MapsActivity.class);
+                startActivity(intent);
+                break;
+            }
+            case 4: {
+                intent = new Intent(getContext(), MapQurantine.class);
                 startActivity(intent);
                 break;
             }

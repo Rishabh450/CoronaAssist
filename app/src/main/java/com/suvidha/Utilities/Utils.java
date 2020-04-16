@@ -68,8 +68,11 @@ public class Utils {
             new HomeIconModel(0,R.mipmap.ic_quarantine,R.string.Quarantine),
             new HomeIconModel(1,R.drawable.ic_pass,R.string.request_passes),
             new HomeIconModel(2,R.drawable.ic_shop,R.string.shop),
-            new HomeIconModel(3,R.mipmap.ic_food_supply,R.string.food_supply_center)
-    ));
+
+            new HomeIconModel(3,R.mipmap.ic_food_supply,R.string.food_supply_center),
+            new HomeIconModel(4,R.mipmap.ic_quarantine,R.string.qurantinec)
+
+            ));
 
     public static Integer currentType;
     public static int local_zone_name = 0;

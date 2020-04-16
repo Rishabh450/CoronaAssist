@@ -18,6 +18,8 @@ public class MediaReceiver extends BroadcastReceiver {
         Log.d("band hua", "Loop running");
         MusicControl.getInstance(context).stopMusic();
         Intent intent1=new Intent(context, LoginActivity.class);
+        intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         context.startActivity(intent1);
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         notificationManager. cancel(2);

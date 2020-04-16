@@ -5,7 +5,13 @@
     <string name="bread">" रोटी"</string>
     <string name="gas">गैस</string>
     <string name="Quarantine">कोरांटीन</string>
+    <string name="Call">कॉल
+</string>
+    <string name="Details">विवरण
+</string>
     <string name="backPress">एप्लिकेशन को बंद करने के लिए फिर से दबाएं</string>
+    <string name="qurantinec">संगरोध केंद्र
+</string>
     <string name="request_passes">अनुरोध निवेदन</string>
     <string name="groceries_and_essentials">किराने का सामान और अनिवार्य है</string>
     <string name="milk_and_dairy">दूध और डेयरी</string>
