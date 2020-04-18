@@ -8,11 +8,11 @@ public class ShopModel {
     public String email;
     public String address;
     public String phone;
-    public int type;
+    public String type;
     public ArrayList<ItemModel> items;
     public ShopModel(){}
 
-    public ShopModel(String id, String name, String email, String address, String phone, int type, ArrayList<ItemModel> items) {
+    public ShopModel(String id, String name, String email, String address, String phone, String type, ArrayList<ItemModel> items) {
         this._id = id;
         this.name = name;
         this.email = email;

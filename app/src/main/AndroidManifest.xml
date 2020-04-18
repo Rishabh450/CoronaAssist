@@ -12,7 +12,8 @@
         android:name=".Utilities.SurakshaApplication"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.MapQurantine"></activity>
+        <activity android:name=".Activities.PharmaAddCart"></activity>
+        <activity android:name=".Activities.MapQurantine" />
         <activity android:name=".Activities.NgoActivity" />
         <activity android:name=".Activities.LoginActivity">
             <intent-filter>

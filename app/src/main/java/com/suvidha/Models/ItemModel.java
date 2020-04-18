@@ -11,6 +11,7 @@ public class ItemModel implements Parcelable {
     public int hide;
     public String category;
     public String subcategory;
+    public int order_no;
 
 
     protected ItemModel(Parcel in) {
@@ -21,6 +22,12 @@ public class ItemModel implements Parcelable {
         hide = in.readInt();
         category = in.readString();
         subcategory = in.readString();
+    }
+
+    public ItemModel(int order_no, String item_name, int item_add_qty) {
+        this.order_no = order_no;
+        this.item_name = item_name;
+        this.item_add_qty = item_add_qty;
     }
 
     @Override

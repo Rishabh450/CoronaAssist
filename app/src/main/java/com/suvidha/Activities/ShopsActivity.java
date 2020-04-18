@@ -1,5 +1,6 @@
 package com.suvidha.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -16,8 +17,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 import com.suvidha.Adapters.CustomExpandableListAdapter;
 import com.suvidha.Adapters.ShopListAdapter;
+import com.suvidha.Fragments.Grocery;
+import com.suvidha.Fragments.Pharma;
 import com.suvidha.Models.GetShopsModel;
 import com.suvidha.Models.ShopModel;
 import com.suvidha.Models.ShopRequestModel;
@@ -35,6 +40,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
@@ -47,7 +54,7 @@ import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.local_zone_name;
 import static com.suvidha.Utilities.Utils.order_address;
 
-public class ShopsActivity extends AppCompatActivity {
+public class ShopsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private static final String TAG = "ShopsActivity";
     private RecyclerView rView;
     private Toolbar toolbar;
@@ -56,6 +63,7 @@ public class ShopsActivity extends AppCompatActivity {
     private String title;
     private List<ShopModel> data=new ArrayList<>();
     private RelativeLayout no_shops;
+    BottomNavigationView bott;
 
 
     @Override
@@ -63,44 +71,40 @@ public class ShopsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shops);
         init();
-        intialiseRetrofit();
-        getData();
         manageToolbar();
-        setuprec();
-    }
-
-
-    private void getData() {
-
-//        Log.e(TAG, "ACCESSTOKEN: "+getAccessToken(this));
-        Call<ShopRequestModel> listCallResult = apiInterface.getAllShops(getAccessToken(this));
-        listCallResult.enqueue(new Callback<ShopRequestModel>() {
+        bott.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onResponse(Call<ShopRequestModel> call, Response<ShopRequestModel> response) {
-//                if (response.body().id != null)
-//                    Log.e(TAG, "onResponse: " + response.body().id.get(0).name);
-                if(response.body().status !=302) {
-                    if (response.body().status == 200) {
-                        data.clear();
-                        data.addAll(response.body().id);
-                        Log.e("SHOP ID", "+" + data.get(0)._id);
-                        mAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(ShopsActivity.this, "No shops exists", Toast.LENGTH_SHORT).show();
-                    }
-                }else{
-                   signOut();
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                FragmentManager fragmentManager=getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+
+                switch (menuItem.getItemId()) {
+                    case R.id.grocery:
+
+                        //do somthing
+                        Grocery grocery=new Grocery();
+                        fragmentTransaction.replace(R.id.fragment_container,grocery);
+                        fragmentTransaction.commit();
+                        break;
+                    case R.id.medical:
+                        Pharma pharma=new Pharma();
+                        fragmentTransaction.replace(R.id.fragment_container,pharma);
+                        fragmentTransaction.commit();
+                        break;
+
                 }
-            }
-
-            @Override
-            public void onFailure(Call<ShopRequestModel> call, Throwable t) {
-                Log.e(TAG, "onResponseError" + t.getMessage());
-                no_shops.setVisibility(View.VISIBLE);
+                return true ;
             }
         });
     }
-    private void signOut() {
+
+
+
+
+
+
+
+/*    private void signOut() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -114,17 +118,20 @@ public class ShopsActivity extends AppCompatActivity {
 
             }
         });
-    }
+    }*/
     private void init() {
         toolbar = findViewById(R.id.default_toolbar);
-        rView = findViewById(R.id.groc_cat_rview);
-        no_shops = findViewById(R.id.no_shops);
+        bott=findViewById(R.id.bott);
+
         order_address = SharedPrefManager.getInstance(this).getString(SharedPrefManager.Key.USER_ADDRESS);
+        FragmentTransaction fragmentTransaction=getSupportFragmentManager().beginTransaction();
+
+        Grocery grocery=new Grocery();
+        fragmentTransaction.add(R.id.fragment_container,grocery);
+        fragmentTransaction.commit();
     }
 
-    private void intialiseRetrofit() {
-        apiInterface = APIClient.getApiClient().create(ApiInterface.class);
-    }
+
 
     void manageToolbar() {
         setSupportActionBar(toolbar);
@@ -132,11 +139,7 @@ public class ShopsActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(getResources().getString(R.string.shop));
     }
 
-    void setuprec() {
-        rView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new ShopListAdapter(this, data);
-        rView.setAdapter(mAdapter);
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -150,6 +153,8 @@ public class ShopsActivity extends AppCompatActivity {
     }
 
 
-
-
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        return false;
+    }
 }
