@@ -81,7 +81,7 @@ public class Grocery extends Fragment {
                         temp.addAll(response.body().id);
                         for(int i=0;i<temp.size()-1;i++)
                         {
-                            if(temp.get(i).type==1)
+                            if(temp.get(i).type.equals("grocery"))
                                 data.add(temp.get(i));
                         }
 

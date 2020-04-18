@@ -12,10 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.PharmaAddCart"></activity>
+        <activity android:name=".Activities.LoginActivity"></activity>
         <activity android:name=".Activities.MapQurantine" />
         <activity android:name=".Activities.NgoActivity" />
-        <activity android:name=".Activities.LoginActivity">
+        <activity android:name=".Activities.PharmaAddCart">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

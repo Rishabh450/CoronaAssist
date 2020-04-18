@@ -84,7 +84,7 @@ public class Pharma extends Fragment {
                         temp.addAll(response.body().id);
                         for(int i=0;i<temp.size()-1;i++)
                         {
-                            if(temp.get(i).type==2)
+                            if(temp.get(i).type.equals("medicine"))
                                 data.add(temp.get(i));
                         }
 

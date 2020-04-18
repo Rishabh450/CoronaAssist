@@ -52,6 +52,7 @@ public class Utils {
     public static String state;
     public static int is_ngo = 0;
     public static int is_shopper = 0;
+    public static int med_order_no = 0;
     public static int is_quarantine = 0;
     public static List<String> special_q_list = new ArrayList<>();
     public static String shop_id;
