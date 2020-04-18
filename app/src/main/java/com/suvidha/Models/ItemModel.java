@@ -24,6 +24,14 @@ public class ItemModel implements Parcelable {
         subcategory = in.readString();
     }
 
+    public ItemModel(String item_id, String item_name, int item_add_qty,int hide,double itemPrice) {
+        this.item_id = item_id;
+        this.item_name = item_name;
+        this.item_add_qty = item_add_qty;
+        this.hide = hide;
+        this.itemPrice = itemPrice;
+    }
+
     public ItemModel(int order_no, String item_name, int item_add_qty) {
         this.order_no = order_no;
         this.item_name = item_name;

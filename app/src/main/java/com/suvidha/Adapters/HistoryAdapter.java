@@ -13,14 +13,11 @@ import com.suvidha.Activities.OrderDetailsActivity;
 import com.suvidha.Models.CartModel;
 import com.suvidha.R;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.suvidha.Utilities.Utils.orderStatus;
 import static com.suvidha.Utilities.Utils.statusHashMap;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyHolder> {
@@ -42,7 +39,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyHolder
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
 
         CartModel data = list.get(position);
-        holder.shop_name.setText(data.shop_details.name);
+        holder.shop_name.setText(data.shop_details.shop_name);
         holder.shop_addr.setText(data.shop_details.address);
 
         holder.time.setText(data.time);

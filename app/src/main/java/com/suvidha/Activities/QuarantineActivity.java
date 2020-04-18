@@ -47,7 +47,6 @@ import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.SharedPrefManager;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -408,11 +407,9 @@ public class QuarantineActivity extends AppCompatActivity  {
             pFrame.setVisibility(View.VISIBLE);
 //            Dialog dialog = createProgressDialog(getApplicationContext(),getResources().getString(R.string.please_wait));
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-            final int lnth=bitmap.getByteCount();
-            ByteBuffer dst= ByteBuffer.allocate(lnth);
-            bitmap.copyPixelsToBuffer( dst);
-            byte[] byteArray = dst.array();
-
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream .toByteArray();
             String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
             ReportModel model = new ReportModel(encoded,(float) currentLocation.getLatitude(),(float)currentLocation.getLongitude(),"hvjhvjh",location_error);
             Call<GeneralModel> call = apiInterface.send_report(getAccessToken(getApplicationContext()),model);
@@ -560,9 +557,7 @@ public class QuarantineActivity extends AppCompatActivity  {
                 Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
 
             } else {
-
                 Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
-
             }
         }else if (requestCode == LOCATION_PERMISSION_CODE){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

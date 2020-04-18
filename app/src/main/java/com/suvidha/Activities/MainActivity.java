@@ -128,10 +128,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intialiseRetrofit();
         getEssentials();
         setListeners();
-
         Log.d(TAG, "checking" + is_quarantined);
     }
-
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);

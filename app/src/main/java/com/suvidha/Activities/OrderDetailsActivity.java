@@ -2,13 +2,9 @@ package com.suvidha.Activities;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,18 +27,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -55,8 +41,6 @@ import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.APP_CHARGE;
 import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
-import static com.suvidha.Utilities.Utils.PLAYSTORE_LINK;
-import static com.suvidha.Utilities.Utils.createAlertDialog;
 import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.email;
 import static com.suvidha.Utilities.Utils.getAccessToken;
@@ -189,7 +173,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void setValues(CartModel data) {
-        shop_name.setText(data.shop_details.name);
+        shop_name.setText(data.shop_details.shop_name);
         shop_address.setText(data.shop_details.address);
         delivery_address.setText(data.address);
         time.setText(data.time);
