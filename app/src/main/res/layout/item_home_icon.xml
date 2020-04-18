@@ -1,10 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="80dp"
-    android:layout_height="100dp"
+    android:layout_height="150dp"
     android:gravity="center_horizontal"
     android:layout_margin="5dp"
     android:orientation="vertical"
-    android:weightSum="10"
+    android:weightSum="14"
     >
 
     <ImageView
@@ -23,8 +23,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="5dp"
-        android:layout_weight="5"
-        android:text="sgddddddddddddddd"
-        android:textColor="@color/primary_text_color"
+        android:layout_weight="9"
+        android:text=""
+        android:textColor="@color/secondary_text_color"
          />
 </LinearLayout>

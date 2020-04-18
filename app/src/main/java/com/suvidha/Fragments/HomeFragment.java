@@ -118,9 +118,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     List<HomeIconModel> iconList = new ArrayList<>();
 
     Map<String,List<ZonesModel>> mCity = new HashMap<>();
-    Map<String,List<SubZoneModel>> mZone = new HashMap<>();
-    Map<String,List<SectorModel>> mSubzone = new HashMap<>();
-    Map<String,List<String>> mSector = new HashMap<>();
+    Map<Pair<String,String>,List<SubZoneModel>> mZone = new HashMap<>();
+    Map<Pair<Pair<String,String>,String>,List<SectorModel>> mSubzone = new HashMap<>();
+    Map<Pair<Pair<Pair<String,String>,String>,String>,List<String>> mSector = new HashMap<>();
     List<ZonesModel> zones;
     List<SubZoneModel> subzones;
     List<SectorModel> sectors;
@@ -490,14 +490,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         for(CityModel c: city){
             mCity.put(c.name,c.zone);
             for(ZonesModel z: c.zone){
-                mZone.put(z.name,z.subzone);
+                mZone.put(new Pair<>(c.name,z.name),z.subzone);
                 for(SubZoneModel sub:z.subzone){
-                    mSubzone.put(sub.name,sub.sector);
+                    mSubzone.put(new Pair<>(new Pair<>(c.name,z.name),sub.name),sub.sector);
                     for (SectorModel s: sub.sector)
-                        mSector.put(s.name,s.area);
+                        mSector.put(new Pair<>(new Pair<>(new Pair<>(c.name,z.name),sub.name),s.name),s.area);
                 }
             }
         }
+        Log.e("TAG",mCity.get("Jamshedpur").get(0).name);
+//        Log.e("LOL",mCity.get(0))
         //set spinner
         setCitySpinner();
         dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
@@ -558,6 +560,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
             }
         });
     }
+
     private void setCitySpinner() {
         final Object cities[] = mCity.keySet().toArray();
         Arrays.sort(cities);
@@ -570,6 +573,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 mSelectedCity = cities[i].toString();
+                zones = mCity.get(mSelectedCity);
                 updateZoneSpinner();
             }
 
@@ -591,10 +595,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         aa2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         zone_spinner.setAdapter(aa2);
         mSelectedZone = zone_spinner.getSelectedItem().toString();
+        subzones = mZone.get(new Pair<>(mSelectedCity,mSelectedZone));
+//        updateSubZoneSpinner();
         zone_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 mSelectedZone = zones.get(i).name;
+
                 Log.e("Register",mSelectedZone);
                 updateSubZoneSpinner();
             }
@@ -607,7 +614,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     }
 
     private void updateSubZoneSpinner() {
-        subzones = mZone.get(mSelectedZone);
+        subzones = mZone.get(new Pair<>(mSelectedCity,mSelectedZone));
         List<String> d = new ArrayList<>();
         for(SubZoneModel model:subzones)
         {
@@ -617,6 +624,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         aa2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         subzone_spinner.setAdapter(aa2);
         mSelectedSubzone = subzone_spinner.getSelectedItem().toString();
+        sectors = mSubzone.get(new Pair<>(new Pair(mSelectedCity,mSelectedZone),mSelectedSubzone));
+//        updateSectorSpinner();
         subzone_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -633,7 +642,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     }
 
     private void updateSectorSpinner() {
-        sectors = mSubzone.get(mSelectedSubzone);
+        sectors = mSubzone.get(new Pair<>(new Pair(mSelectedCity,mSelectedZone),mSelectedSubzone));
         List<String> d = new ArrayList<>();
         for(SectorModel model:sectors)
         {
@@ -643,6 +652,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
         aa2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sector_spinner.setAdapter(aa2);
         mSelectedSector = sector_spinner.getSelectedItem().toString();
+        areas = mSector.get(new Pair<>(new Pair(new Pair<>(mSelectedCity,mSelectedZone),mSelectedSubzone),mSelectedSector));
+//        updateAreaSpinner();
         sector_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -659,7 +670,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
     }
 
     private void updateAreaSpinner() {
-        areas = mSector.get(mSelectedSector);
+        areas = mSector.get(new Pair<>(new Pair(new Pair<>(mSelectedCity,mSelectedZone),mSelectedSubzone),mSelectedSector));
         List<String> d = new ArrayList<>();
         for(String model:areas)
         {
@@ -678,7 +689,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Main
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
     }

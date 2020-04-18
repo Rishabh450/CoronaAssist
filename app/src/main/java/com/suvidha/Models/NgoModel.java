@@ -1,7 +1,5 @@
 package com.suvidha.Models;
 
-import org.json.JSONArray;
-
 import java.util.List;
 
 public class NgoModel
@@ -9,9 +7,9 @@ public class NgoModel
 {
  public String name;
 public List<String> phone_number;
-public List<NgoActivity> activities;
+public List<NgoActivityModel> activities;
 
-    public NgoModel(String name, List<String> phone_number, List<NgoActivity> activities) {
+    public NgoModel(String name, List<String> phone_number, List<NgoActivityModel> activities) {
         this.name = name;
         this.phone_number = phone_number;
         this.activities = activities;
@@ -33,11 +31,11 @@ public List<NgoActivity> activities;
         this.phone_number = phone_number;
     }
 
-    public List<NgoActivity> getActivities() {
+    public List<NgoActivityModel> getActivities() {
         return activities;
     }
 
-    public void setActivities(List<NgoActivity> activities) {
+    public void setActivities(List<NgoActivityModel> activities) {
         this.activities = activities;
     }
 }

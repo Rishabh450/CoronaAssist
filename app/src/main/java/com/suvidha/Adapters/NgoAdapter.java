@@ -1,35 +1,23 @@
 package com.suvidha.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.suvidha.Activities.OrderDetailsActivity;
-import com.suvidha.Models.CartModel;
-import com.suvidha.Models.NgoActivity;
+import com.suvidha.Models.NgoActivityModel;
 import com.suvidha.R;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.suvidha.Utilities.Utils.orderStatus;
-import static com.suvidha.Utilities.Utils.statusHashMap;
-
 public class NgoAdapter extends RecyclerView.Adapter<NgoAdapter.MyHolder> {
     Context ctx;
-    List<NgoActivity> list;
-    public NgoAdapter(Context ctx, List<NgoActivity> list) {
+    List<NgoActivityModel> list;
+    public NgoAdapter(Context ctx, List<NgoActivityModel> list) {
         this.ctx = ctx;
         this.list = list;
     }
@@ -44,7 +32,7 @@ public class NgoAdapter extends RecyclerView.Adapter<NgoAdapter.MyHolder> {
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
 
-        NgoActivity data = list.get(position);
+        NgoActivityModel data = list.get(position);
        holder.ngo_address.setText(data.getAddress());
        holder.ngo_city.setText(data.getCity());
        String date=data.getDatetime().substring(data.getDatetime().indexOf(' ')+1)+" "+data.getDatetime().substring(0,data.getDatetime().indexOf(' '));
