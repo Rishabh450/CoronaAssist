@@ -3,16 +3,17 @@
     package="com.suvidha">
 
     <application
+        android:name=".ApplicationClass"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_suvidha_new_round"
         android:supportsRtl="true"
-        android:name=".ApplicationClass"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.MapQurantine"></activity>
+        <activity android:name=".Activities.PharmaAddCart"></activity>
+        <activity android:name=".Activities.MapQurantine" />
         <activity android:name=".Activities.NgoActivity" />
         <activity android:name=".Activities.LoginActivity">
             <intent-filter>
