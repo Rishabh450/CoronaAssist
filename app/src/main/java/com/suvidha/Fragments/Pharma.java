@@ -82,10 +82,13 @@ public class Pharma extends Fragment {
                         data.clear();
                         List<ShopModel> temp=new ArrayList<>();
                         temp.addAll(response.body().id);
-                        for(int i=0;i<temp.size()-1;i++)
+                        Log.d("categoryy",temp.size()+" ");
+                        for(int i=0;i<temp.size();i++)
                         {
-                            if(temp.get(i).type.equals("medicine"))
+                            if(temp.get(i).type.equals("Medicines"))
                                 data.add(temp.get(i));
+
+                            Log.d("categoryy",temp.size()+" "+temp.get(i).address);
                         }
 
                         mAdapter.notifyDataSetChanged();

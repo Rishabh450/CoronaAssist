@@ -36,6 +36,7 @@ import java.util.List;
 
 import static com.suvidha.Utilities.Utils.clearLoginSession;
 import static com.suvidha.Utilities.Utils.getAccessToken;
+import static com.suvidha.Utilities.Utils.is_delivery;
 import static com.suvidha.Utilities.Utils.order_address;
 
 
@@ -66,6 +67,7 @@ public class Grocery extends Fragment {
     }
 
     private void getData() {
+        Log.d("categoryy","get");
 
 //        Log.e(TAG, "ACCESSTOKEN: "+getAccessToken(this));
         Call<ShopRequestModel> listCallResult = apiInterface.getAllShops(getAccessToken(getContext()));
@@ -73,19 +75,27 @@ public class Grocery extends Fragment {
             @Override
             public void onResponse(Call<ShopRequestModel> call, Response<ShopRequestModel> response) {
 //                if (response.body().id != null)
+                Log.d("categoryy","ret");
 //                    Log.e(TAG, "onResponse: " + response.body().id.get(0).name);
                 if(response.body().status !=302) {
                     if (response.body().status == 200) {
                         data.clear();
+
+
                         List<ShopModel> temp=new ArrayList<>();
+
+
                         temp.addAll(response.body().id);
-                        for(int i=0;i<temp.size()-1;i++)
+                        Log.d("categoryy",temp.size()+" ");
+                        for(int i=0;i<temp.size();i++)
                         {
-                            if(temp.get(i).type.equals("grocery"))
+                            Log.d("categoryy",temp.size()+" "+temp.get(i).type);
+                            if(!temp.get(i).type.equals("Medicines"))
                                 data.add(temp.get(i));
+                            Log.d("categoryy",temp.size()+" "+temp.get(i).address);
                         }
 
-                        Log.e("SHOP ID", "+" + data.get(0)._id);
+                       // Log.e("SHOP ID", "+" + data.get(0)._id);
                         mAdapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(getContext(), "No shops exists", Toast.LENGTH_SHORT).show();

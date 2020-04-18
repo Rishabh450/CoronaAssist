@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.suvidha.Adapters.MedicineListAdapter;
 import com.suvidha.Adapters.ShopListAdapter;
 import com.suvidha.Models.MedicineItem;
 import com.suvidha.R;
@@ -47,7 +48,9 @@ public class PharmaAddCart extends AppCompatActivity {
     ImageView prescription;
      RecyclerView rView;
     FloatingActionButton additem;
+    String shop_name,shopid;
     List<MedicineItem> medicineItemList=new ArrayList<>();
+    MedicineListAdapter medicineListAdapter;
 
 
     @Override
@@ -55,6 +58,7 @@ public class PharmaAddCart extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pharma_add_cart);
         init();
+        setuprec();
         addPresc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,6 +134,11 @@ public class PharmaAddCart extends AppCompatActivity {
                            med_order_no++ ;
                            MedicineItem medicineItem=new MedicineItem(medName.getText().toString(),med_order_no,Integer.parseInt(quantity.getText().toString()));
                            medicineItemList.add(medicineItem);
+                           medicineListAdapter.notifyDataSetChanged();
+                           dialog.dismiss();
+                           Toast.makeText(PharmaAddCart.this,"Added",Toast.LENGTH_SHORT).show();
+
+
                        }
 
 
@@ -201,10 +210,13 @@ public class PharmaAddCart extends AppCompatActivity {
         addPresc=findViewById(R.id.addPresc);
         additem=findViewById(R.id.add_item);
         rView = findViewById(R.id.medicineList);
+        Intent intent=getIntent();
+        shop_name=intent.getStringExtra("shop_name");
+        shopid=intent.getStringExtra("shopid");
     }
     void setuprec() {
         rView.setLayoutManager(new LinearLayoutManager(PharmaAddCart.this));
-        /*mAdapter = new ShopListAdapter(PharmaAddCart.this, medicineItemList);
-        rView.setAdapter(mAdapter);*/
+        medicineListAdapter = new MedicineListAdapter(PharmaAddCart.this, medicineItemList);
+        rView.setAdapter(medicineListAdapter);
     }
 }

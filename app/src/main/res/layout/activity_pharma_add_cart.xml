@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".Activities.PharmaAddCart">
     <androidx.cardview.widget.CardView
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_marginTop="20dp"
         android:elevation="10dp"
         android:clickable="true"
@@ -21,6 +21,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:id="@+id/prescription"
+            android:layout_gravity="center"
             android:layout_height="match_parent">
 
         </ImageView>
