@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.suvidha.Activities.CategoriesActivity;
 import com.suvidha.Activities.ItemActivity;
+import com.suvidha.Models.ItemModel;
 import com.suvidha.Models.MedicineItem;
 import com.suvidha.Models.ShopModel;
 import com.suvidha.R;
@@ -23,9 +24,9 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MedicineListAdapter extends RecyclerView.Adapter<MedicineListAdapter.MyHolder> {
 
     public Context ctx;
-    public List<MedicineItem> list;
+    public List<ItemModel> list;
 
-    public MedicineListAdapter(Context ctx, List<MedicineItem> list) {
+    public MedicineListAdapter(Context ctx, List<ItemModel> list) {
         this.ctx = ctx;
         this.list = list;
     }
@@ -39,8 +40,8 @@ public class MedicineListAdapter extends RecyclerView.Adapter<MedicineListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
-        holder.med_name.setText(list.get(position).getMedicineName());
-        holder.quan.setText(String.valueOf(list.get(position).getQuantity()) );
+        holder.med_name.setText(list.get(position).item_name);
+        holder.quan.setText(String.valueOf(list.get(position).item_add_qty) );
 
 
     }
