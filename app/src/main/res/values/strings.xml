@@ -4,7 +4,7 @@
     <string name="warning_cart_not_empty" translatable="false">You\'ll lose the cart items if you go back. Do you want to continue?</string>
     <string name="view_order_summary" translatable="false">VIEW ORDER SUMMARY</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDCFrm1JWEHas4IE65x1GBcUzWgmXjHW8g</string>
-    <string name="qurantinec">Quarantine Centers</string>
+    <string name="qurantinec">Quarantine Centers Near Me</string>
     <string name="Call">Call</string>
     <string name="Details">Details</string>
 

@@ -77,13 +77,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     SupportMapFragment mapFragment;
     private FusedLocationProviderClient mFusedLocationClient;
     GoogleMap mMap;
-    Switch patrol;
-    Intent mServiceIntent;
     Location lastKnown;
-    ImageView emergency;
     ApiInterface apiInterface;
-    List<NgoModel> data;
-    String vehicle = "rishabhKaGaadi";
     int flag = 0;
     private static final int GPS_REQUEST_CODE = 10;
 
@@ -490,8 +485,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onMarkerClick(Marker marker) {
         String ngo= marker.getTitle();
         Log.d("ngonamer",ngo);
+
         Intent intent=new Intent(MapsActivity.this,NgoActivity.class);
         intent.putExtra("name",ngo);
+        intent.putExtra("lat",marker.getPosition().latitude);
+        intent.putExtra("lon",marker.getPosition().longitude);
         startActivity(intent);
 
 

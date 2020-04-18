@@ -1,6 +1,6 @@
 package com.suvidha.Models;
 
-public class NgoActivity {
+public class NgoActivityModel {
     public String datetime;
     public String address;
     public String city;
@@ -8,7 +8,7 @@ public class NgoActivity {
     public float lon;
     public String description;
 
-    public NgoActivity(String datetime, String address, String city, float lat, float lon,String description) {
+    public NgoActivityModel(String datetime, String address, String city, float lat, float lon, String description) {
         this.datetime = datetime;
         this.address = address;
         this.city = city;
