@@ -120,4 +120,7 @@ Features:<br /><br />
     <string name="no_shops_available">No Shops Available</string>
     <string name="regect">Reject</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/grocery"
+        android:icon="@drawable/ic_grocery"
+        android:title="Grocery" />
+
+    <item
+        android:id="@+id/medical"
+        android:icon="@drawable/ic_pharma"
+        android:title="Pharma" />
+
+</menu>
