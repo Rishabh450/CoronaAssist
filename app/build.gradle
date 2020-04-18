@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        maven { url 'https://plugins.gradle.org/m2/'}
+    }
+    dependencies {
+        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.4, 0.99.99]'
+    }
+}
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'io.fabric'
@@ -11,6 +20,11 @@ android {
         targetSdkVersion 28
         versionCode 3
         versionName "2.0"
+        manifestPlaceholders = [
+                onesignal_app_id: 'a447ef5f-5633-4c56-b2c3-43a9910c7fcf',
+                // Project number pulled from dashboard, local value is ignored.
+                onesignal_google_project_number: 'REMOTE'
+        ]
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -45,6 +59,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
+
+    //onesignal
+    implementation 'com.onesignal:OneSignal:[3.13.0, 3.99.99]'
 
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
     implementation 'com.google.firebase:firebase-auth:19.3.0'
