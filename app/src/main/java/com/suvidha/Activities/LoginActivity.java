@@ -41,14 +41,12 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.Task;
 import com.suvidha.Models.LoginResult;
 import com.suvidha.Models.UserModel;
-import com.suvidha.Models.ZonesModel;
 import com.suvidha.R;
+import com.suvidha.Utilities.SurakshaApplication;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.ServiceGenerator;
 import com.suvidha.Utilities.SharedPrefManager;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,7 +58,6 @@ import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.isLoggedIn;
 import static com.suvidha.Utilities.Utils.password;
 import static com.suvidha.Utilities.Utils.setLoginSession;
-import static com.suvidha.Utilities.Utils.zonesList;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -202,7 +199,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent);
                 finish();
             } else {
-                UserModel user = new UserModel(account.getDisplayName(), account.getEmail());
+                SurakshaApplication application = SurakshaApplication.getInstance();
+
+                UserModel user = new UserModel(account.getDisplayName(), account.getEmail(),application.getAnyID());
 
 //                postData(user);
                 ApiInterface loginService =

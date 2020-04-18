@@ -205,10 +205,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }catch (Exception e){
 
                         }
-                        if(response.body().id.version.compareTo(currentVersion) != 0){
-                            //open update dialog
-                            showUpdateDialog(response.body().id.link);
+                        try {
+                            if(response.body().id.version.compareTo(currentVersion) != 0){
+                                //open update dialog
+                                showUpdateDialog(response.body().id.link);
+                            }
+                        }catch (Exception e){
+                            Log.e("UPDATE DIALOG MSG",e.getMessage());
                         }
+
                         is_quarantined = response.body().id.is_quarantined;
                         SharedPrefManager.getInstance(MainActivity.this).put(SharedPrefManager.Key.IS_QUARANTINE,is_quarantined);
                         is_ngo = response.body().id.support.is_ngo;

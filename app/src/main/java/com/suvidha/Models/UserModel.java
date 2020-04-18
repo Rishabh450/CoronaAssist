@@ -16,11 +16,13 @@ public class UserModel implements Parcelable {
     public String district;
     public String token;
     public List<String> orders;
+    public String player_id;
     public List<String> passes;
 
-    public UserModel(String name, String email) {
+    public UserModel(String name, String email,String player_id) {
         this.name = name;
         this.email = email;
+        this.player_id = player_id;
     }
 
     public UserModel(Parcel in) {
