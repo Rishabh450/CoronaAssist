@@ -205,6 +205,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }catch (Exception e){
 
                         }
+                        if(response.body().id.version.compareTo(currentVersion) != 0){
+                            //open update dialog
+                            showUpdateDialog(response.body().id.link);
+                        }
                         is_quarantined = response.body().id.is_quarantined;
                         SharedPrefManager.getInstance(MainActivity.this).put(SharedPrefManager.Key.IS_QUARANTINE,is_quarantined);
                         is_ngo = response.body().id.support.is_ngo;
@@ -425,7 +429,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                Log.d("hello", "Current : " + currentVersion + " Latest : " + latestVersion);
                 if (currentVersion.compareTo(latestVersion) < 0) {
                     if (!isFinishing()) {
-                        showUpdateDialog();
+//                        showUpdateDialog();
                     }
                 }
             }
@@ -437,14 +441,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(this.getPackageName(), 0);
             currentVersion = pInfo.versionName;
-            new GetCurrentVersion().execute();
+
         } catch (PackageManager.NameNotFoundException e1) {
             Toast.makeText(this, e1.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void showUpdateDialog() {
-        Dialog dialog = createAlertDialog(this, "Update Required", "A newer version of apk is available at playstore. Please Update", "Cancel", "Update");
+    private void showUpdateDialog(String link) {
+        Dialog dialog = createAlertDialog(this, getResources().getString(R.string.update_required), getResources().getString(R.string.new_version_available), getResources().getString(R.string.CANCEL), getResources().getString(R.string.update));
         dialog.setCancelable(true);
         dialog.show();
         dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
@@ -456,7 +460,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=ojass20.nitjsr.in.ojass&hl=en")));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link)));
                 dialog.dismiss();
                 dialog.dismiss();
                 finish();
