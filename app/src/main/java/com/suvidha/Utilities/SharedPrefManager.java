@@ -3,6 +3,9 @@ package com.suvidha.Utilities;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 /*
  * A Singleton for managing your SharedPreferences.
  *
@@ -31,6 +34,7 @@ public class SharedPrefManager {
     private SharedPreferences.Editor mEditor;
     private boolean mBulkUpdate = false;
 
+
     /**
      * Class for keeping all the keys used for shared preferences in one place.
      */
@@ -58,6 +62,9 @@ public class SharedPrefManager {
         public static final String QUARENTINE_LAT_KEY = "quarantinelat";
         public static final String QUARENTINE_LON_KEY = "quarantinelon";
         public static final String USER_ADDRESS = "address";
+
+
+        public static final String LAST_REPORTED="";
     }
 
     private SharedPrefManager(Context context) {

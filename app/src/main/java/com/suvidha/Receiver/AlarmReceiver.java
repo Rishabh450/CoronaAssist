@@ -57,7 +57,7 @@ public class AlarmReceiver extends BroadcastReceiver { ;// Here
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("app_channel", "Demo Notification", NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel channel = new NotificationChannel("app_channel", "Demo Notification", NotificationManager.IMPORTANCE_HIGH);
             channel.setSound(null, null);
             NotificationManager mManager = (NotificationManager) context. getSystemService(NOTIFICATION_SERVICE);
             mManager.createNotificationChannel(channel);
@@ -75,6 +75,7 @@ public class AlarmReceiver extends BroadcastReceiver { ;// Here
         Notification.Builder notificationBuilder = new Notification.Builder(context)
                 .setContentTitle("Quarantine Alarm")
                 .setAutoCancel(true)
+                .setPriority(Notification.PRIORITY_MAX)
 
                 .addAction(R.drawable.ic_launcher_suvidha_foreground, "STOP",
                         snoozePendingIntent)
