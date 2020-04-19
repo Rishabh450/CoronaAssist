@@ -283,6 +283,17 @@ public class RegisterActivity extends AppCompatActivity {
         ArrayAdapter aa2 = new ArrayAdapter(this, android.R.layout.simple_spinner_item, mDistricts);
         aa2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_district.setAdapter(aa2);
+        spinner_district.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSelectedDistrict = spinner_district.getSelectedItem().toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
 

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -30,7 +31,11 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -65,16 +70,17 @@ import static com.suvidha.Utilities.Utils.order_address;
 public class PharmaAddCart extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 10;
     Uri prescriptionUri;
-    CardView feedcard,addPresc,placeorder;
+    CardView addPresc,placeorder;
     TextView itemcount;
     ImageView prescription;
      RecyclerView rView;
-    FloatingActionButton additem;
+
     String shop_name,shopid;
     ArrayList<ItemModel> medicineItemList=new ArrayList<>();
     MedicineListAdapter medicineListAdapter;
     ApiInterface apiInterface;
     Bitmap bitmap;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +88,7 @@ public class PharmaAddCart extends AppCompatActivity {
         setContentView(R.layout.activity_pharma_add_cart);
         intialiseRetrofit();
         init();
+        setToolbar();
         setuprec();
         addPresc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,95 +105,7 @@ public class PharmaAddCart extends AppCompatActivity {
 
             }
         });
-        additem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(PharmaAddCart.this);
-                final View view = LayoutInflater.from(PharmaAddCart.this).inflate(R.layout.addpharmaitem, null);
-                builder.setView(view);
-                final Dialog dialog = builder.create();
 
-                dialog.setContentView(R.layout.addpharmaitem);
-
-                dialog.show();
-                TextInputEditText medName=dialog.findViewById(R.id.medName);
-                TextView minus=dialog.findViewById(R.id.cart_minus_btn);
-                TextView plus=dialog.findViewById(R.id.cart_plus_btn);
-                TextView cancelButton = (TextView) dialog.findViewById(R.id.cancel);
-                TextView addButton=(TextView)dialog.findViewById(R.id.addItem);
-                TextView quantity=(TextView)dialog.findViewById(R.id.med_add_qty);
-                minus.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int quan =Integer.parseInt(quantity.getText().toString());
-                        if (quan>0)
-                        {
-                            String n= String.valueOf(quan-1);
-
-
-                            quantity.setText(n);
-                        }
-
-                    }
-                });
-                plus.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int quan =Integer.parseInt(quantity.getText().toString());
-                        int newQ=quan+1;
-                        String n= String.valueOf(newQ);
-                        quantity.setText(n);
-
-
-
-                    }
-                });
-
-                addButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                       if(medName.getText().toString().equals(""))
-                           Toast.makeText(PharmaAddCart.this,"Enter Medicine Name",Toast.LENGTH_SHORT).show();
-                       else if(quantity.getText().toString().equals("0"))
-                       {
-                           Toast.makeText(PharmaAddCart.this,"Quantity cannot be 0",Toast.LENGTH_SHORT).show();
-
-
-                       }
-                       else
-                       {
-                           med_order_no++ ;
-                           ItemModel itemModel =new ItemModel(String.valueOf(med_order_no),medName.getText().toString(),Integer.parseInt(quantity.getText().toString()),0,0);
-
-                           medicineItemList.add(itemModel);
-                           medicineListAdapter.notifyDataSetChanged();
-                           dialog.dismiss();
-                           Toast.makeText(PharmaAddCart.this,"Added",Toast.LENGTH_SHORT).show();
-                           placeorder.setVisibility(View.VISIBLE);
-                           itemcount.setText(String.valueOf( medicineItemList.size()));
-
-
-                       }
-
-
-
-                        }
-
-
-
-                });
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.cancel();
-                    }
-                });
-
-
-
-
-            }
-        });
 
         placeorder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -255,6 +174,114 @@ public class PharmaAddCart extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.pharma_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.add_item:{
+                AlertDialog.Builder builder = new AlertDialog.Builder(PharmaAddCart.this);
+                final View view = LayoutInflater.from(PharmaAddCart.this).inflate(R.layout.addpharmaitem, null);
+                builder.setView(view);
+                final Dialog dialog = builder.create();
+
+                dialog.setContentView(R.layout.addpharmaitem);
+
+                dialog.show();
+                TextInputEditText medName=dialog.findViewById(R.id.medName);
+                TextView minus=dialog.findViewById(R.id.cart_minus_btn);
+                TextView plus=dialog.findViewById(R.id.cart_plus_btn);
+                TextView cancelButton = (TextView) dialog.findViewById(R.id.cancel);
+                TextView addButton=(TextView)dialog.findViewById(R.id.addItem);
+                TextView quantity=(TextView)dialog.findViewById(R.id.med_add_qty);
+                minus.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int quan =Integer.parseInt(quantity.getText().toString());
+                        if (quan>0)
+                        {
+                            String n= String.valueOf(quan-1);
+
+
+                            quantity.setText(n);
+                        }
+
+                    }
+                });
+                plus.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int quan =Integer.parseInt(quantity.getText().toString());
+                        int newQ=quan+1;
+                        String n= String.valueOf(newQ);
+                        quantity.setText(n);
+
+
+
+                    }
+                });
+
+                addButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(medName.getText().toString().equals(""))
+                            Toast.makeText(PharmaAddCart.this,"Enter Medicine Name",Toast.LENGTH_SHORT).show();
+                        else if(quantity.getText().toString().equals("0"))
+                        {
+                            Toast.makeText(PharmaAddCart.this,"Quantity cannot be 0",Toast.LENGTH_SHORT).show();
+
+
+                        }
+                        else
+                        {
+                            med_order_no++ ;
+                            ItemModel itemModel =new ItemModel(String.valueOf(med_order_no),medName.getText().toString(),Integer.parseInt(quantity.getText().toString()),0,0);
+
+                            medicineItemList.add(itemModel);
+                            medicineListAdapter.notifyDataSetChanged();
+                            dialog.dismiss();
+                            Toast.makeText(PharmaAddCart.this,"Added",Toast.LENGTH_SHORT).show();
+                            placeorder.setVisibility(View.VISIBLE);
+                            itemcount.setText(String.valueOf( medicineItemList.size()));
+
+
+                        }
+
+
+
+                    }
+
+
+
+                });
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                    }
+                });
+                break;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setToolbar() {
+        toolbar = findViewById(R.id.default_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(shop_name);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
     public void addImage()
     {
         if(checkCameraPermission()){
@@ -318,6 +345,7 @@ public class PharmaAddCart extends AppCompatActivity {
          if (resultCode == RESULT_OK&&requestCode==CAMERA_REQUEST) {
 
             bitmap = (Bitmap) data.getExtras().get("data");
+            Bitmap b = bitmap;
 //            Toast.makeText(PharmaAddCart.this,"Prescription Added",Toast.LENGTH_SHORT).show();
 //
 //            Log.d("successhuacrop","addhua"+prescriptionUri);
@@ -326,16 +354,16 @@ public class PharmaAddCart extends AppCompatActivity {
 //            Cursor cursor = getContentResolver().query(prescriptionUri, filePath, null, null, null);
 //            cursor.moveToFirst();
 //            String imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
-//
+////
 //            BitmapFactory.Options options = new BitmapFactory.Options();
 //            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-//            bitmap = BitmapFactory.decodeFile(imagePath, options);
-//            Drawable mDrawable = new BitmapDrawable(getResources(), bitmap);
-//
-//            if(bitmap!=null) {
-//                prescription.setImageDrawable(mDrawable);
-//                feedcard.setVisibility(View.VISIBLE);
-//            }
+//            b = BitmapFactory.decodeFile(imagePath, options);
+//            Drawable mDrawable = new BitmapDrawable(getResources(), b);
+
+            if(bitmap!=null) {
+                prescription.setImageBitmap(bitmap);
+                prescription.setVisibility(View.VISIBLE);
+            }
 //            cursor.close();
         }
     }
@@ -344,10 +372,8 @@ public class PharmaAddCart extends AppCompatActivity {
     }
     private void init()
     {
-        feedcard=findViewById(R.id.feedcard);
         prescription=findViewById(R.id.prescription);
         addPresc=findViewById(R.id.addPresc);
-        additem=findViewById(R.id.add_item);
         rView = findViewById(R.id.medicineList);
         Intent intent=getIntent();
         shop_name=intent.getStringExtra("shop_name");

@@ -93,7 +93,53 @@
                             android:singleLine="true" />
 
                     </com.google.android.material.textfield.TextInputLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/border_margin"
+                        android:layout_marginBottom="@dimen/border_margin"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/state"
+                            android:textSize="16sp"
+                            android:layout_marginLeft="@dimen/border_margin"
+                            android:layout_marginRight="20dp"
+                            />
+                        <Spinner
+                            android:layout_width="180dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/border_margin"
+                            android:spinnerMode="dialog"
+                            android:id="@+id/register_state"
+                            android:layout_marginLeft="20dp"
+                            />
+                    </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/border_margin"
+                        android:layout_marginBottom="@dimen/border_margin"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/district"
+                            android:textSize="16sp"
+                            android:layout_marginLeft="@dimen/border_margin"
+                            android:layout_marginRight="20dp"
+                            />
+                        <Spinner
+                            android:layout_width="180dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/border_margin"
+                            android:spinnerMode="dialog"
+                            android:id="@+id/register_district"
+                            android:layout_marginLeft="20dp"
+                            />
+                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -155,53 +201,7 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/border_margin"
-                        android:layout_marginBottom="@dimen/border_margin"
-                        >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/state"
-                            android:textSize="16sp"
-                            android:layout_marginLeft="@dimen/border_margin"
-                            android:layout_marginRight="20dp"
-                            />
-                        <Spinner
-                            android:layout_width="180dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/border_margin"
-                            android:spinnerMode="dialog"
-                            android:id="@+id/register_state"
-                            android:layout_marginLeft="20dp"
-                            />
-                    </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/border_margin"
-                        android:layout_marginBottom="@dimen/border_margin"
-                        >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/district"
-                            android:textSize="16sp"
-                            android:layout_marginLeft="@dimen/border_margin"
-                            android:layout_marginRight="20dp"
-                            />
-                        <Spinner
-                            android:layout_width="180dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/border_margin"
-                            android:spinnerMode="dialog"
-                            android:id="@+id/register_district"
-                            android:layout_marginLeft="20dp"
-                            />
-                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"

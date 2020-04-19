@@ -78,13 +78,15 @@ public class Utils {
     public static Integer currentType;
     public static int local_zone_name = 0;
     public static List<CityModel> city = new ArrayList<>();
-
+    public static int status_code = 0;
     public static HashMap<Integer,String> statusHashMap = new HashMap<Integer, String>(){{
+        put(-2,"Cancelled");
         put(-1,"Rejected");
         put(0,"Pending");
         put(1,"Accepted and waiting for approval");
         put(2,"Approved");
-        put(3,"Delivered");
+        put(3,"Out for delivery");
+        put(4,"Delivered");
     }};
 
     public static HashMap<Integer,String> orderStatus= new HashMap<Integer,String>(){{

@@ -13,6 +13,7 @@ public class EssentialsModel {
     public int is_delivery;
     public String version;
     public String link;
+    public List<AddressModel> available;
     public EssentialsModel(double delivery_cost, double cess_rate, int is_quarantined, SupportModel support) {
         this.delivery_cost = delivery_cost;
         this.cess_rate = cess_rate;

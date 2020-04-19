@@ -125,5 +125,10 @@ Features:<br /><br />
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="failed_to_change">"Failed to change "</string>
+    <string name="cancel_order">Cancel Order</string>
+    <string name="address_warning">Warning: Once you submit the area you cannot change</string>
+    <string name="Add_medicine">Add medicine</string>
 
 </resources>
