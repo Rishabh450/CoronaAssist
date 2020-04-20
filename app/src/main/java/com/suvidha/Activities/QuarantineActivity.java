@@ -439,6 +439,8 @@ public class QuarantineActivity extends AppCompatActivity  {
                         calendar2.setTime(time2);
                         calendar2.add(Calendar.DATE, 1);
                         String currentDateAndTime1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+                        currentDateAndTime1=currentDateAndTime1.substring(0,11)+(Integer.parseInt(currentDateAndTime1.substring(11,13))+2)+ currentDateAndTime1.substring(13);
+
                         Log.d("current date",currentDateAndTime1);
 
                         String someRandomTime =currentDateAndTime1.substring(currentDateAndTime1.indexOf(' ')+1);
