@@ -2,13 +2,9 @@ package com.suvidha.Activities;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,18 +27,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -55,13 +41,12 @@ import retrofit2.Response;
 
 import static com.suvidha.Utilities.Utils.APP_CHARGE;
 import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
-import static com.suvidha.Utilities.Utils.PLAYSTORE_LINK;
-import static com.suvidha.Utilities.Utils.createAlertDialog;
 import static com.suvidha.Utilities.Utils.createProgressDialog;
 import static com.suvidha.Utilities.Utils.email;
 import static com.suvidha.Utilities.Utils.getAccessToken;
 import static com.suvidha.Utilities.Utils.rs;
 import static com.suvidha.Utilities.Utils.statusHashMap;
+import static com.suvidha.Utilities.Utils.status_code;
 
 public class OrderDetailsActivity extends AppCompatActivity implements View.OnClickListener, CartAdapter.CartCallback, SwipeRefreshLayout.OnRefreshListener {
     private BottomSheetBehavior mBottomSheetBehaviour;
@@ -92,6 +77,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
     private LinearLayout cart_total_layout;
     private TextView cart_qty_tag;
     private TextView time;
+    private Button cancel_order;
 
 
     @Override
@@ -139,9 +125,12 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         cart_total_layout = findViewById(R.id.cart_total_layout);
         cart_qty_tag = findViewById(R.id.cart_qty_tag);
         time = findViewById(R.id.order_time);
+        cancel_order = findViewById(R.id.reject2);
         cart_qty_tag.setVisibility(View.VISIBLE);
         findViewById(R.id.accept).setOnClickListener(this);
         findViewById(R.id.reject).setOnClickListener(this);
+
+        cancel_order.setOnClickListener(this);
     }
 
 
@@ -164,8 +153,12 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
                         orderData.clear();
                         orderData.addAll(response.body().id.items);
 //                        Log.e("ITEM_QTY", "ITEM"+String.valueOf(response.body().id.items.get(0).item_add_qty));
+
                         setValues(response.body().id);
                         data = response.body().id;
+                        status_code = data.status;
+
+                        Log.e("CART", String.valueOf(orderData.size()));
                         cartAdapter.notifyDataSetChanged();
                         swipeRefreshLayout.setRefreshing(false);
 
@@ -189,7 +182,8 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void setValues(CartModel data) {
-        shop_name.setText(data.shop_details.name);
+
+        shop_name.setText(data.shop_details.shop_name);
         shop_address.setText(data.shop_details.address);
         delivery_address.setText(data.address);
         time.setText(data.time);
@@ -197,10 +191,16 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         orderid.setText(oid);
         if(data.status == -1){
             orderStatus.setTextColor(Color.RED);
+            cart_total_layout.setVisibility(View.GONE);
+            cancel_order.setVisibility(View.GONE);
+
         }else if(data.status == 2 || data.status == 1){
+            cart_total_layout.setVisibility(View.VISIBLE);
             orderStatus.setTextColor(getResources().getColor(R.color.default_button_color));
+
         }
         else{
+            cart_total_layout.setVisibility(View.VISIBLE);
             orderStatus.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         }
         if(data.status == 1){
@@ -208,8 +208,26 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
             //hide main app bar
             mAppBar.setVisibility(View.INVISIBLE);
             mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
+
         }else{
             mAppBar.setVisibility(View.VISIBLE);
+        }
+        if(data.status == 0){
+            cart_total_layout.setVisibility(View.GONE);
+        }else{
+            cart_total_layout.setVisibility(View.VISIBLE);
+        }
+        if(data.status == 1){
+            cancel_order.setVisibility(View.GONE);
+        }else if(data.status == 0 || data.status == 2){
+            cancel_order.setVisibility(View.VISIBLE);
+        }else{
+            cancel_order.setVisibility(View.GONE);
+        }
+        if(data.status == -2){
+            cart_total_layout.setVisibility(View.GONE);
+        }else{
+            cart_total_layout.setVisibility(View.VISIBLE);
         }
         orderStatus.setText(statusHashMap.get(data.status));
         updatePrice();
@@ -304,30 +322,38 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
                 break;
             }
             case R.id.reject:{
-                AcceptModel model = new AcceptModel(oid,data.sid,-1);
-                Call<GeneralModel> call = apiInterface.update_order(getAccessToken(this),model);
-                call.enqueue(new Callback<GeneralModel>() {
-                    @Override
-                    public void onResponse(Call<GeneralModel> call, Response<GeneralModel> response) {
-                        if(response.body().status == 202){
-                            Toast.makeText(OrderDetailsActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                            mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                            mAppBar.setVisibility(View.VISIBLE);
-                            getOrderDetails();
-                        }else{
-                            Toast.makeText(OrderDetailsActivity.this, "Failed to reject", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<GeneralModel> call, Throwable t) {
-                        Toast.makeText(OrderDetailsActivity.this, "Failed", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                rejectOrder(-1);
+                break;
+            }
+            case R.id.reject2:{
+                rejectOrder(-2);
                 break;
             }
         }
 
+    }
+
+    private void rejectOrder(int status) {
+        AcceptModel model = new AcceptModel(oid,data.sid,status);
+        Call<GeneralModel> call = apiInterface.update_order(getAccessToken(this),model);
+        call.enqueue(new Callback<GeneralModel>() {
+            @Override
+            public void onResponse(Call<GeneralModel> call, Response<GeneralModel> response) {
+                if(response.body().status == 202){
+                    Toast.makeText(OrderDetailsActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                    mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    mAppBar.setVisibility(View.VISIBLE);
+                    getOrderDetails();
+                }else{
+                    Toast.makeText(OrderDetailsActivity.this, "Failed to reject", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeneralModel> call, Throwable t) {
+                Toast.makeText(OrderDetailsActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -361,7 +387,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
     private double getTotalWithoutTax() {
         double total = 0;
         for (int i = 0; i < orderData.size(); i++) {
-            total += orderData.get(i).itemPrice * orderData.get(i).item_add_qty;
+            total += orderData.get(i).item_price * orderData.get(i).item_add_qty;
         }
         return total;
     }

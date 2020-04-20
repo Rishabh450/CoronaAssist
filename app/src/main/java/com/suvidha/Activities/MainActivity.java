@@ -28,9 +28,11 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,8 +55,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.suvidha.Adapters.EmergencyAdapter;
 import com.suvidha.Fragments.HistoryFragment;
 import com.suvidha.Fragments.HomeFragment;
+import com.suvidha.Models.AddressModel;
 import com.suvidha.Models.EssentialsRequestModel;
+import com.suvidha.Models.GeneralModel;
 import com.suvidha.Models.GetOrdersModel;
+import com.suvidha.Models.MyAddressModel;
 import com.suvidha.R;
 import com.suvidha.Receiver.AlarmReceiver;
 import com.suvidha.Utilities.APIClient;
@@ -62,6 +67,7 @@ import com.suvidha.Utilities.ApiInterface;
 import com.suvidha.Utilities.LiveLocationService;
 import com.suvidha.Utilities.SharedPrefManager;
 import com.suvidha.Utilities.UserLocationService;
+import com.suvidha.Utilities.Utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -70,7 +76,11 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
 import java.util.Calendar;
+
+import java.util.Arrays;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -81,6 +91,7 @@ import retrofit2.Response;
 import static com.suvidha.Utilities.Utils.APP_CHARGE;
 import static com.suvidha.Utilities.Utils.DELIVERY_CHARGE;
 import static com.suvidha.Utilities.Utils.PLAYSTORE_LINK;
+import static com.suvidha.Utilities.Utils.address;
 import static com.suvidha.Utilities.Utils.allOrders;
 import static com.suvidha.Utilities.Utils.city;
 import static com.suvidha.Utilities.Utils.clearLoginSession;
@@ -95,6 +106,7 @@ import static com.suvidha.Utilities.Utils.is_quarantine;
 import static com.suvidha.Utilities.Utils.is_quarantined;
 import static com.suvidha.Utilities.Utils.is_shopper;
 import static com.suvidha.Utilities.Utils.local_zone_name;
+import static com.suvidha.Utilities.Utils.mStateDist;
 import static com.suvidha.Utilities.Utils.special_q_list;
 import static com.suvidha.Utilities.Utils.state;
 import static com.suvidha.Utilities.Utils.zonesList;
@@ -129,10 +141,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intialiseRetrofit();
         getEssentials();
         setListeners();
-
         Log.d(TAG, "checking" + is_quarantined);
     }
-
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -191,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 try {
                     if (response.body().status == 200) {
 //                        Log.e("LOL","LOL"+response.body().id.support.state);
-                        dialog.dismiss();
+                        getAllOrders();
                         try {
                             special_q_list.clear();
                             if(response.body().id.state_q_address!=null)
@@ -200,12 +210,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             e.printStackTrace();
                         }
                         try {
+                            address.clear();
+                            address.addAll(response.body().id.available);
                            city.clear();
                            city.addAll(response.body().id.city);
 
                         }catch (Exception e){
 
                         }
+                        try {
+                            if(response.body().id.version.compareTo(currentVersion) != 0){
+                                //open update dialog
+                                showUpdateDialog(response.body().id.link);
+                            }
+                        }catch (Exception e){
+                            Log.e("UPDATE DIALOG MSG",e.getMessage());
+                        }
+
                         is_quarantined = response.body().id.is_quarantined;
                         SharedPrefManager.getInstance(MainActivity.this).put(SharedPrefManager.Key.IS_QUARANTINE,is_quarantined);
                         is_ngo = response.body().id.support.is_ngo;
@@ -319,6 +340,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         listCall.enqueue(new Callback<GetOrdersModel>() {
             @Override
             public void onResponse(Call<GetOrdersModel> call, Response<GetOrdersModel> response) {
+                dialog.dismiss();
                 if (response.body().status == 200) {
                     allOrders.clear();
                     allOrders.addAll(response.body().id);
@@ -395,7 +417,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                Log.d("hello", "Current : " + currentVersion + " Latest : " + latestVersion);
                 if (currentVersion.compareTo(latestVersion) < 0) {
                     if (!isFinishing()) {
-                        showUpdateDialog();
+//                        showUpdateDialog();
                     }
                 }
             }
@@ -407,14 +429,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(this.getPackageName(), 0);
             currentVersion = pInfo.versionName;
-            new GetCurrentVersion().execute();
+
         } catch (PackageManager.NameNotFoundException e1) {
             Toast.makeText(this, e1.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void showUpdateDialog() {
-        Dialog dialog = createAlertDialog(this, "Update Required", "A newer version of apk is available at playstore. Please Update", "Cancel", "Update");
+    private void showUpdateDialog(String link) {
+        Dialog dialog = createAlertDialog(this, getResources().getString(R.string.update_required), getResources().getString(R.string.new_version_available), getResources().getString(R.string.CANCEL), getResources().getString(R.string.update));
         dialog.setCancelable(true);
         dialog.show();
         dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
@@ -426,7 +448,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=ojass20.nitjsr.in.ojass&hl=en")));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link)));
                 dialog.dismiss();
                 dialog.dismiss();
                 finish();
@@ -640,7 +662,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStart() {
         super.onStart();
         getEssentials();
-        getAllOrders();
+
         compareAppVersion();
     }
 
@@ -654,6 +676,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     signOutClicked();
                 }
                 break;
+            case R.id.edit_profile:{
+                if(is_quarantined==0 && is_delivery == 0){
+                    createEditProfileDialog();
+                }else{
+                    Toast.makeText(this, "You cannot edit profile", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
             case R.id.change_language:
                 changeLanguage(item);
                 break;
@@ -667,6 +697,105 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return super.onOptionsItemSelected(item);
     }
+    Spinner spinner_state,spinner_district;
+    private String mSelectedState, mSelectedDistrict;
+    private List<String> mDistricts;
+    private void createEditProfileDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_edit);
+        EditText et = dialog.findViewById(R.id.register_address);
+        et.setText(SharedPrefManager.getInstance(this).getString(SharedPrefManager.Key.USER_ADDRESS));
+        dialog.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(et.length()!=0) {
+                    MyAddressModel model = new MyAddressModel(et.getText().toString().trim(), mSelectedState, mSelectedDistrict);
+                    Call<GeneralModel> call = apiInterface.edit_address(getAccessToken(MainActivity.this),model);
+                    call.enqueue(new Callback<GeneralModel>() {
+                        @Override
+                        public void onResponse(Call<GeneralModel> call, Response<GeneralModel> response) {
+                            SharedPrefManager.getInstance(MainActivity.this).put(SharedPrefManager.Key.USER_ADDRESS,et.getText().toString());
+                            dialog.dismiss();
+                            getEssentials();
+                            Toast.makeText(MainActivity.this, getResources().getString(R.string.successful), Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(Call<GeneralModel> call, Throwable t) {
+                            Toast.makeText(MainActivity.this, getResources().getString(R.string.failed_to_change), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }else{
+                    Toast.makeText(MainActivity.this, "Address field cannot be empty", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        dialog.show();
+        spinner_district = dialog.findViewById(R.id.register_district);
+        spinner_state = dialog.findViewById(R.id.register_state);
+        setSpinnerData();
+        setSpinner();
+
+    }
+    private void setSpinnerData() {
+        mStateDist.clear();
+        for (AddressModel model : address) {
+            List<String> district = mStateDist.get(model.state);
+            if (district == null) {
+                district = new ArrayList<>();
+            }
+            district.add(model.district);
+            mStateDist.put(model.state, district);
+        }
+    }
+    private void setSpinner() {
+        Object[] states = Utils.mStateDist.keySet().toArray();
+        Arrays.sort(states);
+        ArrayAdapter aa1 = new ArrayAdapter(this, android.R.layout.simple_spinner_item, states);
+        aa1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_state.setAdapter(aa1);
+        mSelectedState = spinner_state.getSelectedItem().toString();
+        mDistricts = Utils.mStateDist.get(mSelectedState);
+        updateDistrictSpinner();
+        spinner_state.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mSelectedState = states[position].toString();
+                updateDistrictSpinner();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private void updateDistrictSpinner() {
+        mDistricts = Utils.mStateDist.get(mSelectedState);
+        ArrayAdapter aa2 = new ArrayAdapter(this, android.R.layout.simple_spinner_item, mDistricts);
+        aa2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_district.setAdapter(aa2);
+        mSelectedDistrict = spinner_district.getSelectedItem().toString();
+        spinner_district.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSelectedDistrict = spinner_district.getSelectedItem().toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
 
     private void showEmegencyDialog() {
         if (checkCallPermission()) {

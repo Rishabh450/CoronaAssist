@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:id="@+id/main_app_bar"
+        android:background="@color/colorPrimary"
+        >
+        <include layout="@layout/include_toolbar"/>
+        <!--        <include layout="@layout/toolbar_layout" />-->
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:layout_below="@id/main_app_bar"
+        android:overScrollMode="never">
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:background="@mipmap/ic_background"
+            tools:context=".Activities.PharmaAddCart">
+
+
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/prescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center">
+
+                </ImageView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/addPresc"
+                android:overScrollMode="never"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_below="@+id/prescription"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="6dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="30dp"
+                        android:padding="2dp"
+                        android:src="@drawable/presc_foreground" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Add Prescription"
+                        android:textColor="#000000" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/medicineList"
+                android:overScrollMode="never"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/addPresc"
+                android:layout_above="@+id/goto_cart_layout"
+
+                android:scrollbars="vertical">
+
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/goto_cart_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="@dimen/border_margin"
+                android:clickable="true"
+                android:elevation="5dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:visibility="gone"
+                app:cardCornerRadius="5dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimaryDark"
+                    android:padding="@dimen/border_margin">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="5dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/item_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1 item"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/items_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Rs. 270 plus taxes"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="18sp"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="60dp"
+                        android:text="Place Order"
+
+                        android:textColor="@color/secondary_text_color"
+                        android:textSize="20sp" />
+
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

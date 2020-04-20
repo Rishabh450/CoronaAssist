@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/ic_background"
-    >
+    android:background="@mipmap/ic_background">
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
@@ -15,36 +14,44 @@
         <include layout="@layout/include_toolbar" />
 
     </com.google.android.material.appbar.AppBarLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/no_shops"
-        android:visibility="gone"
-        >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/no_shops_available"
-            android:textSize="18sp"
 
-            />
-    </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_margin="@dimen/border_margin"
         >
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <androidx.recyclerview.widget.RecyclerView
+            <FrameLayout
+                android:id="@+id/fragment_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/groc_cat_rview"
-                android:layout_marginTop="@dimen/border_margin"
-                />
+                android:layout_above="@+id/bott"
+                android:layout_height="match_parent">
+
+
+            </FrameLayout>
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bott"
+                android:layout_width="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="bottom"
+                android:clickable="true"
+                android:focusable="true"
+
+                android:layout_height="wrap_content"
+
+
+                android:background="?android:attr/windowBackground"
+
+
+                app:labelVisibilityMode="labeled"
+
+
+
+
+                app:menu="@menu/shopsmenu" />
+
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

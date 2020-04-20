@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.suvidha.Activities.CategoriesActivity;
-import com.suvidha.Activities.ItemActivity;
+import com.suvidha.Activities.PharmaAddCart;
 import com.suvidha.Models.ShopModel;
 import com.suvidha.R;
 
@@ -41,16 +41,26 @@ public class ShopListAdapter extends RecyclerView.Adapter<ShopListAdapter.MyHold
         ShopModel data = list.get(position);
         holder.iv.setImageResource(R.mipmap.ic_groc);
 
-        holder.shop_name.setText(data.name);
+        holder.shop_name.setText(data.shop_name);
         holder.shop_addr.setText(data.address);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    Intent intent = new Intent(ctx, CategoriesActivity.class);
-                    intent.putExtra("shop_name",data.name);
-                    intent.putExtra("shopid",data._id);
-                    ctx.startActivity(intent);
+                    if(data.type.equals("Medicines")) {
+                        Intent intent = new Intent(ctx, PharmaAddCart.class);
+                        intent.putExtra("shop_name", data.shop_name);
+                        intent.putExtra("shopid", data._id);
+                        ctx.startActivity(intent);
+                    }
+                    else
+                    {
+                        Intent intent = new Intent(ctx, CategoriesActivity.class);
+                        intent.putExtra("shop_name", data.shop_name);
+                        intent.putExtra("shopid", data._id);
+                        ctx.startActivity(intent);}
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(ctx, "No Items Found", Toast.LENGTH_SHORT).show();

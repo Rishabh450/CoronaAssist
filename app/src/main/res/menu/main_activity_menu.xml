@@ -9,6 +9,11 @@
         android:icon="@mipmap/ic_plus"
         />
     <item
+        android:id="@+id/edit_profile"
+        android:title="@string/edit_profile"
+        app:showAsAction="never"
+        />
+    <item
         android:id="@+id/change_language"
         android:title="@string/change_to_hindi" />
     <item android:id="@+id/faq"

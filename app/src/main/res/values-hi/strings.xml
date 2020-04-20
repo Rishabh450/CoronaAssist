@@ -115,4 +115,12 @@ Phone: 7061039636 </string>
     <string name="check_internet">Check your internet connection</string>
     <string name="no_shops_available">No Shops Available</string>
     <string name="regect">Reject</string>
+    <string name="update_required">Update Required</string>
+    <string name="new_version_available">A newer version is available. Please update your app.</string>
+    <string name="update">Update</string>
+    <string name="edit_profile">प्रोफ़ाइल परिवर्तन</string>
+    <string name="failed_to_change">"Failed to change "</string>
+    <string name="cancel_order">Cancel Order</string>
+    <string name="address_warning">चेतावनी: एक बार जब आप उस क्षेत्र को जमा कर देते हैं जिसे आप बदल नहीं सकते</string>
+    <string name="Add_medicine">Add medicine</string>
 </resources>

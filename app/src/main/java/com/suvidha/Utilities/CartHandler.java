@@ -46,7 +46,7 @@ public class CartHandler {
     public double getTotalWithoutTax(){
         double total=0;
         for(int i=0;i<inCart.size();i++){
-            total += inCart.get(i).itemPrice*inCart.get(i).item_add_qty;
+            total += inCart.get(i).item_price *inCart.get(i).item_add_qty;
         }
         return total;
     }

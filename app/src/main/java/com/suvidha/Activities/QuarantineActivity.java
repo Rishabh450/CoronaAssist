@@ -602,9 +602,7 @@ public class QuarantineActivity extends AppCompatActivity  {
                 Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
 
             } else {
-
                 Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
-
             }
         }else if (requestCode == LOCATION_PERMISSION_CODE){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

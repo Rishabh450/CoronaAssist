@@ -17,6 +17,7 @@ public class CartModel implements Parcelable {
     public String delivery_time;
     public ShopModel shop_details;
     public String address;
+    public String img;
 
 
     public CartModel(String _id, ArrayList<ItemModel> items, String sid, double amount, int status, String uid, ShopModel shop_details, String address) {

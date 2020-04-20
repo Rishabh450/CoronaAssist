@@ -13,6 +13,7 @@ import com.suvidha.Models.ItemModel;
 import com.suvidha.Models.ItemsRequestModel;
 import com.suvidha.Models.LocationModel;
 import com.suvidha.Models.LoginResult;
+import com.suvidha.Models.MyAddressModel;
 import com.suvidha.Models.NgoModel;
 import com.suvidha.Models.OrderIdModel;
 import com.suvidha.Models.OrderRequestModel;
@@ -44,6 +45,9 @@ public interface ApiInterface {
     @Headers("Content-Type: application/json")
     @POST("/api/gregister")
     Call<RegistrationResult> register(@Header("x-access-tokens") String token, @Body UserModel user);
+    @Headers("Content-Type: application/json")
+    @POST("/api/edit_address")
+    Call<GeneralModel> edit_address(@Header("x-access-tokens") String token,@Body MyAddressModel model);
 
 
     @POST("/api/glogin")

@@ -34,6 +34,7 @@
             android:layout_alignParentLeft="true"
             />
 
+
         <Button
             android:id="@+id/accept"
             android:layout_width="wrap_content"
@@ -53,7 +54,12 @@
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/toolbar_height"
         >
-
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:fillViewport="true"
+            >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -206,7 +212,18 @@
                     android:layout_marginTop="@dimen/border_margin"
                     android:text="safasags" />
             </LinearLayout>
-
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel_order"
+                android:id="@+id/reject2"
+                android:layout_marginLeft="@dimen/border_margin"
+                android:backgroundTint="@android:color/holo_red_dark"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:textColor="@color/secondary_text_color"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/border_margin"
+                />
             <View
                 android:id="@+id/order_line"
                 android:layout_width="wrap_content"
@@ -296,6 +313,7 @@
             </LinearLayout>
 
         </LinearLayout>
+        </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

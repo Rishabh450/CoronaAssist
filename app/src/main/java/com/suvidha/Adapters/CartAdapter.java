@@ -7,19 +7,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.suvidha.Models.ItemModel;
 import com.suvidha.R;
 import com.suvidha.Utilities.CartHandler;
-import com.suvidha.Utilities.SharedPrefManager;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static com.suvidha.Utilities.Utils.status_code;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
     private Context ctx;
@@ -47,19 +47,24 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
         ItemModel data = list.get(position);
         holder.item_name.setText(data.item_name);
-        holder.item_price.setText("\u20B9"+data.itemPrice*data.item_add_qty);
+        holder.item_price.setText("\u20B9"+data.item_price);
         Log.e("ITEM_QTY", "ITEM"+String.valueOf(data.item_add_qty));
         holder.item_qty.setText(String.valueOf(data.item_add_qty));
 
         if(orderPlaced==1){
+
             holder.plus.setVisibility(View.INVISIBLE);
             holder.minus.setVisibility(View.INVISIBLE);
 //            holder.addLayout.setVisibility(View.INVISIBLE);
             holder.addLayout.setBackground(null);
-            holder.item_price.setVisibility(View.INVISIBLE);
             holder.item_qty.setBackground(null);
             holder.item_qty.setTextColor(Color.parseColor("#ffffff"));
             holder.item_qty.setText(String.valueOf(data.item_add_qty));
+            if(status_code>0){
+                holder.item_price.setVisibility(View.VISIBLE);
+            }else{
+                holder.item_price.setVisibility(View.INVISIBLE);
+            }
         }else{
             holder.plus.setVisibility(View.VISIBLE);
             holder.minus.setVisibility(View.VISIBLE);
@@ -73,7 +78,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
                 newItem.item_add_qty += 1;
                 cartHandler.updateItem(newItem);
                 holder.item_qty.setText(String.valueOf(newItem.item_add_qty));
-                holder.item_price.setText("\u20B9"+newItem.itemPrice*newItem.item_add_qty);
+                holder.item_price.setText("\u20B9"+newItem.item_price *newItem.item_add_qty);
                 mCallback.updatePrice();
             }
         });
@@ -99,7 +104,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyHolder> {
                     } else {
                         cartHandler.updateItem(newItem);
                         holder.item_qty.setText(String.valueOf(newItem.item_add_qty));
-                        holder.item_price.setText("\u20B9" + newItem.itemPrice * newItem.item_add_qty);
+                        holder.item_price.setText("\u20B9" + newItem.item_price * newItem.item_add_qty);
                         mCallback.updatePrice();
                     }
                 }
