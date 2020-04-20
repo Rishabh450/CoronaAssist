@@ -76,7 +76,11 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import java.util.Calendar;
+
 import java.util.Arrays;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -368,38 +372,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return true;
     }
-    public void setRemainder(){
-        AlarmManager alarmManager=(AlarmManager) getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
-        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime(),
-                10*60*1000,
-                pendingIntent);
-/*
-        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
-        intent.putExtra("SET","RUN");
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                getBaseContext(), 1, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+MINUTES*60*1000,
-                pendingIntent);
-        Log.d("ak47", "setRemainder: ");*/
-//        // Set notificationId & text.
-//        Intent intent = new Intent(QuarantineActivity.this, AlarmReceiver.class);
-//        intent.putExtra("notificationId", 1);
-//
-//        // getBroadcast(context, requestCode, intent, flags)
-//        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
-//                intent, PendingIntent.FLAG_CANCEL_CURRENT);
-//
-//        AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
-//        long alarmStartTime=System.currentTimeMillis()+1000*10;
-//        Toast.makeText(this,alarmStartTime+" ",Toast.LENGTH_LONG).show();
-//        Log.d("ak47", alarmStartTime+"setRemainder: "+System.currentTimeMillis());
-//        alarm.set(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmIntent);
-    }
     private void requestCallPermission() {
         ActivityCompat.requestPermissions(
                 this,
@@ -847,6 +820,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             requestCallPermission();
         }
 
+
+    }
+    public void setRemainder(){
+        String  lastrep = SharedPrefManager.getInstance(MainActivity.this).getString(SharedPrefManager.Key.LAST_REPORTED);
+
+        AlarmManager alarmManager=(AlarmManager) getSystemService(ALARM_SERVICE);
+
+        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
+        intent.setAction("start");
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
+
+
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+10000, pendingIntent);
+        Log.d("lastrep",lastrep+" "+"set");
+
+       /* alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime(),
+                120*60*1000,
+                pendingIntent);*/
 
     }
 

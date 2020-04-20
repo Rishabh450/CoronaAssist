@@ -44,6 +44,7 @@ import com.suvidha.R;
 import com.suvidha.Receiver.AlarmReceiver;
 import com.suvidha.Utilities.APIClient;
 import com.suvidha.Utilities.ApiInterface;
+import com.suvidha.Utilities.LiveLocationService;
 import com.suvidha.Utilities.SharedPrefManager;
 
 import java.io.ByteArrayOutputStream;
@@ -51,7 +52,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -420,7 +423,49 @@ public class QuarantineActivity extends AppCompatActivity  {
                     pFrame.setVisibility(View.GONE);
                     getReports();
                     Dialog alertDialog = createAlertDialog(QuarantineActivity.this,getResources().getString(R.string.successful),getResources().getString(R.string.submitter_successfully),"",getResources().getString(R.string.ok));
-                   // setRemainder();
+                    String currentDateAndTime = new SimpleDateFormat("HH:mm").format(new Date());
+                    SharedPrefManager.getInstance(QuarantineActivity.this).put(SharedPrefManager.Key.LAST_REPORTED, currentDateAndTime);
+                    try {
+                        String string1 = "08:00:00";
+                        Date time1 = new SimpleDateFormat("HH:mm:ss").parse(string1);
+                        Calendar calendar1 = Calendar.getInstance();
+                        calendar1.setTime(time1);
+                        calendar1.add(Calendar.DATE, 1);
+
+
+                        String string2 = "21:00:00";
+                        Date time2 = new SimpleDateFormat("HH:mm:ss").parse(string2);
+                        Calendar calendar2 = Calendar.getInstance();
+                        calendar2.setTime(time2);
+                        calendar2.add(Calendar.DATE, 1);
+                        String currentDateAndTime1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+                        Log.d("current date",currentDateAndTime1);
+
+                        String someRandomTime =currentDateAndTime1.substring(currentDateAndTime1.indexOf(' ')+1);
+                        Date d = new SimpleDateFormat("HH:mm:ss").parse(someRandomTime);
+                        Calendar calendar3 = Calendar.getInstance();
+                        calendar3.setTime(d);
+                        calendar3.add(Calendar.DATE, 1);
+
+                        Date x = calendar3.getTime();
+                        Log.d("limits",x.after(calendar1.getTime())+" "+someRandomTime+" "+string1);
+                        Log.d("limits",x.after(calendar2.getTime())+" "+someRandomTime+" "+string2);
+                        if (x.after(calendar1.getTime()) && x.before(calendar2.getTime())) {
+
+                            setRemainder();
+
+                        }
+                        else
+                        {
+
+
+                            Log.d("cheker","false");
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+
                     alertDialog.findViewById(R.id.dialog_continue).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -615,118 +660,38 @@ public class QuarantineActivity extends AppCompatActivity  {
         sendBroadcast(intent);
     }
     public void setRemainder(){
+        String  lastrep = SharedPrefManager.getInstance(QuarantineActivity.this).getString(SharedPrefManager.Key.LAST_REPORTED);
+
         AlarmManager alarmManager=(AlarmManager) getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(QuarantineActivity.this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(QuarantineActivity.this, 0, intent, 0);
-        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime(),
-                1*60*1000,
-                pendingIntent);
-/*
+        Log.d("lastrep",lastrep+" ");
+        AlarmManager.AlarmClockInfo alarmClockInfo= alarmManager.getNextAlarmClock();
+        if(alarmClockInfo!=null) {
+            Log.d("lastrep",lastrep+" "+"cancelled");
+            alarmManager.cancel(alarmClockInfo.getShowIntent());
+        }
+
         Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
-        intent.putExtra("SET","RUN");
+        intent.setAction("start");
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                getBaseContext(), 1, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+MINUTES*60*1000,
-                pendingIntent);
-        Log.d("ak47", "setRemainder: ");*/
-//        // Set notificationId & text.
-//        Intent intent = new Intent(QuarantineActivity.this, AlarmReceiver.class);
-//        intent.putExtra("notificationId", 1);
-//
-//        // getBroadcast(context, requestCode, intent, flags)
-//        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
-//                intent, PendingIntent.FLAG_CANCEL_CURRENT);
-//
-//        AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
-//        long alarmStartTime=System.currentTimeMillis()+1000*10;
-//        Toast.makeText(this,alarmStartTime+" ",Toast.LENGTH_LONG).show();
-//        Log.d("ak47", alarmStartTime+"setRemainder: "+System.currentTimeMillis());
-//        alarm.set(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmIntent);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
+
+
+            Calendar cal = Calendar.getInstance();
+
+            cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(lastrep.substring(0, 2))+2);
+            cal.set(Calendar.MINUTE, Integer.parseInt(lastrep.substring(3)));
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+
+            alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
+        Log.d("lastrep",lastrep+" "+"set");
+
+       /* alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime(),
+                120*60*1000,
+                pendingIntent);*/
+
     }
-    //    private class LocationStuff extends AsyncTask<Void, Void, Void> {
-//
-//        private Location currentLocation;
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            getCurrentLocation();
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//
-//            //get current location
-//            while (currentLocation == null) {
-////                Log.e("LOL", "lol");
-//            }
-//
-//            //get nodes location
-//            //punch cur and nod loc in list
-//            return null;
-//        }
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//            Log.e("LOC", String.valueOf(currentLocation));
-//
-//
-//        }
-//
-////        private void getCurrentLocation() {
-////            mFusedLocationClient.getLastLocation().addOnCompleteListener(
-////                    new OnCompleteListener<Location>() {
-////                        @Override
-////                        public void onComplete(@NonNull Task<Location> task) {
-////                            Location location = task.getResult();
-////                            if (location == null) {
-////                                //select the node
-//////                            Log.e(TAG, "Response Error " + .getMessage());
-////
-////                                TextView msg = dialog.findViewById(R.id.progress_msg);
-////                                msg.setText("Try Again");
-////                                new Handler().postDelayed(new Runnable() {
-////                                    @Override
-////                                    public void run() {
-////                                        progressBar = dialog.findViewById(R.id.progress_bar);
-////                                        progressBar.setVisibility(View.INVISIBLE);
-////                                        ImageView staticProgress = dialog.findViewById(R.id.static_progress);
-////                                        staticProgress.setVisibility(View.VISIBLE);
-////                                        staticProgress.setOnClickListener(new View.OnClickListener() {
-////                                            @Override
-////                                            public void onClick(View v) {
-////                                                getCurrentLocation();
-////                                            }
-////                                        });
-////                                    }
-////                                }, 500);
-////                                Toast.makeText(getContext(), "Can't get your location", Toast.LENGTH_SHORT).show();
-////                            } else {
-////                                quarantineLocation = location;
-////                                dialog.dismiss();
-////                                currentLocation = quarantineLocation;
-////                                if(is_quarantined==1){
-////                                    Intent intent = new Intent(getContext(), QuarantineActivity.class);
-////                                    startActivity(intent);
-////                                }else {
-////                                    createQuarentineDialog();
-////                                }
-////                            }
-////                        }
-////                    }
-////            );
-////        }
 
-//
-//        Location initLoc(Double lat, Double lng) {
-//            Location location = new Location("Provider");
-//            location.setLatitude(lat);
-//            location.setLongitude(lng);
-//            return location;
-//        }
-//    }
 
 }

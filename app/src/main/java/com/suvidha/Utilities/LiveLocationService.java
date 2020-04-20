@@ -62,6 +62,7 @@ import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 import static com.suvidha.Utilities.Utils.LOCATION_PERMISSION_CODE;
 import static com.suvidha.Utilities.Utils.currentLocation;
 import static com.suvidha.Utilities.Utils.getAccessToken;
+import static com.suvidha.Utilities.Utils.local_zone_name;
 
 public class LiveLocationService extends Service {
     ApiInterface apiInterface;
@@ -191,14 +192,14 @@ public class LiveLocationService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        Intent restartService = new Intent(getApplicationContext(),
-                this.getClass());
-        restartService.setPackage(getPackageName());
-        PendingIntent restartServicePI = PendingIntent.getService(
-                getApplicationContext(), 1, restartService,
-                PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 2000, restartServicePI);
+        int is_quarantine = SharedPrefManager.getInstance(this).getInt(SharedPrefManager.Key.IS_QUARANTINE);
+        if(is_quarantine == 1) {
+            Intent broadcastIntent = new Intent();
+            broadcastIntent.setAction("restartservice");
+            broadcastIntent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+            broadcastIntent.setClass(this, Restarter.class);
+            this.sendBroadcast(broadcastIntent);
+        }
 
     }
 
@@ -215,6 +216,7 @@ public class LiveLocationService extends Service {
             broadcastIntent.setClass(this, Restarter.class);
             this.sendBroadcast(broadcastIntent);
         }
+
     }
     public void setRemainder(){
         AlarmManager alarmManager=(AlarmManager) getSystemService(ALARM_SERVICE);
@@ -222,10 +224,103 @@ public class LiveLocationService extends Service {
         intent.setAction("start");
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, intent, 0);
-        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+      String  lastrep = SharedPrefManager.getInstance(LiveLocationService.this).getString(SharedPrefManager.Key.LAST_REPORTED);
+        Log.d("lastrep",lastrep+" ");
+      if(lastrep==null)
+      {
+
+          alarmManager.set(AlarmManager.RTC_WAKEUP,System.currentTimeMillis()+10000,pendingIntent);
+      }
+      else {
+         Handler handler = new Handler();
+
+          final Runnable r = new Runnable() {
+              public void run() {
+                  try {
+                      String string1 = "08:00:00";
+                      Date time1 = new SimpleDateFormat("HH:mm:ss").parse(string1);
+                      Calendar calendar1 = Calendar.getInstance();
+                      calendar1.setTime(time1);
+                      calendar1.add(Calendar.DATE, 1);
+
+
+                      String string2 = "21:00:00";
+                      Date time2 = new SimpleDateFormat("HH:mm:ss").parse(string2);
+                      Calendar calendar2 = Calendar.getInstance();
+                      calendar2.setTime(time2);
+                      calendar2.add(Calendar.DATE, 1);
+                      String currentDateAndTime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+                      Log.d("current date",currentDateAndTime);
+
+                      String someRandomTime =currentDateAndTime.substring(currentDateAndTime.indexOf(' ')+1);
+                      Date d = new SimpleDateFormat("HH:mm:ss").parse(someRandomTime);
+                      Calendar calendar3 = Calendar.getInstance();
+                      calendar3.setTime(d);
+                      calendar3.add(Calendar.DATE, 1);
+
+                      Date x = calendar3.getTime();
+                      Log.d("limits",x.after(calendar1.getTime())+" "+someRandomTime+" "+string1);
+                      Log.d("limits",x.after(calendar2.getTime())+" "+someRandomTime+" "+string2);
+                      if (x.after(calendar1.getTime()) && x.before(calendar2.getTime())) {
+                          //checkes whether the current time is between 14:49:00 and 20:11:13.
+                          Log.d("cheker","true");
+                          String current = new SimpleDateFormat("HH:mm").format(new Date());
+                          String  lastreps = SharedPrefManager.getInstance(LiveLocationService.this).getString(SharedPrefManager.Key.LAST_REPORTED);
+                          if((Integer.parseInt( current.substring(0,2))- Integer.parseInt( lastreps.substring(0,2))>2)||((Integer.parseInt( current.substring(0,2))- Integer.parseInt( lastreps.substring(0,2))==2)&&Integer.parseInt( current.substring(3))- Integer.parseInt( lastreps.substring(3))>=10))
+                          {
+                              String  lastrepss = SharedPrefManager.getInstance(LiveLocationService.this).getString(SharedPrefManager.Key.LAST_REPORTED);
+
+                              Log.d("inthreadd","set"+lastreps);
+
+                              Calendar cal = Calendar.getInstance();
+
+                              cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(current.substring(0, 2)));
+                              cal.set(Calendar.MINUTE, Integer.parseInt(current.substring(3)));
+                              cal.set(Calendar.SECOND, 10);
+                              cal.set(Calendar.MILLISECOND, 0);
+                              alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
+                             /* Log.d("inthreadd","set");
+                              Calendar cal = Calendar.getInstance();
+
+                              cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(current.substring(0, 2)));
+                              cal.set(Calendar.MINUTE, Integer.parseInt(current.substring(3)) + 1);
+                              cal.set(Calendar.SECOND, 0);
+                              cal.set(Calendar.MILLISECOND, 0);
+                              alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);*/
+                          }
+                          else
+                          {
+                              Log.d("inthreadd","not");
+
+                          }
+
+
+                      }
+                      else
+                      {
+
+
+                          Log.d("cheker","false");
+                      }
+                  } catch (ParseException e) {
+                      e.printStackTrace();
+                  }
+
+
+
+
+                  handler.postDelayed(this, 1000*60*30);
+              }
+          };
+
+          handler.postDelayed(r, 1000*60*30);
+
+
+      }
+       /* alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime(),
                 120*60*1000,
-                pendingIntent);
+                pendingIntent);*/
        // NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         //notificationManager.notify(2,getNotificationAlarm());
